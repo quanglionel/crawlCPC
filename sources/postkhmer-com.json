@@ -1,0 +1,12 @@
+{
+  "source_key": "postkhmer-com",
+  "name": "Postkhmer",
+  "target_url": "https://postkhmer.com/",
+  "target_mode": "listing",
+  "preset_path": "configs/auto_bayontv-com-kh.json",
+  "output": "output/auto/006_postkhmer-com.json",
+  "max_pages": 1,
+  "max_articles": 2,
+  "workers": 2,
+  "notes": "Auto-generated from https://postkhmer.com. Top candidate: https://postkhmer.com/national/news/440261"
+}

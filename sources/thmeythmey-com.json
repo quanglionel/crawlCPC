@@ -1,0 +1,12 @@
+{
+  "source_key": "thmeythmey-com",
+  "name": "Thmeythmey",
+  "target_url": "https://thmeythmey.com/",
+  "target_mode": "listing",
+  "preset_path": "configs/auto_bayontv-com-kh.json",
+  "output": "output/auto/007_thmeythmey-com.json",
+  "max_pages": 1,
+  "max_articles": 2,
+  "workers": 2,
+  "notes": "Auto-generated from https://thmeythmey.com. Top candidate: https://thmeythmey.com/detail/158189"
+}

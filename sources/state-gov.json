@@ -1,0 +1,12 @@
+{
+  "source_key": "state-gov",
+  "name": "State",
+  "target_url": "https://www.state.gov/",
+  "target_mode": "listing",
+  "preset_path": "configs/auto_bayontv-com-kh.json",
+  "output": "output/auto/104_state-gov.json",
+  "max_pages": 1,
+  "max_articles": 2,
+  "workers": 2,
+  "notes": "Auto-generated from https://state.gov. Top candidate: https://www.state.gov/releases/office-of-the-spokesperson/2026/04/u-s-upends-iranian-shadow-fleet-and-oil-for-gold-terror-financing-network/?utm_source=homepage&utm_medium=news_bar&utm_campaign=iran"
+}

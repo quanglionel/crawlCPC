@@ -1,0 +1,12 @@
+{
+  "source_key": "ncct-gov-kh",
+  "name": "ncct.gov.kh",
+  "target_url": "https://ncct.gov.kh/",
+  "target_mode": "listing",
+  "preset_path": "configs/auto_bayontv-com-kh.json",
+  "output": "output/auto/113_ncct-gov-kh.json",
+  "max_pages": 1,
+  "max_articles": 2,
+  "workers": 2,
+  "notes": "Auto-generated from https://ncct.gov.kh. Top candidate: https://ncct.gov.kh/news/7/20/485"
+}

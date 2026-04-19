@@ -1,0 +1,12 @@
+{
+  "source_key": "ckn-media-blogspot-com",
+  "name": "ckn-media.blogspot.com",
+  "target_url": "https://ckn-media.blogspot.com/",
+  "target_mode": "listing",
+  "preset_path": "configs/auto_bayontv-com-kh.json",
+  "output": "output/auto/023_ckn-media-blogspot-com.json",
+  "max_pages": 1,
+  "max_articles": 2,
+  "workers": 2,
+  "notes": "Auto-generated from https://ckn-media.blogspot.com. Top candidate: https://ckn-media.blogspot.com/2018/07/blog-post_39.html"
+}

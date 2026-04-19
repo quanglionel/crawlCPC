@@ -1,0 +1,506 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Media Crawler Studio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@500;600&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script>
+      window.CONFIG_PRESETS = {{ preset_lookup | tojson }};
+      window.PRESET_LABELS = {{ preset_label_lookup | tojson }};
+      window.SOURCE_CATALOG = {{ sources | tojson }};
+    </script>
+    <script src="{{ url_for('static', filename='app.js') }}" defer></script>
+  </head>
+  <body>
+    <div class="backdrop"></div>
+    <div class="page-shell">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Docker-first newsroom tooling</p>
+          <h1>Media Crawler Studio</h1>
+          <p class="hero-text">
+            Quản lý nhiều nguồn, tái sử dụng preset giữa các nguồn, và chạy crawl ngay trong cùng một giao diện.
+          </p>
+        </div>
+        <div class="hero-badges">
+          <span>{{ sources|length }} nguồn</span>
+          <span>{{ presets|length }} preset</span>
+          <span>1 preset có thể dùng cho nhiều nguồn</span>
+        </div>
+      </header>
+
+      <nav class="tab-bar">
+        <a href="/?tab=crawl" class="tab-chip {% if active_tab == 'crawl' %}is-active{% endif %}">Crawl</a>
+        <a href="/?tab=sources" class="tab-chip {% if active_tab == 'sources' %}is-active{% endif %}">Nguồn</a>
+        <a href="/?tab=presets" class="tab-chip {% if active_tab == 'presets' %}is-active{% endif %}">Preset</a>
+      </nav>
+
+      {% if page_notice %}
+        <div class="notice is-{{ page_notice.level }}">{{ page_notice.text }}</div>
+      {% endif %}
+
+      {% if active_tab == "crawl" %}
+        <main class="workspace workspace-single">
+          <section class="panel result-panel">
+            <div class="panel-head panel-head-inline">
+              <div>
+                <h2>Chạy Crawl</h2>
+                <p>Mac dinh crawl tat ca nguon. He thong chi giu bai nam trong 24h tinh tu luc bam crawl.</p>
+              </div>
+              {% if selected_source %}
+                <span class="pill">Nguồn hiện tại: {{ selected_source.name }}</span>
+              {% elif crawl_form_data.selected_source_key == all_sources_key %}
+                <span class="pill">Nguồn hiện tại: Tất cả nguồn</span>
+              {% endif %}
+            </div>
+
+            <form method="post" class="crawl-form quick-crawl-form" id="crawl-form">
+              <input type="hidden" name="active_tab" value="crawl">
+              <input type="hidden" name="action" value="run_crawl">
+              <div class="quick-crawl-grid">
+                <label class="field quick-source-field">
+                  <span>Nguồn</span>
+                  <select name="selected_source_key" id="selected_source_key">
+                    <option value="{{ all_sources_key }}" {% if crawl_form_data.selected_source_key == all_sources_key %}selected{% endif %}>Tất cả nguồn (lọc 24h)</option>
+                    {% for source in sources %}
+                      <option value="{{ source.source_key }}" {% if source.source_key == crawl_form_data.selected_source_key %}selected{% endif %}>
+                        {{ source.name }}
+                      </option>
+                    {% endfor %}
+                  </select>
+                </label>
+                <label class="field quick-count-field">
+                  <span>Số bài viết</span>
+                  <input type="number" name="max_articles" min="1" value="{{ crawl_form_data.max_articles }}" placeholder="5">
+                </label>
+                <button type="submit" class="primary-button" id="submit_button">Bắt đầu crawl</button>
+              </div>
+
+              <label class="translation-toggle">
+                <input
+                  type="checkbox"
+                  name="translate_to_vi"
+                  value="on"
+                  {% if crawl_form_data.translate_to_vi == "on" %}checked{% endif %}
+                >
+                <span>Dịch kết quả hiển thị sang tiếng Việt</span>
+                <small>JSON output vẫn giữ nguyên bản gốc để đối chiếu.</small>
+              </label>
+
+              <p class="helper-text source-runtime-note" id="selected_source_hint">
+                {% if selected_source %}
+                  {{ selected_source.target_url }} · preset {{ preset_label_lookup.get(selected_source.preset_path, selected_source.preset_path) }} · output {{ selected_source.output }}
+                {% elif crawl_form_data.selected_source_key == all_sources_key %}
+                  Se crawl tat ca nguon da luu va chi giu bai co published_at (hoac ngay suy luan tu URL) trong 24h gan nhat.
+                {% else %}
+                  Chọn một nguồn đã lưu để chạy. Toàn bộ thiết lập crawl sẽ được nạp tự động từ nguồn đó.
+                {% endif %}
+              </p>
+
+              <div
+                class="notice is-warning crawl-job-panel"
+                id="crawl_job_panel"
+                data-job-id="{{ active_job_id if active_job_id else '' }}"
+                {% if not active_crawl_job %}hidden{% endif %}
+              >
+                <p id="crawl_job_text">
+                  {% if active_crawl_job %}
+                    {% if active_crawl_job.status == "running" %}
+                      Dang crawl tat ca nguon o che do nen...
+                    {% elif active_crawl_job.status == "completed" %}
+                      Job da hoan tat. Dang tai ket qua moi nhat.
+                    {% else %}
+                      Job crawl that bai: {{ active_crawl_job.error or 'Khong ro nguyen nhan' }}
+                    {% endif %}
+                  {% endif %}
+                </p>
+                <progress id="crawl_job_progress" max="100" value="0"></progress>
+                <p class="helper-text" id="crawl_job_meta"></p>
+              </div>
+            </form>
+
+            <div class="panel-head">
+              <h2>Kết Quả</h2>
+              <p>Tìm kiếm và lọc nhanh trên danh sách bài viết của lần crawl gần nhất.</p>
+            </div>
+
+            {% if result %}
+              <div class="result-toolbar" id="result_filters">
+                <div class="filter-heading">
+                  <div>
+                    <p class="empty-kicker">Bộ lọc kết quả</p>
+                    <h3>Tìm nhanh trong bài đã crawl</h3>
+                  </div>
+                  <span class="pill" id="result_count">{{ result_pagination.page_items }}/{{ result_pagination.total_items }} bài ở trang {{ result_pagination.page }}/{{ result_pagination.total_pages }}</span>
+                </div>
+
+                <div class="filter-grid">
+                  <label class="field filter-search-field">
+                    <span>Tìm kiếm</span>
+                    <input
+                      type="search"
+                      id="result_search"
+                      placeholder="Tìm theo tiêu đề, tóm tắt, nội dung, tác giả..."
+                      autocomplete="off"
+                    >
+                  </label>
+                  <label class="field">
+                    <span>Nguồn</span>
+                    <select id="result_source_filter">
+                      <option value="">Tất cả nguồn</option>
+                      {% if selected_source %}
+                        <option value="{{ selected_source.source_key }}">{{ selected_source.name }}</option>
+                      {% endif %}
+                    </select>
+                  </label>
+                  <label class="field">
+                    <span>Từ ngày</span>
+                    <input type="date" id="result_date_from">
+                  </label>
+                  <label class="field">
+                    <span>Đến ngày</span>
+                    <input type="date" id="result_date_to">
+                  </label>
+                  <button type="button" class="ghost-button filter-reset-button" id="result_filter_reset">Xoá lọc</button>
+                </div>
+
+                <p class="helper-text">
+                  Bộ lọc chạy ngay trên danh sách đang hiển thị. Khi crawl nhiều nguồn cùng lúc, bộ lọc nguồn sẽ gom theo từng nguồn trong kết quả.
+                </p>
+              </div>
+
+              {% if result.translation and result.translation.enabled %}
+                <div class="notice is-success">
+                  <p>Đang hiển thị bản dịch tiếng Việt cho bài viết. File JSON và phần “Xem JSON đầy đủ” vẫn là dữ liệu gốc.</p>
+                </div>
+              {% endif %}
+
+              {% if result.warnings %}
+                <div class="notice is-warning">
+                  {% for warning in result.warnings %}
+                    <p>{{ warning }}</p>
+                  {% endfor %}
+                </div>
+              {% endif %}
+
+              {% if result.article_count == 0 %}
+                <div class="notice is-warning">
+                  <p>Chưa tìm thấy bài viết nào. Hãy kiểm tra nguồn và preset có khớp nhau không.</p>
+                </div>
+              {% else %}
+                <div class="notice is-warning filter-empty-state" id="filter_empty_state" hidden>
+                  <p>Không có bài nào khớp với bộ lọc hiện tại.</p>
+                </div>
+                <div class="article-list">
+                  {% for article in result.articles %}
+                    {% set article_source_key = article.source_key or (selected_source.source_key if selected_source else "") %}
+                    {% set article_source_name = article.source_name or (selected_source.name if selected_source else result.site_name) %}
+                    <article
+                      class="article-card {% if article.error %}is-error{% endif %}"
+                      data-source-key="{{ article_source_key }}"
+                      data-source-name="{{ article_source_name }}"
+                      data-published-at="{{ article.published_at or '' }}"
+                    >
+                      <div class="article-meta">
+                        <span>{{ article_source_name }}</span>
+                        <span>{{ article.display_published_at or article.published_at or "Chưa có ngày đăng" }}</span>
+                        <span>{{ article.author or "Không rõ tác giả" }}</span>
+                        {% if article.display_language == "vi" %}
+                          <span>Bản dịch tiếng Việt</span>
+                        {% endif %}
+                      </div>
+                      <h3>{{ article.display_title or article.title or article.url }}</h3>
+                      {% if article.display_summary %}
+                        <p class="article-summary">{{ article.display_summary }}</p>
+                      {% endif %}
+                      {% if article.display_content %}
+                        <p class="article-content">{{ article.display_content }}{% if article.display_content_truncated %}...{% endif %}</p>
+                      {% endif %}
+                      {% if article.translation_error %}
+                        <p class="article-error">Không dịch được bài này: {{ article.translation_error }}</p>
+                      {% endif %}
+                      {% if article.error %}
+                        <p class="article-error">{{ article.error }}</p>
+                      {% endif %}
+                      {% if article.display_language == "vi" %}
+                        <details class="original-view">
+                          <summary>Xem nguyên bản</summary>
+                          <h4>{{ article.title or article.url }}</h4>
+                          {% if article.summary %}
+                            <p>{{ article.summary }}</p>
+                          {% endif %}
+                          {% if article.content %}
+                            <p>{{ article.content[:420] }}{% if article.content|length > 420 %}...{% endif %}</p>
+                          {% endif %}
+                        </details>
+                      {% endif %}
+                      <a href="{{ article.url }}" target="_blank" rel="noreferrer">Mở bài gốc</a>
+                    </article>
+                  {% endfor %}
+                </div>
+
+                {% if result_pagination.total_pages > 1 %}
+                  <nav class="result-pagination" aria-label="Phân trang kết quả crawl">
+                    {% if result_pagination.has_prev %}
+                      <a
+                        class="ghost-button button-link"
+                        href="/?tab=crawl&result_page={{ result_pagination.prev_page }}{% if active_job_id %}&job_id={{ active_job_id }}{% endif %}"
+                      >Trang trước</a>
+                    {% else %}
+                      <span class="ghost-button button-link is-disabled">Trang trước</span>
+                    {% endif %}
+
+                    <span class="pagination-label">Trang {{ result_pagination.page }} / {{ result_pagination.total_pages }}</span>
+
+                    {% if result_pagination.has_next %}
+                      <a
+                        class="ghost-button button-link"
+                        href="/?tab=crawl&result_page={{ result_pagination.next_page }}{% if active_job_id %}&job_id={{ active_job_id }}{% endif %}"
+                      >Trang sau</a>
+                    {% else %}
+                      <span class="ghost-button button-link is-disabled">Trang sau</span>
+                    {% endif %}
+                  </nav>
+                {% endif %}
+              {% endif %}
+
+              <details class="json-viewer">
+                <summary>Xem JSON đầy đủ</summary>
+                <pre>{{ raw_result_json }}</pre>
+              </details>
+            {% else %}
+              <div class="empty-state">
+                <p class="empty-kicker">Sẵn sàng cho lần chạy đầu tiên</p>
+                <h3>Chọn một nguồn đã lưu, nhập số bài viết cần lấy, rồi bấm crawl.</h3>
+                <p>Nếu bạn có nhiều website giống cấu trúc, hãy tạo một preset rồi gán nó cho nhiều nguồn khác nhau ở tab quản lý.</p>
+              </div>
+            {% endif %}
+          </section>
+        </main>
+      {% elif active_tab == "sources" %}
+        <main class="workspace management-workspace">
+          <section class="panel control-panel">
+            <div class="panel-head">
+              <h2>Quản Lý Nguồn</h2>
+              <p>Mỗi nguồn là một URL cần crawl. Khi tạo nguồn mới, hệ thống sẽ tự thử preset cũ trước; nếu không phù hợp sẽ tự tạo preset mới cho nguồn đó.</p>
+            </div>
+
+            <form method="post" class="crawl-form">
+              <input type="hidden" name="active_tab" value="sources">
+              <input type="hidden" name="original_source_key" value="{{ source_form_data.original_source_key }}">
+
+              <div class="form-grid">
+                <label class="field">
+                  <span>Source key</span>
+                  <input type="text" name="source_key" value="{{ source_form_data.source_key }}" placeholder="akp-home">
+                </label>
+                <label class="field">
+                  <span>Tên nguồn</span>
+                  <input type="text" name="name" value="{{ source_form_data.name }}" placeholder="AKP Homepage">
+                </label>
+                <label class="field field-wide">
+                  <span>URL nguồn</span>
+                  <input type="url" name="target_url" value="{{ source_form_data.target_url }}" placeholder="https://akp.gov.kh/">
+                </label>
+                <label class="field">
+                  <span>Kiểu URL</span>
+                  <select name="target_mode">
+                    <option value="auto" {% if source_form_data.target_mode == "auto" %}selected{% endif %}>Tự nhận diện</option>
+                    <option value="listing" {% if source_form_data.target_mode == "listing" %}selected{% endif %}>Trang danh sách</option>
+                    <option value="article" {% if source_form_data.target_mode == "article" %}selected{% endif %}>Bài viết đơn</option>
+                  </select>
+                </label>
+                <label class="field">
+                  <span>Preset dùng chung</span>
+                  <select name="preset_path">
+                    {% for preset in presets %}
+                      <option value="{{ preset.path }}" {% if preset.path == source_form_data.preset_path %}selected{% endif %}>
+                        {{ preset.label }}
+                      </option>
+                    {% endfor %}
+                  </select>
+                </label>
+              </div>
+
+              <div class="form-grid">
+                <label class="field">
+                  <span>Output file</span>
+                  <input type="text" name="output" value="{{ source_form_data.output }}" placeholder="output/akp_articles.json">
+                </label>
+                <label class="field">
+                  <span>Số trang tối đa</span>
+                  <input type="number" name="max_pages" min="1" value="{{ source_form_data.max_pages }}" placeholder="1">
+                </label>
+                <label class="field">
+                  <span>Số bài tối đa</span>
+                  <input type="number" name="max_articles" min="1" value="{{ source_form_data.max_articles }}" placeholder="5">
+                </label>
+                <label class="field">
+                  <span>Workers</span>
+                  <input type="number" name="workers" min="1" value="{{ source_form_data.workers }}" placeholder="4">
+                </label>
+              </div>
+
+              <div class="submit-row">
+                <button type="submit" name="action" value="save_source" class="primary-button">Lưu nguồn</button>
+                <a href="/?tab=sources" class="ghost-button button-link">Nguồn mới</a>
+              </div>
+            </form>
+          </section>
+
+          <section class="panel result-panel">
+            <div class="panel-head">
+              <h2>Danh Sách Nguồn</h2>
+              <p>Chọn sửa, xoá, hoặc đưa một nguồn sang tab crawl để chạy ngay.</p>
+            </div>
+
+            <div class="field source-search-field" style="margin-bottom: 16px;">
+              <span>Tìm kiếm nguồn</span>
+              <div class="source-search-row">
+                <input
+                  type="search"
+                  id="source_search"
+                  name="search_sources"
+                  value="{{ search_sources }}"
+                  placeholder="Tìm kiếm theo tên, URL, preset..."
+                  autocomplete="off"
+                >
+                <button type="button" class="ghost-button" id="source_search_reset">Xóa lọc</button>
+              </div>
+            </div>
+
+            {% if sources %}
+              <div class="notice is-warning" id="source_filter_empty_state" hidden>
+                <p>Không có nguồn nào khớp với từ khóa tìm kiếm.</p>
+              </div>
+              <div class="entity-list" id="source_entity_list">
+                {% for source in sources %}
+                  <article class="entity-card">
+                    <div class="entity-header">
+                      <div>
+                        <h3>{{ source.name }}</h3>
+                        <p class="entity-subtitle">{{ source.target_url }}</p>
+                      </div>
+                      <span class="pill">{{ preset_label_lookup.get(source.preset_path, source.preset_path) }}</span>
+                    </div>
+                    <div class="entity-meta">
+                      <span>Mode: {{ source.target_mode }}</span>
+                      <span>Output: {{ source.output }}</span>
+                      <span>Workers: {{ source.workers }}</span>
+                    </div>
+                    <div class="card-actions">
+                      <a href="{{ source.target_url }}" target="_blank" rel="noreferrer" class="ghost-button button-link small-button">Direct</a>
+                      <form method="post">
+                        <input type="hidden" name="active_tab" value="sources">
+                        <input type="hidden" name="action" value="edit_source">
+                        <input type="hidden" name="source_ref" value="{{ source.source_key }}">
+                        <button type="submit" class="ghost-button small-button">Sửa</button>
+                      </form>
+                      <form method="post">
+                        <input type="hidden" name="active_tab" value="sources">
+                        <input type="hidden" name="action" value="use_source_for_crawl">
+                        <input type="hidden" name="source_ref" value="{{ source.source_key }}">
+                        <button type="submit" class="ghost-button small-button">Mở ở Crawl</button>
+                      </form>
+                      <form method="post">
+                        <input type="hidden" name="active_tab" value="sources">
+                        <input type="hidden" name="action" value="delete_source">
+                        <input type="hidden" name="source_ref" value="{{ source.source_key }}">
+                        <button type="submit" class="danger-button small-button">Xoá</button>
+                      </form>
+                    </div>
+                  </article>
+                {% endfor %}
+              </div>
+            {% else %}
+              <div class="empty-state">
+                <p class="empty-kicker">Chưa có nguồn nào</p>
+                <h3>Tạo nguồn đầu tiên để tái sử dụng URL và tham số crawl.</h3>
+                <p>Một nguồn chỉ mô tả URL và tham số chạy. Selector thực sự nằm ở preset.</p>
+              </div>
+            {% endif %}
+          </section>
+        </main>
+      {% elif active_tab == "presets" %}
+        <main class="workspace management-workspace">
+          <section class="panel control-panel">
+            <div class="panel-head">
+              <h2>Quản Lý Preset</h2>
+              <p>Preset là bộ selector crawl. Khi đổi tên preset, các nguồn đang dùng preset đó sẽ được cập nhật theo.</p>
+            </div>
+
+            <form method="post" class="crawl-form">
+              <input type="hidden" name="active_tab" value="presets">
+              <input type="hidden" name="original_preset_path" value="{{ preset_form_data.original_preset_path }}">
+
+              <label class="field">
+                <span>Preset key</span>
+                <input type="text" name="preset_key" value="{{ preset_form_data.preset_key }}" placeholder="akp_en">
+              </label>
+
+              <label class="field textarea-field">
+                <span>Preset JSON</span>
+                <textarea name="config_json" spellcheck="false">{{ preset_form_data.config_json }}</textarea>
+              </label>
+
+              <div class="submit-row">
+                <button type="submit" name="action" value="save_preset" class="primary-button">Lưu preset</button>
+                <a href="/?tab=presets" class="ghost-button button-link">Preset mới</a>
+              </div>
+            </form>
+          </section>
+
+          <section class="panel result-panel">
+            <div class="panel-head">
+              <h2>Danh Sách Preset</h2>
+              <p>Xem preset nào đang được bao nhiêu nguồn dùng chung, rồi sửa hoặc xoá ngay tại đây.</p>
+            </div>
+
+            {% if presets %}
+              <div class="entity-list">
+                {% for preset in presets %}
+                  <article class="entity-card">
+                    <div class="entity-header">
+                      <div>
+                        <h3>{{ preset.label }}</h3>
+                        <p class="entity-subtitle">{{ preset.path }}</p>
+                      </div>
+                      <span class="pill">{{ preset_usage.get(preset.path, 0) }} nguồn</span>
+                    </div>
+                    {% if preset.site_name %}
+                      <p class="entity-notes">site_name: {{ preset.site_name }}</p>
+                    {% endif %}
+                    <div class="card-actions">
+                      <form method="post">
+                        <input type="hidden" name="active_tab" value="presets">
+                        <input type="hidden" name="action" value="edit_preset">
+                        <input type="hidden" name="preset_ref" value="{{ preset.path }}">
+                        <button type="submit" class="ghost-button small-button">Sửa</button>
+                      </form>
+                      <form method="post">
+                        <input type="hidden" name="active_tab" value="presets">
+                        <input type="hidden" name="action" value="delete_preset">
+                        <input type="hidden" name="preset_ref" value="{{ preset.path }}">
+                        <button type="submit" class="danger-button small-button">Xoá</button>
+                      </form>
+                    </div>
+                  </article>
+                {% endfor %}
+              </div>
+            {% else %}
+              <div class="empty-state">
+                <p class="empty-kicker">Chưa có preset nào</p>
+                <h3>Tạo preset đầu tiên để nhiều nguồn có thể dùng chung selector.</h3>
+                <p>Preset nên đại diện cho một cấu trúc HTML, còn từng URL cụ thể thì nên lưu thành nguồn.</p>
+              </div>
+            {% endif %}
+          </section>
+        </main>
+      {% endif %}
+    </div>
+  </body>
+</html>

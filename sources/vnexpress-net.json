@@ -1,0 +1,12 @@
+{
+  "source_key": "vnexpress-net",
+  "name": "Vnexpress",
+  "target_url": "https://vnexpress.net/",
+  "target_mode": "listing",
+  "preset_path": "configs/auto_bayontv-com-kh.json",
+  "output": "output/auto/022_vnexpress-net.json",
+  "max_pages": 1,
+  "max_articles": 2,
+  "workers": 2,
+  "notes": "Auto-generated from https://vnexpress.net. Top candidate: https://vnexpress.net/tac-gia/doan-manh-dung-3009.html"
+}

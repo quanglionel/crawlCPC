@@ -1,0 +1,12 @@
+{
+  "source_key": "rajp-gov-kh-1776590379",
+  "name": "RAJP-GOV-KH Test",
+  "target_url": "http://rajp.gov.kh",
+  "target_mode": "auto",
+  "preset_path": "configs/moc_gov_kh.json",
+  "output": "output/rajp-gov-kh-1776590379.json",
+  "max_pages": 1,
+  "max_articles": 3,
+  "workers": 2,
+  "notes": "Batch test auto preset resolution from UI workflow\nDùng preset có sẵn 'configs/moc_gov_kh.json' (success 5/5 khi test nhanh)."
+}

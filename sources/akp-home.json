@@ -1,0 +1,12 @@
+{
+  "source_key": "akp-home",
+  "name": "AKP Home",
+  "target_url": "https://akp.gov.kh/",
+  "target_mode": "listing",
+  "preset_path": "configs/akp_en.json",
+  "output": "output/akp_home_from_source.json",
+  "max_pages": 1,
+  "max_articles": 3,
+  "workers": 2,
+  "notes": "Trang chủ AKP dùng preset English."
+}

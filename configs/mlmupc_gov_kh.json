@@ -1,0 +1,146 @@
+{
+  "site_name": "MLMUPC",
+  "base_url": "https://mlmupc.gov.kh",
+  "allowed_domains": [
+    "mlmupc.gov.kh",
+    "www.mlmupc.gov.kh"
+  ],
+  "listing_urls": [
+    "https://mlmupc.gov.kh/wp-sitemap-posts-post-1.xml"
+  ],
+  "article_link_selectors": [],
+  "article_link_regexes": [
+    "<loc>(https://mlmupc\\.gov\\.kh/\\d{4}/\\d{2}/\\d{2}/[^<]+/)</loc>"
+  ],
+  "article_link_pattern": "https?://(?:www\\.)?mlmupc\\.gov\\.kh/\\d{4}/\\d{2}/\\d{2}/[^?#]+/?$",
+  "article_link_exclude_patterns": [
+    "https?://(?:www\\.)?mlmupc\\.gov\\.kh/2023/09/06/%e1%9e%91%e1%9f%86%e1%9e%93%e1%9e%b6%e1%9e%80"
+  ],
+  "remove_selectors": [
+    "script",
+    "style",
+    "noscript",
+    "iframe",
+    "form",
+    "nav",
+    "header",
+    "footer",
+    ".sidebar",
+    ".widget-area",
+    ".comments-area"
+  ],
+  "request": {
+    "timeout_seconds": 30,
+    "delay_seconds": 0.15,
+    "verify_ssl": true,
+    "respect_robots_txt": false,
+    "user_agent": "Mozilla/5.0"
+  },
+  "fields": {
+    "title": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": "meta[property='og:title']",
+          "attr": "content"
+        },
+        {
+          "selector": "h1.entry-title"
+        },
+        {
+          "selector": "h1"
+        },
+        {
+          "selector": "title"
+        }
+      ]
+    },
+    "summary": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": "meta[property='og:description']",
+          "attr": "content"
+        },
+        {
+          "selector": "meta[name='description']",
+          "attr": "content"
+        },
+        {
+          "selector": ".entry-content p"
+        }
+      ]
+    },
+    "published_at": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": "meta[property='article:published_time']",
+          "attr": "content"
+        },
+        {
+          "selector": "time[datetime]",
+          "attr": "datetime"
+        }
+      ]
+    },
+    "author": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": "meta[name='author']",
+          "attr": "content"
+        },
+        {
+          "selector": ".author-name"
+        },
+        {
+          "selector": ".byline a"
+        }
+      ]
+    },
+    "category": {
+      "mode": "list",
+      "extractors": [
+        {
+          "selector": ".cat-links a"
+        },
+        {
+          "selector": "a[rel='category tag']"
+        }
+      ]
+    },
+    "content": {
+      "mode": "join",
+      "separator": "\n\n",
+      "extractors": [
+        {
+          "selector": ".entry-content p"
+        },
+        {
+          "selector": ".single-content p"
+        },
+        {
+          "selector": "article p"
+        }
+      ]
+    },
+    "image": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": "meta[property='og:image']",
+          "attr": "content"
+        },
+        {
+          "selector": ".entry-content img[src]",
+          "attr": "src"
+        },
+        {
+          "selector": "article img[src]",
+          "attr": "src"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,95 @@
+{
+  "site_name": "NCDD Bidding",
+  "base_url": "https://db.ncdd.gov.kh",
+  "allowed_domains": [
+    "db.ncdd.gov.kh",
+    "bid.ncdd.gov.kh"
+  ],
+  "listing_urls": [
+    "https://bid.ncdd.gov.kh/ajax/operator.php?do=list_project&ann_district_id=112"
+  ],
+  "hash_link_prefix": "/ajax/operator.php?",
+  "article_link_selectors": [
+    "a[href^='#do=list_project1']"
+  ],
+  "article_link_pattern": "https?://(?:www\\.)?bid\\.ncdd\\.gov\\.kh/ajax/operator\\.php\\?do=list_project1.*",
+  "article_link_exclude_patterns": [],
+  "remove_selectors": [
+    "script",
+    "style",
+    "noscript",
+    "iframe",
+    "form",
+    "nav",
+    "header",
+    "footer"
+  ],
+  "request": {
+    "timeout_seconds": 30,
+    "delay_seconds": 0.1,
+    "verify_ssl": true,
+    "respect_robots_txt": false,
+    "user_agent": "Mozilla/5.0"
+  },
+  "fields": {
+    "title": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": "h2"
+        },
+        {
+          "selector": "strong"
+        }
+      ]
+    },
+    "summary": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": "p"
+        }
+      ]
+    },
+    "published_at": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": "time[datetime]",
+          "attr": "datetime"
+        }
+      ]
+    },
+    "author": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": "meta[name='author']",
+          "attr": "content"
+        }
+      ]
+    },
+    "content": {
+      "mode": "join",
+      "separator": "\n\n",
+      "extractors": [
+        {
+          "selector": "table"
+        },
+        {
+          "selector": "p"
+        }
+      ]
+    },
+    "image": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": "img[src]",
+          "attr": "src"
+        }
+      ]
+    }
+  }
+}
+

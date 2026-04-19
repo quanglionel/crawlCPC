@@ -1,0 +1,12 @@
+{
+  "source_key": "chabsrok-1776590061",
+  "name": "CHABSROK Test",
+  "target_url": "https://chabsrok.com/",
+  "target_mode": "auto",
+  "preset_path": "configs/auto_chabsrok-com.json",
+  "output": "output/chabsrok-1776590061.json",
+  "max_pages": 1,
+  "max_articles": 3,
+  "workers": 2,
+  "notes": "Batch test auto preset resolution from UI workflow\nTạo preset mới 'configs/auto_chabsrok-com.json' cho nguồn này."
+}

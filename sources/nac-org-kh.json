@@ -1,0 +1,12 @@
+{
+  "source_key": "nac-org-kh",
+  "name": "nac.org.kh",
+  "target_url": "https://nac.org.kh/",
+  "target_mode": "listing",
+  "preset_path": "configs/auto_bayontv-com-kh.json",
+  "output": "output/auto/040_nac-org-kh.json",
+  "max_pages": 1,
+  "max_articles": 2,
+  "workers": 2,
+  "notes": "Auto-generated from https://nac.org.kh. Top candidate: https://nac.org.kh/article/9576"
+}

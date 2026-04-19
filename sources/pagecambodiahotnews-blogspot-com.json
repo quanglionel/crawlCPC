@@ -1,0 +1,12 @@
+{
+  "source_key": "pagecambodiahotnews-blogspot-com",
+  "name": "pagecambodiahotnews.blogspot.com",
+  "target_url": "https://pagecambodiahotnews.blogspot.com/",
+  "target_mode": "listing",
+  "preset_path": "configs/auto_bayontv-com-kh.json",
+  "output": "output/auto/044_pagecambodiahotnews-blogspot-com.json",
+  "max_pages": 1,
+  "max_articles": 2,
+  "workers": 2,
+  "notes": "Auto-generated from https://pagecambodiahotnews.blogspot.com. Top candidate: https://pagecambodiahotnews.blogspot.com/2020/10/blog-post.html"
+}

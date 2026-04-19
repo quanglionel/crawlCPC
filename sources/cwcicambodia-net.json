@@ -1,0 +1,12 @@
+{
+  "source_key": "cwcicambodia-net",
+  "name": "Cwcicambodia",
+  "target_url": "https://cwcicambodia.net/",
+  "target_mode": "listing",
+  "preset_path": "configs/cwcicambodia_kh.json",
+  "output": "output/cwcicambodia.json",
+  "max_pages": 1,
+  "max_articles": 5,
+  "workers": 2,
+  "notes": "Uses a short Mozilla/5.0 user-agent because the site blocks full Chrome-like crawler user agents."
+}

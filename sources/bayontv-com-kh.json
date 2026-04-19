@@ -1,0 +1,12 @@
+{
+  "source_key": "bayontv-com-kh",
+  "name": "bayontv.com.kh",
+  "target_url": "https://bayontv.com.kh/category/news/",
+  "target_mode": "listing",
+  "preset_path": "configs/bayontv_news_only.json",
+  "output": "output/auto/005_bayontv-com-kh.json",
+  "max_pages": 1,
+  "max_articles": 2,
+  "workers": 2,
+  "notes": "Auto-generated from https://bayontv.com.kh. News-only preset active (configs/bayontv_news_only.json). Restricted section: https://bayontv.com.kh/category/news/. Top candidate: https://bayontv.com.kh/news/49849/"
+}

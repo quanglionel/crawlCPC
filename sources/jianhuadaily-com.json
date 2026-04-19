@@ -1,0 +1,12 @@
+{
+  "source_key": "jianhuadaily-com",
+  "name": "Jianhuadaily",
+  "target_url": "https://www.jianhuadaily.com/",
+  "target_mode": "listing",
+  "preset_path": "configs/auto_bayontv-com-kh.json",
+  "output": "output/auto/107_jianhuadaily-com.json",
+  "max_pages": 1,
+  "max_articles": 2,
+  "workers": 2,
+  "notes": "Auto-generated from https://jianhuadaily.com. Top candidate: https://www.jianhuadaily.com/2026/04/01"
+}

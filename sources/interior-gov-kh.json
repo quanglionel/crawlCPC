@@ -1,0 +1,12 @@
+{
+  "source_key": "interior-gov-kh",
+  "name": "interior.gov.kh",
+  "target_url": "https://interior.gov.kh/",
+  "target_mode": "listing",
+  "preset_path": "configs/auto_interior-gov-kh.json",
+  "output": "output/auto/029_interior-gov-kh.json",
+  "max_pages": 1,
+  "max_articles": 2,
+  "workers": 2,
+  "notes": "Auto-generated from https://interior.gov.kh. Top candidate: https://interior.gov.kh/ministry_and_unit/6\nAuto quality fix: moved from broad preset to dedicated preset due to non-article links."
+}

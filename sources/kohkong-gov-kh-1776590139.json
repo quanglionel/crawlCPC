@@ -1,0 +1,12 @@
+{
+  "source_key": "kohkong-gov-kh-1776590139",
+  "name": "KOHKONG-GOV-KH Test",
+  "target_url": "https://kohkong.gov.kh/",
+  "target_mode": "auto",
+  "preset_path": "configs/auto_bayontv-com-kh.json",
+  "output": "output/kohkong-gov-kh-1776590139.json",
+  "max_pages": 1,
+  "max_articles": 3,
+  "workers": 2,
+  "notes": "Batch test auto preset resolution from UI workflow\nDùng preset có sẵn 'configs/auto_bayontv-com-kh.json' (success 5/5 khi test nhanh)."
+}

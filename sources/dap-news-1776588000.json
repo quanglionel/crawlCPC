@@ -1,0 +1,12 @@
+{
+  "source_key": "dap-news-1776588000",
+  "name": "DAP News Test",
+  "target_url": "https://dap-news.com/",
+  "target_mode": "auto",
+  "preset_path": "configs/auto_dap-news-com.json",
+  "output": "output/dap-news-1776588000.json",
+  "max_pages": 1,
+  "max_articles": 3,
+  "workers": 2,
+  "notes": "Test auto preset resolution from UI workflow\nDùng preset có sẵn 'configs/auto_bayontv-com-kh.json' (success 1/1 khi test nhanh).\nRepointed to dedicated preset auto_dap-news-com to avoid non-article links (contact/home)."
+}

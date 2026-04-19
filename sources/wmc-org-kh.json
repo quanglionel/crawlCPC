@@ -1,0 +1,12 @@
+{
+  "source_key": "wmc-org-kh",
+  "name": "wmc.org.kh",
+  "target_url": "https://wmc.org.kh/",
+  "target_mode": "listing",
+  "preset_path": "configs/auto_bayontv-com-kh.json",
+  "output": "output/auto/017_wmc-org-kh.json",
+  "max_pages": 1,
+  "max_articles": 2,
+  "workers": 2,
+  "notes": "Auto-generated from https://wmc.org.kh. Top candidate: https://wmc.org.kh/in-the-first-three-months-of-2026-cambodia-cleared-more-than-4000-hectares-of-mine-contaminated-land/"
+}

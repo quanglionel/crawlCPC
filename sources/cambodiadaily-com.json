@@ -1,0 +1,12 @@
+{
+  "source_key": "cambodiadaily-com",
+  "name": "Cambodiadaily",
+  "target_url": "https://www.cambodiadaily.com/",
+  "target_mode": "listing",
+  "preset_path": "configs/auto_bayontv-com-kh.json",
+  "output": "output/auto/093_cambodiadaily-com.json",
+  "max_pages": 1,
+  "max_articles": 2,
+  "workers": 2,
+  "notes": "Auto-generated from https://cambodiadaily.com. Top candidate: https://www.cambodiadaily.com/2026/04/02/23/56/87159/"
+}

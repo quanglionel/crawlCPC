@@ -1,0 +1,12 @@
+{
+  "source_key": "mfaic-gov-kh",
+  "name": "mfaic.gov.kh",
+  "target_url": "https://mfaic.gov.kh/en",
+  "target_mode": "listing",
+  "preset_path": "configs/auto_bayontv-com-kh.json",
+  "output": "output/auto/057_mfaic-gov-kh.json",
+  "max_pages": 1,
+  "max_articles": 2,
+  "workers": 2,
+  "notes": "Auto-generated from https://mfaic.gov.kh. Top candidate: https://mfaic.gov.kh/Media/View/2026-04-13-News-The-Second-Special-ASEAN-Foreign-Ministers--Meeting-on-the-Situation-in-the-Middle-East--via-videoco-22-26-31"
+}

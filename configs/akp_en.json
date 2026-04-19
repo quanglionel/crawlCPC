@@ -1,0 +1,108 @@
+{
+  "site_name": "akp-en",
+  "base_url": "https://akp.gov.kh",
+  "allowed_domains": [
+    "akp.gov.kh"
+  ],
+  "listing_urls": [
+    "https://akp.gov.kh/"
+  ],
+  "article_link_selectors": [
+    ".single-blog-post .post-catagory",
+    ".single-blog-post .featured-image a",
+    ".single-blog-post a.post-title"
+  ],
+  "article_link_pattern": "https://akp\\.gov\\.kh/post/detail/\\d+$",
+  "article_link_exclude_patterns": [],
+  "remove_selectors": [
+    ".rrssb-buttons",
+    "script",
+    "style"
+  ],
+  "request": {
+    "timeout_seconds": 30,
+    "delay_seconds": 0.2,
+    "verify_ssl": true,
+    "respect_robots_txt": false,
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+  },
+  "fields": {
+    "title": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": "h6.post-title"
+        },
+        {
+          "selector": "meta[property='og:title']",
+          "attr": "content"
+        }
+      ]
+    },
+    "summary": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": ".youtube-video p:nth-of-type(2)"
+        },
+        {
+          "selector": "meta[name='description']",
+          "attr": "content"
+        }
+      ]
+    },
+    "published_at": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": ".youtube-video p:first-of-type"
+        }
+      ]
+    },
+    "author": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": ".youtube-video p:last-of-type"
+        },
+        {
+          "selector": "meta[name='author']",
+          "attr": "content"
+        }
+      ]
+    },
+    "category": {
+      "mode": "list",
+      "extractors": [
+        {
+          "selector": ".breadcrumb a"
+        }
+      ]
+    },
+    "content": {
+      "mode": "join",
+      "separator": "\n\n",
+      "extractors": [
+        {
+          "selector": ".youtube-video p:not(:first-of-type):not(:last-of-type)"
+        },
+        {
+          "selector": ".youtube-video p:not(:first-of-type)"
+        }
+      ]
+    },
+    "image": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": "meta[property='og:image']",
+          "attr": "content"
+        },
+        {
+          "selector": ".youtube-video img",
+          "attr": "src"
+        }
+      ]
+    }
+  }
+}

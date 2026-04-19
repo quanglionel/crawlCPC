@@ -1,0 +1,12 @@
+{
+  "source_key": "information-gov-home",
+  "name": "Information Gov Home",
+  "target_url": "https://www.information.gov.kh/",
+  "target_mode": "listing",
+  "preset_path": "configs/information_gov_kh.json",
+  "output": "output/information_gov_home.json",
+  "max_pages": 1,
+  "max_articles": 5,
+  "workers": 3,
+  "notes": "Crawl qua JSON API cua information.gov.kh vi trang chu dung Next.js client-side."
+}

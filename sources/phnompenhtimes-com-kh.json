@@ -1,0 +1,12 @@
+{
+  "source_key": "phnompenhtimes-com-kh",
+  "name": "Phnompenhtimes",
+  "target_url": "https://phnompenhtimes.com.kh/",
+  "target_mode": "listing",
+  "preset_path": "configs/phnompenhtimes_kh.json",
+  "output": "output/phnompenhtimes.json",
+  "max_pages": 1,
+  "max_articles": 5,
+  "workers": 2,
+  "notes": "Uses Firestore REST API because the website is an Angular shell without server-rendered article links."
+}

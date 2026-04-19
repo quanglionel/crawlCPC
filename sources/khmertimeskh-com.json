@@ -1,0 +1,12 @@
+{
+  "source_key": "khmertimeskh-com",
+  "name": "khmertimeskh.com",
+  "target_url": "https://www.khmertimeskh.com/",
+  "target_mode": "auto",
+  "preset_path": "configs/auto_khmertimeskh-com.json",
+  "output": "output/auto/khmertimeskh-com.json",
+  "max_pages": 1,
+  "max_articles": 5,
+  "workers": 2,
+  "notes": "Prepared source for khmertimeskh.com. Site currently protected by Cloudflare challenge (403)."
+}

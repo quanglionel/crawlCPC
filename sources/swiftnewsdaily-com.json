@@ -1,0 +1,12 @@
+{
+  "source_key": "swiftnewsdaily-com",
+  "name": "Swiftnewsdaily",
+  "target_url": "https://swiftnewsdaily.com/",
+  "target_mode": "listing",
+  "preset_path": "configs/swiftnewsdaily_kh.json",
+  "output": "output/swiftnewsdaily.json",
+  "max_pages": 1,
+  "max_articles": 5,
+  "workers": 2,
+  "notes": "Uses the Swift News Daily JSON API because the website renders article links client-side."
+}

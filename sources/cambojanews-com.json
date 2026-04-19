@@ -1,0 +1,12 @@
+{
+  "source_key": "cambojanews-com",
+  "name": "Cambojanews",
+  "target_url": "https://cambojanews.com/",
+  "target_mode": "listing",
+  "preset_path": "configs/auto_bayontv-com-kh.json",
+  "output": "output/auto/148_cambojanews-com.json",
+  "max_pages": 1,
+  "max_articles": 2,
+  "workers": 2,
+  "notes": "Auto-generated from https://cambojanews.com. Top candidate: https://cambojanews.com/article-type/editors-pick/"
+}

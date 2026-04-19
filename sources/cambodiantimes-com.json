@@ -1,0 +1,12 @@
+{
+  "source_key": "cambodiantimes-com",
+  "name": "Cambodiantimes",
+  "target_url": "https://www.cambodiantimes.com/",
+  "target_mode": "listing",
+  "preset_path": "configs/auto_bayontv-com-kh.json",
+  "output": "output/auto/096_cambodiantimes-com.json",
+  "max_pages": 1,
+  "max_articles": 2,
+  "workers": 2,
+  "notes": "Auto-generated from https://cambodiantimes.com. Top candidate: https://www.cambodiantimes.com/news/278996051/china-guangxi-nanning-vietnam-to-lam-visit-cn"
+}

@@ -1,0 +1,12 @@
+{
+  "source_key": "khmercircle-blogspot-com",
+  "name": "khmercircle.blogspot.com",
+  "target_url": "https://khmercircle.blogspot.com/",
+  "target_mode": "listing",
+  "preset_path": "configs/auto_bayontv-com-kh.json",
+  "output": "output/auto/088_khmercircle-blogspot-com.json",
+  "max_pages": 1,
+  "max_articles": 2,
+  "workers": 2,
+  "notes": "Auto-generated from https://khmercircle.blogspot.com. Top candidate: https://khmercircle.blogspot.com/2026/04/24-hours-in-ancient-angkor-god-kings.html"
+}

@@ -1,0 +1,122 @@
+{
+  "site_name": "RNK",
+  "base_url": "https://rnk.gov.kh",
+  "allowed_domains": [
+    "rnk.gov.kh"
+  ],
+  "listing_urls": [
+    "https://rnk.gov.kh/"
+  ],
+  "article_link_selectors": [
+    "a[href*='/article/']"
+  ],
+  "article_link_pattern": "https?://rnk\\.gov\\.kh/article/\\d+$",
+  "article_link_exclude_patterns": [],
+  "remove_selectors": [],
+  "request": {
+    "timeout_seconds": 30,
+    "delay_seconds": 0.15,
+    "verify_ssl": true,
+    "respect_robots_txt": false,
+    "user_agent": "Mozilla/5.0",
+    "headers": {
+      "Accept": "application/json, text/plain, */*",
+      "X-Inertia": "true",
+      "X-Inertia-Version": "68d3e00aba25b86aa2922b56f3cd45fd",
+      "Referer": "https://rnk.gov.kh/"
+    }
+  },
+  "api": {
+    "listing": {
+      "url": "https://rnk.gov.kh/",
+      "items_path": "props.posts",
+      "link_template": "https://rnk.gov.kh/article/{id}",
+      "default_pages": 1
+    },
+    "article": {
+      "url_template": "https://rnk.gov.kh/article/{id}",
+      "id_pattern": "/article/(\\d+)$",
+      "root_path": "props.article"
+    },
+    "json_fields": {
+      "title": {
+        "mode": "first",
+        "extractors": [
+          {
+            "path": "title"
+          }
+        ]
+      },
+      "summary": {
+        "mode": "first",
+        "extractors": [
+          {
+            "path": "meta_description"
+          },
+          {
+            "path": "body"
+          }
+        ]
+      },
+      "published_at": {
+        "mode": "first",
+        "extractors": [
+          {
+            "path": "created_at"
+          },
+          {
+            "path": "updated_at"
+          }
+        ]
+      },
+      "author": {
+        "mode": "first",
+        "extractors": [
+          {
+            "template": "{first_name} {last_name}"
+          }
+        ]
+      },
+      "category": {
+        "mode": "list",
+        "extractors": [
+          {
+            "path": "name"
+          },
+          {
+            "path": "category_name"
+          },
+          {
+            "path": "category_slug"
+          }
+        ]
+      },
+      "content": {
+        "mode": "join",
+        "separator": "\n\n",
+        "extractors": [
+          {
+            "path": "body"
+          }
+        ]
+      },
+      "image": {
+        "mode": "first",
+        "extractors": [
+          {
+            "path": "image"
+          }
+        ]
+      }
+    }
+  },
+  "fields": {
+    "title": {},
+    "summary": {},
+    "published_at": {},
+    "author": {},
+    "category": {},
+    "content": {},
+    "image": {}
+  }
+}

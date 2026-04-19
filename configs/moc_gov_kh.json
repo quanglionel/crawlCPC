@@ -1,0 +1,114 @@
+{
+  "site_name": "MOC",
+  "base_url": "https://moc.gov.kh",
+  "allowed_domains": [
+    "moc.gov.kh"
+  ],
+  "listing_urls": [
+    "https://moc.gov.kh/kh"
+  ],
+  "article_link_selectors": [
+    "a[href*='/kh/news/']"
+  ],
+  "article_link_regexes": [
+    "https://moc\\.gov\\.kh/kh/news/\\d+",
+    "/kh/news/\\d+"
+  ],
+  "article_link_pattern": "https?://moc\\.gov\\.kh/kh/news/\\d+$",
+  "article_link_exclude_patterns": [],
+  "remove_selectors": [
+    "script",
+    "style",
+    "noscript",
+    "iframe",
+    "form",
+    "nav",
+    "header",
+    "footer"
+  ],
+  "request": {
+    "timeout_seconds": 30,
+    "delay_seconds": 0.15,
+    "verify_ssl": true,
+    "respect_robots_txt": false,
+    "user_agent": "Mozilla/5.0"
+  },
+  "fields": {
+    "title": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": "meta[property='og:title']",
+          "attr": "content"
+        },
+        {
+          "selector": "meta[name='twitter:title']",
+          "attr": "content"
+        },
+        {
+          "selector": "title"
+        }
+      ]
+    },
+    "summary": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": "meta[property='og:description']",
+          "attr": "content"
+        },
+        {
+          "selector": "meta[name='description']",
+          "attr": "content"
+        }
+      ]
+    },
+    "published_at": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": "meta[property='article:published_time']",
+          "attr": "content"
+        },
+        {
+          "selector": "time[datetime]",
+          "attr": "datetime"
+        }
+      ]
+    },
+    "author": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": "meta[name='author']",
+          "attr": "content"
+        }
+      ]
+    },
+    "content": {
+      "mode": "join",
+      "separator": "\n\n",
+      "extractors": [
+        {
+          "selector": "main p"
+        },
+        {
+          "selector": "p"
+        }
+      ]
+    },
+    "image": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": "meta[property='og:image']",
+          "attr": "content"
+        },
+        {
+          "selector": "main img[src]",
+          "attr": "src"
+        }
+      ]
+    }
+  }
+}

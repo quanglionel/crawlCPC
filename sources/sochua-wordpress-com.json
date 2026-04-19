@@ -1,0 +1,13 @@
+{
+  "source_key": "sochua-wordpress-com",
+  "name": "sochua.wordpress.com",
+  "target_url": "https://sochua.wordpress.com/feed/",
+  "target_mode": "listing",
+  "preset_path": "configs/sochua_wordpress_com.json",
+  "output": "output/sochua_wordpress_com.json",
+  "max_pages": 1,
+  "max_articles": 5,
+  "workers": 2,
+  "notes": "Uses RSS feed with UA Mozilla/5.0 (Chrome-like UA can be blocked)."
+}
+

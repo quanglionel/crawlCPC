@@ -1,0 +1,133 @@
+{
+  "site_name": "information-gov-kh",
+  "base_url": "https://www.information.gov.kh",
+  "allowed_domains": [
+    "information.gov.kh",
+    "www.information.gov.kh"
+  ],
+  "listing_urls": [
+    "https://www.information.gov.kh/"
+  ],
+  "article_link_selectors": [
+    "a[href*='/articles/']"
+  ],
+  "article_link_pattern": "https?://(?:www\\.)?information\\.gov\\.kh/articles/\\d+$",
+  "article_link_exclude_patterns": [],
+  "remove_selectors": [],
+  "request": {
+    "timeout_seconds": 30,
+    "delay_seconds": 0.15,
+    "verify_ssl": true,
+    "respect_robots_txt": false,
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+    "headers": {
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+      "MoiWeb": "true",
+      "UUID": "media-crawler"
+    }
+  },
+  "api": {
+    "listing": {
+      "url": "https://api.information.gov.kh/v1/posts",
+      "params": {
+        "page": "{page}",
+        "limit": 20
+      },
+      "items_path": "posts",
+      "link_field": "url",
+      "default_pages": 1
+    },
+    "article": {
+      "url_template": "https://api.information.gov.kh/v1/posts/{id}",
+      "id_pattern": "/articles/(\\d+)$",
+      "root_path": "post"
+    },
+    "json_fields": {
+      "title": {
+        "mode": "first",
+        "extractors": [
+          {
+            "path": "title"
+          }
+        ]
+      },
+      "summary": {
+        "mode": "first",
+        "extractors": [
+          {
+            "path": "short_content.text"
+          },
+          {
+            "path": "description"
+          }
+        ]
+      },
+      "published_at": {
+        "mode": "first",
+        "extractors": [
+          {
+            "path": "published_at"
+          }
+        ]
+      },
+      "author": {
+        "mode": "first",
+        "extractors": [
+          {
+            "path": "author.name"
+          },
+          {
+            "path": "creator.name"
+          },
+          {
+            "path": "department.name"
+          }
+        ]
+      },
+      "category": {
+        "mode": "list",
+        "extractors": [
+          {
+            "path": "categories.name"
+          },
+          {
+            "path": "first_category.name"
+          }
+        ]
+      },
+      "content": {
+        "mode": "join",
+        "separator": "\n\n",
+        "extractors": [
+          {
+            "path": "content.data.text"
+          },
+          {
+            "path": "short_content.text"
+          }
+        ]
+      },
+      "image": {
+        "mode": "first",
+        "extractors": [
+          {
+            "path": "feature_image.url"
+          },
+          {
+            "path": "files_list.url"
+          }
+        ]
+      }
+    }
+  },
+  "fields": {
+    "title": {},
+    "summary": {},
+    "published_at": {},
+    "author": {},
+    "category": {},
+    "content": {},
+    "image": {}
+  }
+}

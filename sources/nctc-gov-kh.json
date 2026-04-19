@@ -1,0 +1,12 @@
+{
+  "source_key": "nctc-gov-kh",
+  "name": "nctc.gov.kh",
+  "target_url": "https://nctc.gov.kh/",
+  "target_mode": "listing",
+  "preset_path": "configs/auto_bayontv-com-kh.json",
+  "output": "output/auto/036_nctc-gov-kh.json",
+  "max_pages": 1,
+  "max_articles": 2,
+  "workers": 2,
+  "notes": "Auto-generated from https://nctc.gov.kh. Top candidate: https://nctc.gov.kh/world/124251"
+}

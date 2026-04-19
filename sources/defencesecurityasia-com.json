@@ -1,0 +1,12 @@
+{
+  "source_key": "defencesecurityasia-com",
+  "name": "Defencesecurityasia",
+  "target_url": "https://defencesecurityasia.com/",
+  "target_mode": "listing",
+  "preset_path": "configs/auto_bayontv-com-kh.json",
+  "output": "output/auto/052_defencesecurityasia-com.json",
+  "max_pages": 1,
+  "max_articles": 2,
+  "workers": 2,
+  "notes": "Auto-generated from https://defencesecurityasia.com. Top candidate: https://defencesecurityasia.com/rusia-hantar-su-35s-baharu-pertama-2026-moscow-kekalkan-kuasa-udara-walaupun-sekatan/"
+}

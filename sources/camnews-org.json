@@ -1,0 +1,12 @@
+{
+  "source_key": "camnews-org",
+  "name": "Camnews",
+  "target_url": "https://www.camnews.org/",
+  "target_mode": "listing",
+  "preset_path": "configs/auto_bayontv-com-kh.json",
+  "output": "output/auto/126_camnews-org.json",
+  "max_pages": 1,
+  "max_articles": 2,
+  "workers": 2,
+  "notes": "Auto-generated from https://camnews.org. Top candidate: https://www.camnews.org/2025/06/23/%e1%9e%9b%e1%9f%84%e1%9e%80-%e1%9e%a0%e1%9f%8a%e1%9e%bb%e1%9e%93-%e1%9e%98%e1%9f%89%e1%9e%b6%e1%9e%8e%e1%9f%82%e1%9e%8f-%e1%9e%94%e1%9f%92%e1%9e%9a%e1%9e%b6%e1%9e%94%e1%9f%8b%e1%9e%a2%e1%9f%92/"
+}

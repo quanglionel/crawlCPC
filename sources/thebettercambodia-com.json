@@ -1,0 +1,12 @@
+{
+  "source_key": "thebettercambodia-com",
+  "name": "Thebettercambodia",
+  "target_url": "https://thebettercambodia.com/",
+  "target_mode": "listing",
+  "preset_path": "configs/auto_bayontv-com-kh.json",
+  "output": "output/auto/134_thebettercambodia-com.json",
+  "max_pages": 1,
+  "max_articles": 2,
+  "workers": 2,
+  "notes": "Auto-generated from https://thebettercambodia.com. Top candidate: https://thebettercambodia.com/kampot-khmer-new-year-tourism-2026/"
+}

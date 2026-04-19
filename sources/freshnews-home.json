@@ -1,0 +1,12 @@
+{
+  "source_key": "freshnews-home",
+  "name": "Fresh News Home",
+  "target_url": "https://freshnews.com.kh/",
+  "target_mode": "listing",
+  "preset_path": "configs/freshnews_kh.json",
+  "output": "output/freshnews_home.json",
+  "max_pages": 1,
+  "max_articles": 5,
+  "workers": 3,
+  "notes": "Trang chủ Fresh News tiếng Khmer."
+}

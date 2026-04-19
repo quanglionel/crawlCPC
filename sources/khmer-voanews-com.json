@@ -1,0 +1,12 @@
+{
+  "source_key": "khmer-voanews-com",
+  "name": "Voanews",
+  "target_url": "https://khmer.voanews.com/",
+  "target_mode": "listing",
+  "preset_path": "configs/auto_bayontv-com-kh.json",
+  "output": "output/auto/004_khmer-voanews-com.json",
+  "max_pages": 1,
+  "max_articles": 2,
+  "workers": 2,
+  "notes": "Auto-generated from https://khmer.voanews.com. Top candidate: https://khmer.voanews.com/p/6001.html"
+}

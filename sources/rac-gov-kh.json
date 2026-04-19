@@ -1,0 +1,12 @@
+{
+  "source_key": "rac-gov-kh",
+  "name": "rac.gov.kh",
+  "target_url": "https://rac.gov.kh/",
+  "target_mode": "listing",
+  "preset_path": "configs/auto_bayontv-com-kh.json",
+  "output": "output/auto/041_rac-gov-kh.json",
+  "max_pages": 1,
+  "max_articles": 2,
+  "workers": 2,
+  "notes": "Auto-generated from https://rac.gov.kh. Top candidate: https://rac.gov.kh/kh/posts/2004"
+}

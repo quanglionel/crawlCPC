@@ -1,0 +1,12 @@
+{
+  "source_key": "croxyproxy-com",
+  "name": "Croxyproxy",
+  "target_url": "https://www.croxyproxy.com/",
+  "target_mode": "listing",
+  "preset_path": "configs/auto_croxyproxy-com.json",
+  "output": "output/auto/145_croxyproxy-com.json",
+  "max_pages": 1,
+  "max_articles": 2,
+  "workers": 2,
+  "notes": "Auto-generated from https://croxyproxy.com. Top candidate: https://www.croxyproxy.com/blog/posts\nAuto quality fix: moved from broad preset to dedicated preset due to non-article links."
+}

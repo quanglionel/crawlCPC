@@ -1,0 +1,12 @@
+{
+  "source_key": "dot-mod-gov-kh",
+  "name": "dot.mod.gov.kh",
+  "target_url": "https://dot.mod.gov.kh/",
+  "target_mode": "listing",
+  "preset_path": "configs/auto_bayontv-com-kh.json",
+  "output": "output/auto/128_dot-mod-gov-kh.json",
+  "max_pages": 1,
+  "max_articles": 2,
+  "workers": 2,
+  "notes": "Auto-generated from https://dot.mod.gov.kh. Top candidate: https://dot.mod.gov.kh/date/2024/01/15/"
+}

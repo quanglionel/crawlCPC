@@ -1,0 +1,12 @@
+{
+  "source_key": "maff",
+  "name": "MAFF",
+  "target_url": "https://www.maff.gov.kh/",
+  "target_mode": "auto",
+  "preset_path": "configs/auto_maff-gov-kh.json",
+  "output": "output/source_articles.json",
+  "max_pages": 1,
+  "max_articles": 5,
+  "workers": 4,
+  "notes": "Tạo preset mới 'configs/auto_maff-gov-kh.json' cho nguồn này."
+}

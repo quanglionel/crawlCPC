@@ -1,0 +1,12 @@
+{
+  "source_key": "phnompenhpost-com",
+  "name": "Phnompenhpost",
+  "target_url": "https://phnompenhpost.com/",
+  "target_mode": "listing",
+  "preset_path": "configs/auto_bayontv-com-kh.json",
+  "output": "output/auto/147_phnompenhpost-com.json",
+  "max_pages": 1,
+  "max_articles": 2,
+  "workers": 2,
+  "notes": "Auto-generated from https://phnompenhpost.com. Top candidate: https://phnompenhpost.com/business/financial/key-highlights-of-cambodia-s-securities-market-in-2025/"
+}

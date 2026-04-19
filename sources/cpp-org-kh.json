@@ -1,0 +1,12 @@
+{
+  "source_key": "cpp-org-kh",
+  "name": "cpp.org.kh",
+  "target_url": "https://www.cpp.org.kh/",
+  "target_mode": "listing",
+  "preset_path": "configs/auto_bayontv-com-kh.json",
+  "output": "output/auto/067_cpp-org-kh.json",
+  "max_pages": 1,
+  "max_articles": 2,
+  "workers": 2,
+  "notes": "Auto-generated from https://cpp.org.kh. Top candidate: https://www.cpp.org.kh/details/452050"
+}

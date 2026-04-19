@@ -1,0 +1,12 @@
+{
+  "source_key": "ki-media-blogspot-com",
+  "name": "ki-media.blogspot.com",
+  "target_url": "https://ki-media.blogspot.com/",
+  "target_mode": "listing",
+  "preset_path": "configs/auto_bayontv-com-kh.json",
+  "output": "output/auto/091_ki-media-blogspot-com.json",
+  "max_pages": 1,
+  "max_articles": 2,
+  "workers": 2,
+  "notes": "Auto-generated from https://ki-media.blogspot.com. Top candidate: http://ki-media.blogspot.com/2011/12/new-book-on-cambodian-history.html"
+}

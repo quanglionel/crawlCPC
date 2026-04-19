@@ -1,0 +1,12 @@
+{
+  "source_key": "rnk-gov-kh",
+  "name": "RNK",
+  "target_url": "https://rnk.gov.kh/",
+  "target_mode": "listing",
+  "preset_path": "configs/rnk_gov_kh.json",
+  "output": "output/rnk_gov_kh.json",
+  "max_pages": 1,
+  "max_articles": 5,
+  "workers": 2,
+  "notes": "Uses Inertia JSON responses because the server HTML stores posts in data-page instead of rendered anchor tags."
+}

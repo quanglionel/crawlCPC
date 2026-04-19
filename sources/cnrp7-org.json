@@ -1,0 +1,12 @@
+{
+  "source_key": "cnrp7-org",
+  "name": "Cnrp7",
+  "target_url": "https://cnrp7.org/",
+  "target_mode": "listing",
+  "preset_path": "configs/auto_bayontv-com-kh.json",
+  "output": "output/auto/071_cnrp7-org.json",
+  "max_pages": 1,
+  "max_articles": 2,
+  "workers": 2,
+  "notes": "Auto-generated from https://cnrp7.org. Top candidate: https://cnrp7.org/https://pgslot.mn/%e0%b8%aa%e0%b8%a5%e0%b9%87%e0%b8%ad%e0%b8%95"
+}

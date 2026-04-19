@@ -1,0 +1,143 @@
+{
+  "site_name": "Swift News Daily",
+  "base_url": "https://swiftnewsdaily.com",
+  "allowed_domains": [
+    "swiftnewsdaily.com",
+    "www.swiftnewsdaily.com"
+  ],
+  "listing_urls": [
+    "https://swiftnewsdaily.com/"
+  ],
+  "article_link_selectors": [
+    "a[href*='/articles/']"
+  ],
+  "article_link_pattern": "https?://(?:www\\.)?swiftnewsdaily\\.com/articles/[^/?#]+$",
+  "article_link_exclude_patterns": [],
+  "remove_selectors": [],
+  "request": {
+    "timeout_seconds": 30,
+    "delay_seconds": 0.15,
+    "verify_ssl": true,
+    "respect_robots_txt": false,
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+    "headers": {
+      "Accept": "application/json, text/plain, */*",
+      "Content-Type": "application/json",
+      "Origin": "https://swiftnewsdaily.com",
+      "Referer": "https://swiftnewsdaily.com/"
+    }
+  },
+  "api": {
+    "listing": {
+      "method": "POST",
+      "url": "https://service.swiftnewsdaily.com/api/search-all-content",
+      "json": {
+        "Offset": 0,
+        "Limit": 20,
+        "Filter": {
+          "AND": [
+            {
+              "Column": "status",
+              "Operator": "=",
+              "Value": "Publish"
+            }
+          ]
+        },
+        "Sort": {
+          "Column": "page_key",
+          "Direction": "DESC"
+        }
+      },
+      "items_path": "data",
+      "link_template": "https://swiftnewsdaily.com/articles/{id}",
+      "default_pages": 1
+    },
+    "article": {
+      "url_template": "https://service.swiftnewsdaily.com/api/articles/{id}",
+      "id_pattern": "/articles/([^/?#]+)$"
+    },
+    "json_fields": {
+      "title": {
+        "mode": "first",
+        "extractors": [
+          {
+            "path": "name"
+          }
+        ]
+      },
+      "summary": {
+        "mode": "first",
+        "extractors": [
+          {
+            "path": "reference"
+          },
+          {
+            "path": "editname"
+          }
+        ]
+      },
+      "published_at": {
+        "mode": "first",
+        "extractors": [
+          {
+            "path": "created_date"
+          },
+          {
+            "path": "updated_date"
+          }
+        ]
+      },
+      "author": {
+        "mode": "first",
+        "extractors": [
+          {
+            "path": "createname"
+          }
+        ]
+      },
+      "category": {
+        "mode": "list",
+        "extractors": [
+          {
+            "path": "category.name"
+          },
+          {
+            "path": "category_id"
+          }
+        ]
+      },
+      "content": {
+        "mode": "join",
+        "separator": "\n\n",
+        "extractors": [
+          {
+            "path": "editname"
+          }
+        ]
+      },
+      "image": {
+        "mode": "first",
+        "extractors": [
+          {
+            "path": "fileurl"
+          },
+          {
+            "path": "picture"
+          },
+          {
+            "path": "thumbnail"
+          }
+        ]
+      }
+    }
+  },
+  "fields": {
+    "title": {},
+    "summary": {},
+    "published_at": {},
+    "author": {},
+    "category": {},
+    "content": {},
+    "image": {}
+  }
+}

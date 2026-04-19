@@ -1,0 +1,434 @@
+{
+  "created_at": "20260419_152721",
+  "before": [
+    {
+      "source_file": "akp-home.json",
+      "source_key": "akp-home",
+      "preset_path": "configs/akp_en.json"
+    },
+    {
+      "source_file": "angrut-com.json",
+      "source_key": "angrut-com",
+      "preset_path": "configs/angrut_kh.json"
+    },
+    {
+      "source_file": "bayontv-com-kh.json",
+      "source_key": "bayontv-com-kh",
+      "preset_path": "configs/auto_bayontv-com-kh.json"
+    },
+    {
+      "source_file": "cambodiadaily-com.json",
+      "source_key": "cambodiadaily-com",
+      "preset_path": "configs/auto_cambodiadaily-com.json"
+    },
+    {
+      "source_file": "cambodian-cri-cn.json",
+      "source_key": "cambodian-cri-cn",
+      "preset_path": "configs/auto_cambodian-cri-cn.json"
+    },
+    {
+      "source_file": "cambodiantimes-com.json",
+      "source_key": "cambodiantimes-com",
+      "preset_path": "configs/auto_cambodiantimes-com.json"
+    },
+    {
+      "source_file": "cambojanews-com.json",
+      "source_key": "cambojanews-com",
+      "preset_path": "configs/auto_cambojanews-com.json"
+    },
+    {
+      "source_file": "cambonomist-com.json",
+      "source_key": "cambonomist-com",
+      "preset_path": "configs/auto_cambonomist-com.json"
+    },
+    {
+      "source_file": "camnews-org.json",
+      "source_key": "camnews-org",
+      "preset_path": "configs/auto_camnews-org.json"
+    },
+    {
+      "source_file": "cdcmoh-gov-kh.json",
+      "source_key": "cdcmoh-gov-kh",
+      "preset_path": "configs/auto_cdcmoh-gov-kh.json"
+    },
+    {
+      "source_file": "cen-home.json",
+      "source_key": "cen-home",
+      "preset_path": "configs/cen_kh.json"
+    },
+    {
+      "source_file": "chk-news-com.json",
+      "source_key": "chk-news-com",
+      "preset_path": "configs/auto_chk-news-com.json"
+    },
+    {
+      "source_file": "cicp-org-kh.json",
+      "source_key": "cicp-org-kh",
+      "preset_path": "configs/auto_cicp-org-kh.json"
+    },
+    {
+      "source_file": "ckn-media-blogspot-com.json",
+      "source_key": "ckn-media-blogspot-com",
+      "preset_path": "configs/auto_ckn-media-blogspot-com.json"
+    },
+    {
+      "source_file": "cnrp-just-blogspot-com.json",
+      "source_key": "cnrp-just-blogspot-com",
+      "preset_path": "configs/auto_cnrp-just-blogspot-com.json"
+    },
+    {
+      "source_file": "cnrp7-org.json",
+      "source_key": "cnrp7-org",
+      "preset_path": "configs/auto_cnrp7-org.json"
+    },
+    {
+      "source_file": "cpp-org-kh.json",
+      "source_key": "cpp-org-kh",
+      "preset_path": "configs/auto_cpp-org-kh.json"
+    },
+    {
+      "source_file": "croxyproxy-com.json",
+      "source_key": "croxyproxy-com",
+      "preset_path": "configs/auto_croxyproxy-com.json"
+    },
+    {
+      "source_file": "cwcicambodia-net.json",
+      "source_key": "cwcicambodia-net",
+      "preset_path": "configs/cwcicambodia_kh.json"
+    },
+    {
+      "source_file": "db-ncdd-gov-kh.json",
+      "source_key": "db-ncdd-gov-kh",
+      "preset_path": "configs/db_ncdd_gov_kh.json"
+    },
+    {
+      "source_file": "defencesecurityasia-com.json",
+      "source_key": "defencesecurityasia-com",
+      "preset_path": "configs/auto_defencesecurityasia-com.json"
+    },
+    {
+      "source_file": "defense-studies-blogspot-com.json",
+      "source_key": "defense-studies-blogspot-com",
+      "preset_path": "configs/auto_defense-studies-blogspot-com.json"
+    },
+    {
+      "source_file": "dot-mod-gov-kh.json",
+      "source_key": "dot-mod-gov-kh",
+      "preset_path": "configs/auto_dot-mod-gov-kh.json"
+    },
+    {
+      "source_file": "eccc-gov-kh.json",
+      "source_key": "eccc-gov-kh",
+      "preset_path": "configs/auto_eccc-gov-kh.json"
+    },
+    {
+      "source_file": "freshnews-home.json",
+      "source_key": "freshnews-home",
+      "preset_path": "configs/freshnews_kh.json"
+    },
+    {
+      "source_file": "globalpost-com.json",
+      "source_key": "globalpost-com",
+      "preset_path": "configs/auto_globalpost-com.json"
+    },
+    {
+      "source_file": "grandnewsasia-com.json",
+      "source_key": "grandnewsasia-com",
+      "preset_path": "configs/auto_grandnewsasia-com.json"
+    },
+    {
+      "source_file": "imagetotext-info.json",
+      "source_key": "imagetotext-info",
+      "preset_path": "configs/auto_imagetotext-info.json"
+    },
+    {
+      "source_file": "immigration-gov-kh.json",
+      "source_key": "immigration-gov-kh",
+      "preset_path": "configs/auto_immigration-gov-kh.json"
+    },
+    {
+      "source_file": "information-gov-home.json",
+      "source_key": "information-gov-home",
+      "preset_path": "configs/information_gov_kh.json"
+    },
+    {
+      "source_file": "interior-gov-kh.json",
+      "source_key": "interior-gov-kh",
+      "preset_path": "configs/auto_interior-gov-kh.json"
+    },
+    {
+      "source_file": "jianhuadaily-com.json",
+      "source_key": "jianhuadaily-com",
+      "preset_path": "configs/auto_jianhuadaily-com.json"
+    },
+    {
+      "source_file": "kampongcham-gov-kh.json",
+      "source_key": "kampongcham-gov-kh",
+      "preset_path": "configs/auto_kampongcham-gov-kh.json"
+    },
+    {
+      "source_file": "kampuchea-news.json",
+      "source_key": "kampuchea-news",
+      "preset_path": "configs/auto_kampuchea-news.json"
+    },
+    {
+      "source_file": "khmer-voanews-com.json",
+      "source_key": "khmer-voanews-com",
+      "preset_path": "configs/auto_khmer-voanews-com.json"
+    },
+    {
+      "source_file": "khmercircle-blogspot-com.json",
+      "source_key": "khmercircle-blogspot-com",
+      "preset_path": "configs/auto_khmercircle-blogspot-com.json"
+    },
+    {
+      "source_file": "khmerization-blogspot-com.json",
+      "source_key": "khmerization-blogspot-com",
+      "preset_path": "configs/auto_khmerization-blogspot-com.json"
+    },
+    {
+      "source_file": "khmerkrom-org.json",
+      "source_key": "khmerkrom-org",
+      "preset_path": "configs/khmerkrom_org.json"
+    },
+    {
+      "source_file": "khmernation-news-blogspot-com.json",
+      "source_key": "khmernation-news-blogspot-com",
+      "preset_path": "configs/auto_khmernation-news-blogspot-com.json"
+    },
+    {
+      "source_file": "ki-media-blogspot-com.json",
+      "source_key": "ki-media-blogspot-com",
+      "preset_path": "configs/auto_ki-media-blogspot-com.json"
+    },
+    {
+      "source_file": "mfaic-gov-kh.json",
+      "source_key": "mfaic-gov-kh",
+      "preset_path": "configs/auto_mfaic-gov-kh.json"
+    },
+    {
+      "source_file": "mlmupc-gov-kh.json",
+      "source_key": "mlmupc-gov-kh",
+      "preset_path": "configs/mlmupc_gov_kh.json"
+    },
+    {
+      "source_file": "mme-gov-kh.json",
+      "source_key": "mme-gov-kh",
+      "preset_path": "configs/auto_mme-gov-kh.json"
+    },
+    {
+      "source_file": "moc-gov-kh.json",
+      "source_key": "moc-gov-kh",
+      "preset_path": "configs/moc_gov_kh.json"
+    },
+    {
+      "source_file": "monoroom-info.json",
+      "source_key": "monoroom-info",
+      "preset_path": "configs/auto_monoroom-info.json"
+    },
+    {
+      "source_file": "mptc-gov-kh.json",
+      "source_key": "mptc-gov-kh",
+      "preset_path": "configs/auto_mptc-gov-kh.json"
+    },
+    {
+      "source_file": "nac-org-kh.json",
+      "source_key": "nac-org-kh",
+      "preset_path": "configs/auto_nac-org-kh.json"
+    },
+    {
+      "source_file": "navy-mil-kh.json",
+      "source_key": "navy-mil-kh",
+      "preset_path": "configs/auto_navy-mil-kh.json"
+    },
+    {
+      "source_file": "ncct-gov-kh.json",
+      "source_key": "ncct-gov-kh",
+      "preset_path": "configs/auto_ncct-gov-kh.json"
+    },
+    {
+      "source_file": "nctc-gov-kh.json",
+      "source_key": "nctc-gov-kh",
+      "preset_path": "configs/auto_nctc-gov-kh.json"
+    },
+    {
+      "source_file": "obnasia-com.json",
+      "source_key": "obnasia-com",
+      "preset_path": "configs/auto_obnasia-com.json"
+    },
+    {
+      "source_file": "pagecambodiahotnews-blogspot-com.json",
+      "source_key": "pagecambodiahotnews-blogspot-com",
+      "preset_path": "configs/auto_pagecambodiahotnews-blogspot-com.json"
+    },
+    {
+      "source_file": "phnompenhpost-com.json",
+      "source_key": "phnompenhpost-com",
+      "preset_path": "configs/auto_phnompenhpost-com.json"
+    },
+    {
+      "source_file": "phnompenhtimes-com-kh.json",
+      "source_key": "phnompenhtimes-com-kh",
+      "preset_path": "configs/phnompenhtimes_kh.json"
+    },
+    {
+      "source_file": "postkhmer-com.json",
+      "source_key": "postkhmer-com",
+      "preset_path": "configs/auto_postkhmer-com.json"
+    },
+    {
+      "source_file": "pressocm-gov-kh.json",
+      "source_key": "pressocm-gov-kh",
+      "preset_path": "configs/auto_pressocm-gov-kh.json"
+    },
+    {
+      "source_file": "rac-gov-kh.json",
+      "source_key": "rac-gov-kh",
+      "preset_path": "configs/auto_rac-gov-kh.json"
+    },
+    {
+      "source_file": "rnk-gov-kh.json",
+      "source_key": "rnk-gov-kh",
+      "preset_path": "configs/rnk_gov_kh.json"
+    },
+    {
+      "source_file": "senate-gov-kh.json",
+      "source_key": "senate-gov-kh",
+      "preset_path": "configs/auto_senate-gov-kh.json"
+    },
+    {
+      "source_file": "sochua-wordpress-com.json",
+      "source_key": "sochua-wordpress-com",
+      "preset_path": "configs/sochua_wordpress_com.json"
+    },
+    {
+      "source_file": "state-gov.json",
+      "source_key": "state-gov",
+      "preset_path": "configs/auto_state-gov.json"
+    },
+    {
+      "source_file": "swiftnewsdaily-com.json",
+      "source_key": "swiftnewsdaily-com",
+      "preset_path": "configs/swiftnewsdaily_kh.json"
+    },
+    {
+      "source_file": "takeo-gov-kh.json",
+      "source_key": "takeo-gov-kh",
+      "preset_path": "configs/auto_takeo-gov-kh.json"
+    },
+    {
+      "source_file": "takeo-org-kh.json",
+      "source_key": "takeo-org-kh",
+      "preset_path": "configs/auto_takeo-org-kh.json"
+    },
+    {
+      "source_file": "thebettercambodia-com.json",
+      "source_key": "thebettercambodia-com",
+      "preset_path": "configs/auto_thebettercambodia-com.json"
+    },
+    {
+      "source_file": "thediplomat-com.json",
+      "source_key": "thediplomat-com",
+      "preset_path": "configs/thediplomat_com.json"
+    },
+    {
+      "source_file": "thmeythmey-com.json",
+      "source_key": "thmeythmey-com",
+      "preset_path": "configs/auto_thmeythmey-com.json"
+    },
+    {
+      "source_file": "tvk-gov-kh.json",
+      "source_key": "tvk-gov-kh",
+      "preset_path": "configs/auto_tvk-gov-kh.json"
+    },
+    {
+      "source_file": "vietnamese-cri-cn.json",
+      "source_key": "vietnamese-cri-cn",
+      "preset_path": "configs/auto_vietnamese-cri-cn.json"
+    },
+    {
+      "source_file": "vietnamexport-com.json",
+      "source_key": "vietnamexport-com",
+      "preset_path": "configs/auto_vietnamexport-com.json"
+    },
+    {
+      "source_file": "vnexpress-net.json",
+      "source_key": "vnexpress-net",
+      "preset_path": "configs/auto_vnexpress-net.json"
+    },
+    {
+      "source_file": "vodkhmer-news.json",
+      "source_key": "vodkhmer-news",
+      "preset_path": "configs/auto_vodkhmer-news.json"
+    },
+    {
+      "source_file": "vokk-net.json",
+      "source_key": "vokk-net",
+      "preset_path": "configs/vokk_kh.json"
+    },
+    {
+      "source_file": "wmc-org-kh.json",
+      "source_key": "wmc-org-kh",
+      "preset_path": "configs/auto_wmc-org-kh.json"
+    }
+  ],
+  "repoint_map": {
+    "configs/auto_cambodiadaily-com.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_cambodian-cri-cn.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_cambodiantimes-com.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_cambojanews-com.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_cambonomist-com.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_camnews-org.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_cdcmoh-gov-kh.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_chk-news-com.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_cicp-org-kh.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_ckn-media-blogspot-com.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_cnrp-just-blogspot-com.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_cnrp7-org.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_cpp-org-kh.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_croxyproxy-com.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_defencesecurityasia-com.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_defense-studies-blogspot-com.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_dot-mod-gov-kh.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_eccc-gov-kh.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_globalpost-com.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_grandnewsasia-com.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_imagetotext-info.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_immigration-gov-kh.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_interior-gov-kh.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_jianhuadaily-com.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_kampongcham-gov-kh.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_kampuchea-news.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_khmer-voanews-com.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_khmercircle-blogspot-com.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_khmerization-blogspot-com.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_khmernation-news-blogspot-com.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_ki-media-blogspot-com.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_mfaic-gov-kh.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_mme-gov-kh.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_moc-gov-kh.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_monoroom-info.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_mptc-gov-kh.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_nac-org-kh.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_navy-mil-kh.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_ncct-gov-kh.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_nctc-gov-kh.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_obnasia-com.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_pagecambodiahotnews-blogspot-com.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_phnompenhpost-com.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_postkhmer-com.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_pressocm-gov-kh.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_rac-gov-kh.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_senate-gov-kh.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_state-gov.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_takeo-gov-kh.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_takeo-org-kh.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_thebettercambodia-com.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_thmeythmey-com.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_tvk-gov-kh.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_vietnamese-cri-cn.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_vietnamexport-com.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_vnexpress-net.json": "configs/auto_bayontv-com-kh.json",
+    "configs/auto_wmc-org-kh.json": "configs/auto_bayontv-com-kh.json"
+  }
+}

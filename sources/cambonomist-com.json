@@ -1,0 +1,12 @@
+{
+  "source_key": "cambonomist-com",
+  "name": "Cambonomist",
+  "target_url": "https://cambonomist.com/",
+  "target_mode": "listing",
+  "preset_path": "configs/auto_bayontv-com-kh.json",
+  "output": "output/auto/049_cambonomist-com.json",
+  "max_pages": 1,
+  "max_articles": 2,
+  "workers": 2,
+  "notes": "Auto-generated from https://cambonomist.com. Top candidate: https://cambonomist.com/news/peng-huot-unveils-scope-of-growth-on-nearly-1000-hectares-of-development-land/"
+}

@@ -1,0 +1,12 @@
+{
+  "source_key": "vietnamese-cri-cn",
+  "name": "vietnamese.cri.cn",
+  "target_url": "https://vietnamese.cri.cn/",
+  "target_mode": "listing",
+  "preset_path": "configs/auto_bayontv-com-kh.json",
+  "output": "output/auto/021_vietnamese-cri-cn.json",
+  "max_pages": 1,
+  "max_articles": 2,
+  "workers": 2,
+  "notes": "Auto-generated from https://vietnamese.cri.cn. Top candidate: https://vietnamese.cri.cn/2026/04/18/ARTI1776494902982575"
+}

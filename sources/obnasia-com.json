@@ -1,0 +1,12 @@
+{
+  "source_key": "obnasia-com",
+  "name": "Obnasia",
+  "target_url": "https://obnasia.com/",
+  "target_mode": "listing",
+  "preset_path": "configs/auto_bayontv-com-kh.json",
+  "output": "output/auto/119_obnasia-com.json",
+  "max_pages": 1,
+  "max_articles": 2,
+  "workers": 2,
+  "notes": "Auto-generated from https://obnasia.com. Top candidate: https://obnasia.com/sport/237980"
+}

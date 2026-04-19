@@ -1,0 +1,12 @@
+{
+  "source_key": "mptc-gov-kh",
+  "name": "mptc.gov.kh",
+  "target_url": "https://mptc.gov.kh/",
+  "target_mode": "listing",
+  "preset_path": "configs/auto_bayontv-com-kh.json",
+  "output": "output/auto/038_mptc-gov-kh.json",
+  "max_pages": 1,
+  "max_articles": 2,
+  "workers": 2,
+  "notes": "Auto-generated from https://mptc.gov.kh. Top candidate: https://mptc.gov.kh/2026/04/%e1%9e%af%e1%9e%80%e1%9e%a7%e1%9e%8f%e1%9f%92%e1%9e%8f%e1%9e%98%e1%9e%9a%e1%9e%8a%e1%9f%92%e1%9e%8b%e1%9e%98%e1%9e%93%e1%9f%92%e1%9e%9a%e1%9f%92%e1%9e%8f%e1%9e%b8-%e1%9e%87%e1%9e%b6-%e1%9e%9c/"
+}

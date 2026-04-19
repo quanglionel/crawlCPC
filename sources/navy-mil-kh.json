@@ -1,0 +1,12 @@
+{
+  "source_key": "navy-mil-kh",
+  "name": "Mil",
+  "target_url": "https://navy.mil.kh/",
+  "target_mode": "listing",
+  "preset_path": "configs/auto_navy-mil-kh.json",
+  "output": "output/auto/028_navy-mil-kh.json",
+  "max_pages": 1,
+  "max_articles": 2,
+  "workers": 2,
+  "notes": "Auto-generated from https://navy.mil.kh. Top candidate: https://navy.mil.kh/cdn-cgi/l/email-protection\nAuto quality fix: moved from broad preset to dedicated preset due to non-article links."
+}

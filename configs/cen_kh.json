@@ -1,0 +1,137 @@
+{
+  "site_name": "cen-kh",
+  "base_url": "https://www.cen-news.com",
+  "allowed_domains": [
+    "cen-news.com",
+    "www.cen-news.com"
+  ],
+  "listing_urls": [
+    "https://www.cen-news.com/"
+  ],
+  "pagination": {
+    "url_template": "https://www.cen-news.com/page/{page}",
+    "start_page": 2,
+    "end_page": 5
+  },
+  "article_link_selectors": [
+    ".td-module-title a[href]",
+    ".entry-title a[href]"
+  ],
+  "article_link_pattern": "https?://(?:www\\.)?cen-news\\.com/archives/\\d+\\.html$",
+  "article_link_exclude_patterns": [],
+  "remove_selectors": [
+    "script",
+    "style",
+    "iframe",
+    "noscript",
+    ".sharedaddy",
+    ".jp-relatedposts",
+    ".related-posts",
+    ".sidebar",
+    ".widget",
+    ".advertisement",
+    ".adsbygoogle",
+    ".advads-entity-placement",
+    ".td-a-rec",
+    ".td_block_template_1 .advads-target"
+  ],
+  "request": {
+    "timeout_seconds": 30,
+    "delay_seconds": 0.2,
+    "verify_ssl": true,
+    "respect_robots_txt": false,
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+  },
+  "fields": {
+    "title": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": ".tdb-title-text"
+        },
+        {
+          "selector": "h1"
+        },
+        {
+          "selector": "meta[property='og:title']",
+          "attr": "content"
+        }
+      ]
+    },
+    "summary": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": "meta[name='description']",
+          "attr": "content"
+        },
+        {
+          "selector": "meta[property='og:description']",
+          "attr": "content"
+        }
+      ]
+    },
+    "published_at": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": ".tdb_single_date .entry-date"
+        },
+        {
+          "selector": ".td-post-date .entry-date"
+        },
+        {
+          "selector": "time"
+        }
+      ]
+    },
+    "author": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": ".tdb-author-name"
+        },
+        {
+          "selector": "[rel='author']"
+        },
+        {
+          "selector": "meta[name='author']",
+          "attr": "content"
+        }
+      ]
+    },
+    "category": {
+      "mode": "list",
+      "extractors": [
+        {
+          "selector": ".breadcrumb a"
+        }
+      ]
+    },
+    "content": {
+      "mode": "join",
+      "separator": "\n\n",
+      "extractors": [
+        {
+          "selector": ".td-post-content p"
+        },
+        {
+          "selector": ".tdb_single_content p"
+        }
+      ]
+    },
+    "image": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": "meta[property='og:image']",
+          "attr": "content"
+        },
+        {
+          "selector": "article img",
+          "attr": "src"
+        }
+      ]
+    }
+  }
+}

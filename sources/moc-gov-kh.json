@@ -1,0 +1,12 @@
+{
+  "source_key": "moc-gov-kh",
+  "name": "moc.gov.kh",
+  "target_url": "https://moc.gov.kh/kh",
+  "target_mode": "listing",
+  "preset_path": "configs/moc_gov_kh.json",
+  "output": "output/moc_gov_kh.json",
+  "max_pages": 1,
+  "max_articles": 5,
+  "workers": 2,
+  "notes": "Uses raw HTML URL regexes because news links are embedded in the Next.js page payload rather than normal anchor tags."
+}

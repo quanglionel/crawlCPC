@@ -1,0 +1,12 @@
+{
+  "source_key": "defense-studies-blogspot-com",
+  "name": "defense-studies.blogspot.com",
+  "target_url": "https://defense-studies.blogspot.com/",
+  "target_mode": "listing",
+  "preset_path": "configs/auto_bayontv-com-kh.json",
+  "output": "output/auto/059_defense-studies-blogspot-com.json",
+  "max_pages": 1,
+  "max_articles": 2,
+  "workers": 2,
+  "notes": "Auto-generated from https://defense-studies.blogspot.com. Top candidate: https://defense-studies.blogspot.com/2026/04/exercise-kakadu-makes-history-in-harbour.html"
+}

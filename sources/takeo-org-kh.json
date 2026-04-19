@@ -1,0 +1,12 @@
+{
+  "source_key": "takeo-org-kh",
+  "name": "takeo.org.kh",
+  "target_url": "https://www.takeo.org.kh/",
+  "target_mode": "listing",
+  "preset_path": "configs/auto_takeo-org-kh.json",
+  "output": "output/auto/073_takeo-org-kh.json",
+  "max_pages": 1,
+  "max_articles": 2,
+  "workers": 2,
+  "notes": "Auto-generated from https://takeo.org.kh. Top candidate: https://www.takeo.org.kh/details/8830\nAuto quality fix: moved from broad preset to dedicated preset due to non-article links."
+}

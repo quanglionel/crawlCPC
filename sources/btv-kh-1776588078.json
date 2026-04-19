@@ -1,0 +1,12 @@
+{
+  "source_key": "btv-kh-1776588078",
+  "name": "BTV KH Test",
+  "target_url": "https://www.btv.com.kh",
+  "target_mode": "auto",
+  "preset_path": "configs/auto_bayontv-com-kh.json",
+  "output": "output/btv-kh-1776588078.json",
+  "max_pages": 1,
+  "max_articles": 3,
+  "workers": 2,
+  "notes": "Test auto preset resolution from UI workflow\nDùng preset có sẵn 'configs/auto_bayontv-com-kh.json' (success 1/1 khi test nhanh)."
+}

@@ -1,0 +1,12 @@
+{
+  "source_key": "cambodian-cri-cn",
+  "name": "cambodian.cri.cn",
+  "target_url": "https://cambodian.cri.cn/",
+  "target_mode": "listing",
+  "preset_path": "configs/auto_bayontv-com-kh.json",
+  "output": "output/auto/012_cambodian-cri-cn.json",
+  "max_pages": 1,
+  "max_articles": 2,
+  "workers": 2,
+  "notes": "Auto-generated from https://cambodian.cri.cn. Top candidate: https://cambodian.cri.cn/2026/04/14/ARTI1776154641266189"
+}

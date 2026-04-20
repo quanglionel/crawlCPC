@@ -58,7 +58,17 @@ docker compose run --rm crawler
 ## Chạy CLI trực tiếp trong image
 
 ```bash
-docker run --rm -v ${PWD}:/app media-crawler crawl --config configs/vnexpress_kinh_doanh.json --output output/articles.json --max-pages 1 --max-articles 5
+docker run --rm -v ${PWD}:/app media-crawler python -m app.main crawl --config configs/vnexpress_kinh_doanh.json --output output/articles.json --max-pages 1 --max-articles 5
+```
+
+## Deploy Render
+
+Docker image mặc định chạy web bằng Gunicorn qua `app.wsgi:app` và đọc cổng từ biến môi trường `PORT` của Render. Khi deploy bằng Docker trên Render, chỉ cần build từ `Dockerfile`; không dùng start command kiểu `python -m app.main web` hoặc `flask run` vì hai lệnh đó sẽ chạy Flask development server.
+
+Nếu deploy Render bằng Python environment thay vì Docker, dùng start command:
+
+```bash
+gunicorn app.wsgi:app --config gunicorn_config.py
 ```
 
 ## Tùy chỉnh config

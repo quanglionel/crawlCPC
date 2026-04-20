@@ -9,7 +9,8 @@ services:
       - ./:/app
     ports:
       - "8001:8001"
-    command: ["web", "--host", "0.0.0.0", "--port", "8001"]
+    environment:
+      PORT: "8001"
   crawler:
     image: media-crawler:latest
     working_dir: /app
@@ -17,6 +18,9 @@ services:
       - ./:/app
     command:
       [
+        "python",
+        "-m",
+        "app.main",
         "crawl",
         "--config",
         "configs/vnexpress_kinh_doanh.json",

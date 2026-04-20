@@ -12,8 +12,8 @@ COPY app ./app
 COPY configs ./configs
 COPY templates ./templates
 COPY static ./static
+COPY gunicorn_config.py .
 
 EXPOSE 8000
 
-ENTRYPOINT ["python", "-m", "app.main"]
-CMD ["web", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["gunicorn", "app.wsgi:app", "--config", "gunicorn_config.py"]

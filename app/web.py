@@ -3,19 +3,21 @@ from __future__ import annotations
 import argparse
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from io import BytesIO
 import json
 import re
 import threading
 import time
 import unicodedata
 import uuid
+import zipfile
 from copy import deepcopy
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Callable
 from urllib.parse import urlparse
 
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, Response, jsonify, render_template, request, send_file
 
 from app.auto_preset import resolve_preset_for_new_source
 from app.catalog import (
@@ -1035,6 +1037,37 @@ def create_app() -> Flask:
         if not payload:
             return jsonify({"error": "not_found"}), 404
         return jsonify(payload)
+
+    @app.get("/api/sources/<source_key>/export")
+    def export_source(source_key: str):
+        source_lookup = {source["source_key"]: source for source in list_sources()}
+        source = source_lookup.get(source_key)
+        if not source:
+            return jsonify({"error": "not_found"}), 404
+
+        body = json.dumps(source, ensure_ascii=False, indent=2) + "\n"
+        filename = f"{source['source_key']}.json"
+        return Response(
+            body,
+            mimetype="application/json; charset=utf-8",
+            headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+        )
+
+    @app.get("/api/sources/export.zip")
+    def export_sources_zip():
+        buffer = BytesIO()
+        with zipfile.ZipFile(buffer, mode="w", compression=zipfile.ZIP_DEFLATED) as archive:
+            for source in list_sources():
+                body = json.dumps(source, ensure_ascii=False, indent=2) + "\n"
+                archive.writestr(f"{source['source_key']}.json", body)
+
+        buffer.seek(0)
+        return send_file(
+            buffer,
+            mimetype="application/zip",
+            as_attachment=True,
+            download_name="sources_export.zip",
+        )
 
     @app.post("/api/summarize")
     def summarize_article():

@@ -497,6 +497,12 @@ button {
   align-items: end;
 }
 
+.source-export-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 16px;
+}
+
 .source-search-row input,
 .source-search-row .ghost-button {
   min-height: 52px;

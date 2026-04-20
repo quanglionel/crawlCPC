@@ -432,6 +432,12 @@
               <p>Chọn sửa, xoá, hoặc đưa một nguồn sang tab crawl để chạy ngay.</p>
             </div>
 
+            {% if sources %}
+              <div class="source-export-row">
+                <a href="/api/sources/export.zip" class="ghost-button button-link">Tải tất cả nguồn</a>
+              </div>
+            {% endif %}
+
             <div class="field source-search-field" style="margin-bottom: 16px;">
               <span>Tìm kiếm nguồn</span>
               <div class="source-search-row">
@@ -468,6 +474,7 @@
                     </div>
                     <div class="card-actions">
                       <a href="{{ source.target_url }}" target="_blank" rel="noreferrer" class="ghost-button button-link small-button">Direct</a>
+                      <a href="/api/sources/{{ source.source_key }}/export" class="ghost-button button-link small-button">Tải JSON</a>
                       <form method="post">
                         <input type="hidden" name="active_tab" value="sources">
                         <input type="hidden" name="action" value="edit_source">

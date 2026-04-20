@@ -1038,6 +1038,10 @@ def create_app() -> Flask:
             return jsonify({"error": "not_found"}), 404
         return jsonify(payload)
 
+    @app.get("/healthz")
+    def health_check():
+        return jsonify({"ok": True})
+
     @app.get("/api/sources/<source_key>/export")
     def export_source(source_key: str):
         source_lookup = {source["source_key"]: source for source in list_sources()}

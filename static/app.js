@@ -12,6 +12,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const sourceLookup = Object.fromEntries(sources.map((source) => [source.source_key, source]));
   const allSourcesKey = "__all__";
   let crawlJobPollTimer = null;
+  const keepAliveIntervalMs = 4 * 60 * 1000;
+
+  const pingHealthCheck = () => {
+    fetch("/healthz", {
+      cache: "no-store",
+      headers: { Accept: "application/json" },
+    }).catch(() => {});
+  };
+
+  window.setInterval(pingHealthCheck, keepAliveIntervalMs);
 
   const updateSourceHint = (source) => {
     if (!sourceHint) {

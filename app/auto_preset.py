@@ -15,7 +15,7 @@ from bs4 import BeautifulSoup
 from app.batch_sources import canonical_domain
 from app.catalog import list_presets, list_sources, resolve_preset_path, save_source, slugify
 from app.crawler import describe_exception
-from app.service import CONFIGS_DIR, PROJECT_ROOT, resolve_path, run_crawl
+from app.service import CONFIGS_DIR, DATA_ROOT, resolve_path, run_crawl
 
 
 DEFAULT_HEADERS = {
@@ -399,7 +399,7 @@ def _build_config(
 
 def _relative_or_absolute(path: Path) -> str:
     try:
-        return path.relative_to(PROJECT_ROOT).as_posix()
+        return path.relative_to(DATA_ROOT).as_posix()
     except ValueError:
         return str(path)
 
@@ -560,7 +560,7 @@ def auto_preset_missing_sources(
         source_key = slugify(final_domain.replace(".", "-"))
         preset_filename = f"auto_{source_key}.json"
         preset_path = CONFIGS_DIR / preset_filename
-        relative_preset_path = preset_path.relative_to(PROJECT_ROOT).as_posix()
+        relative_preset_path = preset_path.relative_to(DATA_ROOT).as_posix()
         config = _build_config(
             label=label,
             listing_url=listing_url,
@@ -796,7 +796,7 @@ def create_auto_preset_for_source(
     label = _display_name({"name": source_name}, final_domain)
     domain_key = final_domain.replace(".", "-") or slugify(source_name)
     preset_path = _build_unique_preset_path(domain_key)
-    relative_preset_path = preset_path.relative_to(PROJECT_ROOT).as_posix()
+    relative_preset_path = preset_path.relative_to(DATA_ROOT).as_posix()
 
     config = _build_config(
         label=label,

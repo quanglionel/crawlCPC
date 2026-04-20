@@ -10,6 +10,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY app ./app
 COPY configs ./configs
+COPY sources ./sources
 COPY templates ./templates
 COPY static ./static
 COPY gunicorn_config.py .

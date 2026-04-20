@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import json
+import os
+import shutil
 import time
 from copy import deepcopy
 from pathlib import Path
@@ -12,14 +14,38 @@ from app.crawler import MediaCrawler, read_json
 
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-CONFIGS_DIR = PROJECT_ROOT / "configs"
+DATA_ROOT = Path(os.environ.get("APP_DATA_DIR", PROJECT_ROOT)).resolve()
+BUNDLED_CONFIGS_DIR = PROJECT_ROOT / "configs"
+BUNDLED_SOURCES_DIR = PROJECT_ROOT / "sources"
+CONFIGS_DIR = DATA_ROOT / "configs"
+
+
+def seed_directory_if_empty(runtime_dir: Path, bundled_dir: Path) -> None:
+    runtime_dir.mkdir(parents=True, exist_ok=True)
+    if any(runtime_dir.glob("*.json")) or not bundled_dir.exists():
+        return
+
+    for source_path in bundled_dir.glob("*.json"):
+        destination = runtime_dir / source_path.name
+        if not destination.exists():
+            shutil.copy2(source_path, destination)
+
+
+def ensure_data_dirs() -> None:
+    seed_directory_if_empty(CONFIGS_DIR, BUNDLED_CONFIGS_DIR)
+    seed_directory_if_empty(DATA_ROOT / "sources", BUNDLED_SOURCES_DIR)
+    (DATA_ROOT / "output").mkdir(parents=True, exist_ok=True)
+    (DATA_ROOT / "cache").mkdir(parents=True, exist_ok=True)
+
+
+ensure_data_dirs()
 
 
 def resolve_path(raw_path: str) -> Path:
     path = Path(raw_path)
     if path.is_absolute():
         return path
-    return PROJECT_ROOT / path
+    return DATA_ROOT / path
 
 
 def discover_config_paths() -> list[Path]:

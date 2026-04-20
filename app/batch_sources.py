@@ -9,7 +9,7 @@ from urllib.parse import urlparse
 
 from app.catalog import list_sources, resolve_preset_path, slugify
 from app.crawler import read_json
-from app.service import PROJECT_ROOT, resolve_path, run_crawl
+from app.service import DATA_ROOT, resolve_path, run_crawl
 
 
 DOMAIN_ALIASES = {
@@ -37,7 +37,7 @@ def canonical_domain(raw_url: str | None) -> str:
 
 def _relative_or_absolute(path: Path) -> str:
     try:
-        return path.relative_to(PROJECT_ROOT).as_posix()
+        return path.relative_to(DATA_ROOT).as_posix()
     except ValueError:
         return str(path)
 

@@ -12,6 +12,7 @@
       window.CONFIG_PRESETS = {{ preset_lookup | tojson }};
       window.PRESET_LABELS = {{ preset_label_lookup | tojson }};
       window.SOURCE_CATALOG = {{ sources | tojson }};
+      window.DEFAULT_SUMMARY_PROMPT = {{ default_summary_prompt | tojson }};
     </script>
     <script src="{{ url_for('static', filename='app.js') }}" defer></script>
   </head>
@@ -35,6 +36,7 @@
 
       <nav class="tab-bar">
         <a href="/?tab=crawl" class="tab-chip {% if active_tab == 'crawl' %}is-active{% endif %}">Crawl</a>
+        <a href="/?tab=summary" class="tab-chip {% if active_tab == 'summary' %}is-active{% endif %}">Tóm tắt</a>
         <a href="/?tab=sources" class="tab-chip {% if active_tab == 'sources' %}is-active{% endif %}">Nguồn</a>
         <a href="/?tab=presets" class="tab-chip {% if active_tab == 'presets' %}is-active{% endif %}">Preset</a>
       </nav>
@@ -238,7 +240,22 @@
                           {% endif %}
                         </details>
                       {% endif %}
-                      <a href="{{ article.url }}" target="_blank" rel="noreferrer">Mở bài gốc</a>
+                      <script type="application/json" class="article-transfer-payload">
+                        {{
+                          {
+                            "source_name": article_source_name,
+                            "published_at": article.published_at or "",
+                            "url": article.url or "",
+                            "title": article.title or article.display_title or "",
+                            "summary": article.summary or article.display_summary or "",
+                            "content": article.content or article.display_content or ""
+                          } | tojson
+                        }}
+                      </script>
+                      <div class="article-actions">
+                        <button type="button" class="ghost-button small-button summary-transfer-button">Tóm tắt</button>
+                        <a href="{{ article.url }}" target="_blank" rel="noreferrer">Mở bài gốc</a>
+                      </div>
                     </article>
                   {% endfor %}
                 </div>
@@ -279,6 +296,63 @@
                 <p>Nếu bạn có nhiều website giống cấu trúc, hãy tạo một preset rồi gán nó cho nhiều nguồn khác nhau ở tab quản lý.</p>
               </div>
             {% endif %}
+          </section>
+        </main>
+      {% elif active_tab == "summary" %}
+        <main class="workspace summary-workspace">
+          <section class="panel control-panel">
+            <div class="panel-head">
+              <h2>Tóm Tắt</h2>
+              <p>Nhận bài từ tab Crawl, chỉnh prompt nếu cần, rồi gửi sang Gemini để tóm tắt theo mẫu.</p>
+            </div>
+
+            <form class="crawl-form summary-form" id="summary_form">
+              <label class="field">
+                <span>Tiêu đề</span>
+                <input type="text" id="summary_article_title" placeholder="Chọn một bài từ tab Crawl hoặc nhập thủ công">
+              </label>
+              <label class="field">
+                <span>URL</span>
+                <input type="url" id="summary_article_url" placeholder="https://example.com/article">
+              </label>
+              <div class="form-grid">
+                <label class="field">
+                  <span>Nguồn</span>
+                  <input type="text" id="summary_article_source" placeholder="Tên nguồn">
+                </label>
+                <label class="field">
+                  <span>Ngày đăng</span>
+                  <input type="text" id="summary_article_date" placeholder="Ngày đăng">
+                </label>
+              </div>
+              <label class="field textarea-field">
+                <span>Nội dung bài viết</span>
+                <textarea id="summary_article_content" class="summary-input-textarea" placeholder="Nội dung bài viết sẽ xuất hiện ở đây sau khi bấm Tóm tắt từ tab Crawl."></textarea>
+              </label>
+              <label class="field textarea-field">
+                <span>Prompt mẫu</span>
+                <textarea id="summary_prompt" class="summary-prompt-textarea" spellcheck="false">{{ default_summary_prompt }}</textarea>
+              </label>
+              <div class="submit-row">
+                <button type="submit" class="primary-button" id="summary_submit_button">Gửi tóm tắt</button>
+                <button type="button" class="ghost-button" id="summary_reset_prompt_button">Khôi phục prompt</button>
+                <button type="button" class="ghost-button" id="summary_clear_button">Xóa bài</button>
+              </div>
+              <p class="helper-text">
+                Prompt hỗ trợ các biến: <code>{source_name}</code>, <code>{published_at}</code>, <code>{url}</code>, <code>{title}</code>, <code>{summary}</code>, <code>{content}</code>.
+              </p>
+            </form>
+          </section>
+
+          <section class="panel result-panel">
+            <div class="panel-head">
+              <h2>Chat Tóm Tắt</h2>
+              <p>Kết quả sẽ hiện như một cuộc hội thoại để bạn tiếp tục chỉnh prompt và gửi lại nhanh.</p>
+            </div>
+            <div class="notice is-warning" id="summary_empty_state">
+              <p>Chưa có bài nào trong tab Tóm tắt. Hãy bấm nút “Tóm tắt” trên một bài đã crawl, hoặc nhập nội dung thủ công.</p>
+            </div>
+            <div class="chat-thread" id="summary_chat_thread" aria-live="polite"></div>
           </section>
         </main>
       {% elif active_tab == "sources" %}

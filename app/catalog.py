@@ -5,10 +5,10 @@ import re
 from pathlib import Path
 from typing import Any
 
-from app.service import CONFIGS_DIR, PROJECT_ROOT, discover_config_paths, load_config_from_json, read_config_text
+from app.service import CONFIGS_DIR, DATA_ROOT, PROJECT_ROOT, discover_config_paths, load_config_from_json, read_config_text
 
 
-SOURCES_DIR = PROJECT_ROOT / "sources"
+SOURCES_DIR = DATA_ROOT / "sources"
 
 
 _SOURCES_CACHE_SIGNATURE: tuple[tuple[str, int, int], ...] | None = None
@@ -58,7 +58,7 @@ def ensure_sources_dir() -> None:
 
 
 def resolve_preset_path(relative_path: str) -> Path:
-    candidate = (PROJECT_ROOT / relative_path).resolve()
+    candidate = (DATA_ROOT / relative_path).resolve()
     configs_root = CONFIGS_DIR.resolve()
     if not str(candidate).startswith(str(configs_root)):
         raise ValueError("Preset path must stay inside the configs directory.")
@@ -135,7 +135,7 @@ def list_presets() -> list[dict[str, Any]]:
 
     presets: list[dict[str, Any]] = []
     for path in discover_config_paths():
-        relative_path = path.relative_to(PROJECT_ROOT).as_posix()
+        relative_path = path.relative_to(DATA_ROOT).as_posix()
         try:
             config = load_config_from_json(read_config_text(path))
         except json.JSONDecodeError:
@@ -172,7 +172,7 @@ def save_preset(config_json: str, preset_key: str, original_preset_path: str | N
     key = slugify(preset_key)
     destination = CONFIGS_DIR / f"{key}.json"
     destination.write_text(config_json.strip() + "\n", encoding="utf-8")
-    relative_path = destination.relative_to(PROJECT_ROOT).as_posix()
+    relative_path = destination.relative_to(DATA_ROOT).as_posix()
     if original_preset_path and original_preset_path != relative_path:
         previous = resolve_preset_path(original_preset_path)
         if previous.exists():

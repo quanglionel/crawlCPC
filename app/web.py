@@ -30,6 +30,7 @@ from app.catalog import (
     sources_using_preset,
 )
 from app.service import PROJECT_ROOT, load_config_from_json, parse_target_url, resolve_path, run_crawl
+from app.summarizer import DEFAULT_SUMMARY_PROMPT, SummarizerError, summarize_with_gemini
 from app.translator import prepare_result_for_display
 
 
@@ -1025,6 +1026,7 @@ def create_app() -> Flask:
             raw_result_json=raw_result_json,
             page_notice=page_notice,
             search_sources=search_sources,
+            default_summary_prompt=DEFAULT_SUMMARY_PROMPT,
         )
 
     @app.get("/api/crawl-jobs/<job_id>")
@@ -1033,6 +1035,23 @@ def create_app() -> Flask:
         if not payload:
             return jsonify({"error": "not_found"}), 404
         return jsonify(payload)
+
+    @app.post("/api/summarize")
+    def summarize_article():
+        payload = request.get_json(silent=True) or {}
+        article = payload.get("article") or {}
+        prompt_template = str(payload.get("prompt") or DEFAULT_SUMMARY_PROMPT)
+        if not isinstance(article, dict):
+            return jsonify({"error": "article payload must be an object"}), 400
+        if not str(article.get("title") or article.get("content") or "").strip():
+            return jsonify({"error": "Chưa có nội dung bài viết để tóm tắt."}), 400
+
+        try:
+            result = summarize_with_gemini(article, prompt_template)
+        except SummarizerError as exc:
+            return jsonify({"error": str(exc)}), 400
+
+        return jsonify(result)
 
     return app
 

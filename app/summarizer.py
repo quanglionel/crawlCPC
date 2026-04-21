@@ -33,6 +33,7 @@ Nội dung:
 """
 
 GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
+OPENAI_RESPONSES_ENDPOINT = "https://api.openai.com/v1/responses"
 MAX_ARTICLE_CHARS = 60000
 
 
@@ -116,3 +117,84 @@ def summarize_with_gemini(article_payload: dict[str, Any], prompt_template: str)
         raise SummarizerError("Gemini không trả về nội dung tóm tắt.")
 
     return {"summary": text, "model": model}
+
+
+def _extract_openai_text(payload: dict[str, Any]) -> str:
+    if payload.get("output_text"):
+        return str(payload["output_text"]).strip()
+
+    output = payload.get("output") or []
+    chunks: list[str] = []
+    for item in output:
+        for content in item.get("content") or []:
+            if content.get("type") in {"output_text", "text"}:
+                chunks.append(str(content.get("text") or ""))
+
+    return "\n".join(chunk for chunk in chunks if chunk).strip()
+
+
+def summarize_with_openai(article_payload: dict[str, Any], prompt_template: str) -> dict[str, str]:
+    api_key = os.environ.get("OPENAI_API_KEY", "").strip()
+    if not api_key:
+        raise SummarizerError("Chưa cấu hình OPENAI_API_KEY trên server.")
+
+    model = os.environ.get("OPENAI_MODEL", "gpt-4o-mini").strip() or "gpt-4o-mini"
+    article = normalize_article_payload(article_payload)
+    prompt = render_summary_prompt(prompt_template, article)
+
+    try:
+        response = requests.post(
+            OPENAI_RESPONSES_ENDPOINT,
+            headers={
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json",
+            },
+            json={
+                "model": model,
+                "input": prompt,
+                "max_output_tokens": 2048,
+            },
+            timeout=90,
+        )
+    except requests.RequestException as exc:
+        raise SummarizerError(f"Không gọi được OpenAI: {exc}") from exc
+
+    if response.status_code >= 400:
+        try:
+            error_payload = response.json()
+            message = error_payload.get("error", {}).get("message") or response.text
+        except ValueError:
+            message = response.text
+        raise SummarizerError(f"OpenAI trả lỗi {response.status_code}: {message}")
+
+    try:
+        payload = response.json()
+    except ValueError as exc:
+        raise SummarizerError("OpenAI trả về phản hồi không phải JSON.") from exc
+
+    text = _extract_openai_text(payload)
+    if not text:
+        raise SummarizerError("OpenAI không trả về nội dung tóm tắt.")
+
+    return {"summary": text, "model": model}
+
+
+def summarize_article(article_payload: dict[str, Any], prompt_template: str) -> dict[str, str]:
+    provider = os.environ.get("SUMMARY_PROVIDER", "auto").strip().lower() or "auto"
+    if provider == "openai":
+        result = summarize_with_openai(article_payload, prompt_template)
+        return {**result, "provider": "openai"}
+    if provider == "gemini":
+        result = summarize_with_gemini(article_payload, prompt_template)
+        return {**result, "provider": "gemini"}
+    if provider != "auto":
+        raise SummarizerError("SUMMARY_PROVIDER chỉ hỗ trợ: auto, openai, gemini.")
+
+    if os.environ.get("OPENAI_API_KEY", "").strip():
+        result = summarize_with_openai(article_payload, prompt_template)
+        return {**result, "provider": "openai"}
+    if os.environ.get("GEMINI_API_KEY", "").strip():
+        result = summarize_with_gemini(article_payload, prompt_template)
+        return {**result, "provider": "gemini"}
+
+    raise SummarizerError("Chưa cấu hình OPENAI_API_KEY hoặc GEMINI_API_KEY trên server.")

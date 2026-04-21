@@ -71,6 +71,14 @@ Docker image mặc định chạy web bằng Gunicorn qua `app.wsgi:app` và đ�
 - `GEMINI_API_KEY`: API key dùng để gọi Gemini.
 - `GEMINI_MODEL`: model Gemini muốn dùng, mặc định là `gemini-2.0-flash`.
 
+Hoặc dùng OpenAI cho tab tóm tắt:
+
+- `OPENAI_API_KEY`: API key dùng để gọi OpenAI.
+- `OPENAI_MODEL`: model OpenAI muốn dùng, mặc định là `gpt-4o-mini`.
+- `SUMMARY_PROVIDER`: chọn `openai`, `gemini`, hoặc `auto`. Mặc định `auto`; nếu có `OPENAI_API_KEY` thì ưu tiên OpenAI, nếu không thì dùng Gemini.
+
+Khi chạy bằng Docker Compose, có thể đặt các biến này trong file `.env` ở thư mục dự án.
+
 Để nguồn/preset thêm từ UI không mất sau khi Render restart hoặc redeploy, cần bật Persistent Disk và cấu hình:
 
 - Disk mount path: `/var/data`

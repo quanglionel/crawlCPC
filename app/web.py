@@ -32,7 +32,7 @@ from app.catalog import (
     sources_using_preset,
 )
 from app.service import PROJECT_ROOT, load_config_from_json, parse_target_url, resolve_path, run_crawl
-from app.summarizer import DEFAULT_SUMMARY_PROMPT, SummarizerError, summarize_with_gemini
+from app.summarizer import DEFAULT_SUMMARY_PROMPT, SummarizerError, summarize_article as run_summary
 from app.translator import prepare_result_for_display
 
 
@@ -1084,7 +1084,7 @@ def create_app() -> Flask:
             return jsonify({"error": "Chưa có nội dung bài viết để tóm tắt."}), 400
 
         try:
-            result = summarize_with_gemini(article, prompt_template)
+            result = run_summary(article, prompt_template)
         except SummarizerError as exc:
             return jsonify({"error": str(exc)}), 400
 

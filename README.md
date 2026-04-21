@@ -72,6 +72,8 @@ Khuyến nghị dùng Groq free tier:
 
 - `GROQ_API_KEY`: API key dùng để gọi Groq.
 - `GROQ_MODEL`: model Groq muốn dùng, mặc định là `llama-3.1-8b-instant`.
+- `GROQ_MAX_ARTICLE_CHARS`: số ký tự bài viết gửi sang Groq, mặc định là `8000` để tránh vượt TPM free tier.
+- `GROQ_MAX_OUTPUT_TOKENS`: số token trả lời tối đa, mặc định là `900`.
 - `SUMMARY_PROVIDER`: đặt là `groq`.
 
 Tuỳ chọn dùng Gemini:

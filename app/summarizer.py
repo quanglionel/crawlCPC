@@ -36,20 +36,30 @@ GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/{mode
 OPENAI_RESPONSES_ENDPOINT = "https://api.openai.com/v1/responses"
 GROQ_CHAT_COMPLETIONS_ENDPOINT = "https://api.groq.com/openai/v1/chat/completions"
 MAX_ARTICLE_CHARS = 60000
+GROQ_DEFAULT_MAX_ARTICLE_CHARS = 8000
+GROQ_DEFAULT_MAX_OUTPUT_TOKENS = 900
 
 
 class SummarizerError(RuntimeError):
     pass
 
 
-def normalize_article_payload(payload: dict[str, Any]) -> dict[str, str]:
+def _read_positive_int_env(name: str, default: int) -> int:
+    try:
+        value = int(os.environ.get(name, "").strip() or default)
+    except ValueError:
+        return default
+    return value if value > 0 else default
+
+
+def normalize_article_payload(payload: dict[str, Any], max_article_chars: int = MAX_ARTICLE_CHARS) -> dict[str, str]:
     return {
         "source_name": str(payload.get("source_name") or ""),
         "published_at": str(payload.get("published_at") or ""),
         "url": str(payload.get("url") or ""),
         "title": str(payload.get("title") or ""),
         "summary": str(payload.get("summary") or ""),
-        "content": str(payload.get("content") or "")[:MAX_ARTICLE_CHARS],
+        "content": str(payload.get("content") or "")[:max_article_chars],
     }
 
 
@@ -199,7 +209,9 @@ def summarize_with_groq(article_payload: dict[str, Any], prompt_template: str) -
         raise SummarizerError("Chưa cấu hình GROQ_API_KEY trên server.")
 
     model = os.environ.get("GROQ_MODEL", "llama-3.1-8b-instant").strip() or "llama-3.1-8b-instant"
-    article = normalize_article_payload(article_payload)
+    max_article_chars = _read_positive_int_env("GROQ_MAX_ARTICLE_CHARS", GROQ_DEFAULT_MAX_ARTICLE_CHARS)
+    max_output_tokens = _read_positive_int_env("GROQ_MAX_OUTPUT_TOKENS", GROQ_DEFAULT_MAX_OUTPUT_TOKENS)
+    article = normalize_article_payload(article_payload, max_article_chars=max_article_chars)
     prompt = render_summary_prompt(prompt_template, article)
 
     try:
@@ -219,7 +231,7 @@ def summarize_with_groq(article_payload: dict[str, Any], prompt_template: str) -
                     {"role": "user", "content": prompt},
                 ],
                 "temperature": 0.2,
-                "max_tokens": 2048,
+                "max_tokens": max_output_tokens,
             },
             timeout=90,
         )

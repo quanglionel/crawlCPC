@@ -174,6 +174,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const sourceSearchReset = document.getElementById("source_search_reset");
   const sourceCards = Array.from(document.querySelectorAll(".entity-card"));
   const sourceFilterEmptyState = document.getElementById("source_filter_empty_state");
+  const sourceBulkForm = document.getElementById("source_bulk_form");
+  const sourceSelectAll = document.getElementById("source_select_all");
+  const sourceBulkDeleteButton = document.getElementById("source_bulk_delete_button");
+  const sourceSelectedCount = document.getElementById("source_selected_count");
+  const sourceCheckboxes = Array.from(document.querySelectorAll(".source-select-checkbox"));
 
   const monthLookup = {
     january: 0,
@@ -329,8 +334,37 @@ document.addEventListener("DOMContentLoaded", () => {
 
   applyResultFilters();
 
+  const visibleSourceCheckboxes = () => sourceCheckboxes.filter((checkbox) => {
+    const card = checkbox.closest(".entity-card");
+    return card && !card.hidden;
+  });
+
+  const updateSourceBulkState = () => {
+    if (!sourceCheckboxes.length) {
+      return;
+    }
+
+    const selectedCount = sourceCheckboxes.filter((checkbox) => checkbox.checked).length;
+    const visibleCheckboxes = visibleSourceCheckboxes();
+    const selectedVisibleCount = visibleCheckboxes.filter((checkbox) => checkbox.checked).length;
+
+    if (sourceBulkDeleteButton) {
+      sourceBulkDeleteButton.disabled = selectedCount === 0;
+    }
+    if (sourceSelectedCount) {
+      sourceSelectedCount.textContent = selectedCount
+        ? `Đã chọn ${selectedCount} nguồn`
+        : "Chưa chọn nguồn nào";
+    }
+    if (sourceSelectAll) {
+      sourceSelectAll.checked = visibleCheckboxes.length > 0 && selectedVisibleCount === visibleCheckboxes.length;
+      sourceSelectAll.indeterminate = selectedVisibleCount > 0 && selectedVisibleCount < visibleCheckboxes.length;
+    }
+  };
+
   const applySourceSearch = () => {
     if (!sourceSearch || !sourceCards.length) {
+      updateSourceBulkState();
       return;
     }
 
@@ -348,7 +382,42 @@ document.addEventListener("DOMContentLoaded", () => {
     if (sourceFilterEmptyState) {
       sourceFilterEmptyState.hidden = visibleCount > 0;
     }
+    updateSourceBulkState();
   };
+
+  sourceCheckboxes.forEach((checkbox) => {
+    checkbox.addEventListener("change", updateSourceBulkState);
+  });
+
+  if (sourceSelectAll) {
+    sourceSelectAll.addEventListener("change", () => {
+      visibleSourceCheckboxes().forEach((checkbox) => {
+        checkbox.checked = sourceSelectAll.checked;
+      });
+      updateSourceBulkState();
+    });
+  }
+
+  if (sourceBulkForm) {
+    sourceBulkForm.addEventListener("submit", (event) => {
+      const action = event.submitter?.value || "";
+      if (action !== "delete_sources") {
+        return;
+      }
+
+      const selectedCount = sourceCheckboxes.filter((checkbox) => checkbox.checked).length;
+      if (!selectedCount) {
+        event.preventDefault();
+        updateSourceBulkState();
+        return;
+      }
+
+      const confirmed = window.confirm(`Xoá ${selectedCount} nguồn đã chọn?`);
+      if (!confirmed) {
+        event.preventDefault();
+      }
+    });
+  }
 
   if (sourceSearch) {
     sourceSearch.addEventListener("input", applySourceSearch);
@@ -366,6 +435,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   applySourceSearch();
+  updateSourceBulkState();
 
   // Check duplicate sources realtime in source form.
   const sourceForm = document.querySelector("input[name='source_key']")?.closest("form");

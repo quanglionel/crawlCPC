@@ -939,6 +939,32 @@ def create_app() -> Flask:
                     page_notice = {"level": "success", "text": f"Đã xóa nguồn '{source['name']}'."}
                     active_tab = "sources"
 
+                elif action == "delete_sources":
+                    source_keys = [key.strip() for key in request.form.getlist("source_refs") if key.strip()]
+                    if not source_keys:
+                        raise ValueError("Chưa chọn nguồn nào để xóa.")
+
+                    deleted_names: list[str] = []
+                    missing_keys: list[str] = []
+                    for source_key in dict.fromkeys(source_keys):
+                        source = source_lookup.get(source_key)
+                        if not source:
+                            missing_keys.append(source_key)
+                            continue
+                        delete_source(source_key)
+                        deleted_names.append(source["name"])
+
+                    presets, preset_lookup, sources, source_lookup = load_catalogs()
+                    source_form_data = build_initial_source_form_data(presets)
+                    if not deleted_names:
+                        raise ValueError("Không tìm thấy nguồn nào trong danh sách đã chọn.")
+
+                    notice_text = f"Đã xóa {len(deleted_names)} nguồn."
+                    if missing_keys:
+                        notice_text = f"{notice_text} Bỏ qua {len(missing_keys)} nguồn không còn tồn tại."
+                    page_notice = {"level": "success", "text": notice_text}
+                    active_tab = "sources"
+
                 elif action == "save_preset":
                     if not preset_form_data["preset_key"]:
                         raise ValueError("Preset key là bắt buộc.")

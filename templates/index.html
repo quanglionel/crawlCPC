@@ -386,46 +386,47 @@
               <div class="notice is-warning" id="source_filter_empty_state" hidden>
                 <p>Không có nguồn nào khớp với từ khóa tìm kiếm.</p>
               </div>
-              <div class="entity-list" id="source_entity_list">
-                {% for source in sources %}
-                  <article class="entity-card">
-                    <div class="entity-header">
-                      <div>
-                        <h3>{{ source.name }}</h3>
-                        <p class="entity-subtitle">{{ source.target_url }}</p>
+              <form method="post" id="source_bulk_form">
+                <input type="hidden" name="active_tab" value="sources">
+                <input type="hidden" name="source_ref" value="">
+                <div class="bulk-actions">
+                  <label class="bulk-select-all">
+                    <input type="checkbox" id="source_select_all">
+                    <span>Chọn tất cả nguồn đang hiển thị</span>
+                  </label>
+                  <button type="submit" name="action" value="delete_sources" class="danger-button small-button" id="source_bulk_delete_button" disabled>Xoá nguồn đã chọn</button>
+                  <span class="helper-text" id="source_selected_count">Chưa chọn nguồn nào</span>
+                </div>
+                <div class="entity-list" id="source_entity_list">
+                  {% for source in sources %}
+                    <article class="entity-card">
+                      <label class="source-select-control">
+                        <input type="checkbox" name="source_refs" value="{{ source.source_key }}" class="source-select-checkbox">
+                        <span>Chọn nguồn này</span>
+                      </label>
+                      <div class="entity-header">
+                        <div>
+                          <h3>{{ source.name }}</h3>
+                          <p class="entity-subtitle">{{ source.target_url }}</p>
+                        </div>
+                        <span class="pill">{{ preset_label_lookup.get(source.preset_path, source.preset_path) }}</span>
                       </div>
-                      <span class="pill">{{ preset_label_lookup.get(source.preset_path, source.preset_path) }}</span>
-                    </div>
-                    <div class="entity-meta">
-                      <span>Mode: {{ source.target_mode }}</span>
-                      <span>Output: {{ source.output }}</span>
-                      <span>Workers: {{ source.workers }}</span>
-                    </div>
-                    <div class="card-actions">
-                      <a href="{{ source.target_url }}" target="_blank" rel="noreferrer" class="ghost-button button-link small-button">Direct</a>
-                      <a href="/api/sources/{{ source.source_key }}/export" class="ghost-button button-link small-button">Tải JSON</a>
-                      <form method="post">
-                        <input type="hidden" name="active_tab" value="sources">
-                        <input type="hidden" name="action" value="edit_source">
-                        <input type="hidden" name="source_ref" value="{{ source.source_key }}">
-                        <button type="submit" class="ghost-button small-button">Sửa</button>
-                      </form>
-                      <form method="post">
-                        <input type="hidden" name="active_tab" value="sources">
-                        <input type="hidden" name="action" value="use_source_for_crawl">
-                        <input type="hidden" name="source_ref" value="{{ source.source_key }}">
-                        <button type="submit" class="ghost-button small-button">Mở ở Crawl</button>
-                      </form>
-                      <form method="post">
-                        <input type="hidden" name="active_tab" value="sources">
-                        <input type="hidden" name="action" value="delete_source">
-                        <input type="hidden" name="source_ref" value="{{ source.source_key }}">
-                        <button type="submit" class="danger-button small-button">Xoá</button>
-                      </form>
-                    </div>
-                  </article>
-                {% endfor %}
-              </div>
+                      <div class="entity-meta">
+                        <span>Mode: {{ source.target_mode }}</span>
+                        <span>Output: {{ source.output }}</span>
+                        <span>Workers: {{ source.workers }}</span>
+                      </div>
+                      <div class="card-actions">
+                        <a href="{{ source.target_url }}" target="_blank" rel="noreferrer" class="ghost-button button-link small-button">Direct</a>
+                        <a href="/api/sources/{{ source.source_key }}/export" class="ghost-button button-link small-button">Tải JSON</a>
+                        <button type="submit" name="action" value="edit_source" class="ghost-button small-button" onclick="this.form.source_ref.value='{{ source.source_key }}'">Sửa</button>
+                        <button type="submit" name="action" value="use_source_for_crawl" class="ghost-button small-button" onclick="this.form.source_ref.value='{{ source.source_key }}'">Mở ở Crawl</button>
+                        <button type="submit" name="action" value="delete_source" class="danger-button small-button" onclick="this.form.source_ref.value='{{ source.source_key }}'">Xoá</button>
+                      </div>
+                    </article>
+                  {% endfor %}
+                </div>
+              </form>
             {% else %}
               <div class="empty-state">
                 <p class="empty-kicker">Chưa có nguồn nào</p>

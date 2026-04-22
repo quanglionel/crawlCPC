@@ -1,0 +1,147 @@
+{
+  "site_name": "ThmeyThmey",
+  "base_url": "https://thmeythmey.com",
+  "allowed_domains": [
+    "thmeythmey.com"
+  ],
+  "listing_urls": [
+    "https://thmeythmey.com/"
+  ],
+  "article_link_selectors": [
+    "a[href*='/detail/']"
+  ],
+  "article_link_pattern": "^https?://(?:www\\.)?thmeythmey\\.com/detail/\\d+/?$",
+  "article_link_order": "id_desc",
+  "article_link_id_pattern": "/detail/(\\d+)",
+  "article_link_exclude_patterns": [
+    "/cdn-cgi/"
+  ],
+  "listing_articles": {
+    "enabled": true,
+    "card_selectors": [
+      ".main-article",
+      ".news-item",
+      ".news-item-1",
+      ".news-card"
+    ],
+    "link_selectors": [
+      "a[href*='/detail/']"
+    ]
+  },
+  "fields": {
+    "title": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": ".hotnews-title a"
+        },
+        {
+          "selector": ".news-title"
+        },
+        {
+          "selector": "h3 a"
+        },
+        {
+          "selector": "a[href*='/detail/']"
+        },
+        {
+          "selector": "img[alt]",
+          "attr": "alt"
+        }
+      ]
+    },
+    "summary": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": "p.limited-text[data-text]",
+          "attr": "data-text"
+        },
+        {
+          "selector": "img[alt]",
+          "attr": "alt"
+        }
+      ]
+    },
+    "published_at": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": ".news-meta"
+        },
+        {
+          "selector": "p",
+          "regex": "([០-៩0-9]+\\s*(?:នាទី|ម៉ោង|ថ្ងៃ)|ម្សិលមិញ)"
+        }
+      ]
+    },
+    "author": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": "meta[name='author']",
+          "attr": "content"
+        }
+      ]
+    },
+    "content": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": "p.limited-text[data-text]",
+          "attr": "data-text"
+        },
+        {
+          "selector": ".news-title"
+        },
+        {
+          "selector": ".hotnews-title a"
+        },
+        {
+          "selector": "h3 a"
+        },
+        {
+          "selector": "img[alt]",
+          "attr": "alt"
+        }
+      ]
+    },
+    "images": {
+      "mode": "list",
+      "extractors": [
+        {
+          "selector": "img[src]",
+          "attr": "src"
+        }
+      ]
+    }
+  },
+  "remove_selectors": [
+    "script",
+    "style",
+    "noscript",
+    "iframe",
+    "form",
+    "nav",
+    "header",
+    "footer",
+    ".advertisement",
+    ".ads",
+    ".ad",
+    ".share",
+    ".social-share",
+    ".related-posts",
+    ".related",
+    ".comments"
+  ],
+  "request": {
+    "timeout_seconds": 12,
+    "delay_seconds": 0.2,
+    "respect_robots_txt": false,
+    "headers": {
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+      "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+      "Accept-Language": "km,en-US;q=0.9,en;q=0.8,vi;q=0.7"
+    }
+  }
+}

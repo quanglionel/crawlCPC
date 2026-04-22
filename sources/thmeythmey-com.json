@@ -3,10 +3,10 @@
   "name": "Thmeythmey",
   "target_url": "https://thmeythmey.com/",
   "target_mode": "listing",
-  "preset_path": "configs/auto_bayontv-com-kh.json",
-  "output": "output/auto/007_thmeythmey-com.json",
+  "preset_path": "configs/thmeythmey_com.json",
+  "output": "output/thmeythmey-com.json",
   "max_pages": 1,
-  "max_articles": 2,
+  "max_articles": 5,
   "workers": 2,
-  "notes": "Auto-generated from https://thmeythmey.com. Top candidate: https://thmeythmey.com/detail/158189"
+  "notes": "Trang chi tiet dang bi Cloudflare chan crawler HTTP, preset nay lay title/mo ta/anh tu card tren homepage de tranh load lai link rac."
 }

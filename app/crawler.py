@@ -79,6 +79,7 @@ class MediaCrawler:
         self.article_link_regexes = [
             re.compile(pattern) for pattern in config.get("article_link_regexes", [])
         ]
+        self.listing_article_config = config.get("listing_articles") or {}
         self.fields = config["fields"]
         self.remove_selectors = config.get("remove_selectors", [])
         request_settings = config.get("request", {})
@@ -304,6 +305,43 @@ class MediaCrawler:
         if self.article_link_order == "id_desc":
             links.sort(key=self._article_link_sort_key, reverse=True)
         return links
+
+    def _extract_listing_card_url(self, card: Any, listing_url: str) -> str | None:
+        selectors = self.listing_article_config.get("link_selectors") or ["a[href]"]
+        for selector in selectors:
+            for node in card.select(selector):
+                raw_url = node.get("href")
+                if not raw_url:
+                    continue
+                candidate = raw_url.strip().strip("\"'").replace("\\/", "/").split("#", 1)[0]
+                absolute_url = urljoin(listing_url, candidate)
+                if self.is_allowed_article_url(absolute_url):
+                    return absolute_url
+        return None
+
+    def extract_listing_articles(self, listing_url: str) -> list[dict[str, Any]]:
+        html = self.fetch_html(listing_url)
+        parser = "xml" if listing_url.lower().endswith(".xml") or html.lstrip().startswith("<?xml") else "lxml"
+        soup = BeautifulSoup(html, parser)
+        card_selectors = self.listing_article_config.get("card_selectors") or []
+        if not card_selectors:
+            return []
+        articles: list[dict[str, Any]] = []
+        seen: set[str] = set()
+
+        for card in soup.select(", ".join(card_selectors)):
+            article_url = self._extract_listing_card_url(card, listing_url)
+            if not article_url or article_url in seen:
+                continue
+            seen.add(article_url)
+            article: dict[str, Any] = {"url": article_url, "site_name": self.site_name}
+            for field_name in self.fields:
+                article[field_name] = self.extract_field(card, field_name, article_url)
+            articles.append(article)
+
+        if self.article_link_order == "id_desc":
+            articles.sort(key=lambda article: self._article_link_sort_key(str(article.get("url") or "")), reverse=True)
+        return articles
 
     def _article_link_sort_key(self, url: str) -> int:
         if self.article_link_id_pattern:
@@ -580,6 +618,31 @@ class MediaCrawler:
             listing_urls = self.build_listing_urls(max_pages=max_pages)
 
             seen_links: set[str] = set()
+            if self.listing_article_config.get("enabled"):
+                articles: list[dict[str, Any]] = []
+                for listing_url in listing_urls:
+                    try:
+                        listing_articles = self.extract_listing_articles(listing_url)
+                    except Exception as exc:
+                        self.run_warnings.append(
+                            f"Khong doc duoc bai viet tu trang danh sach {listing_url}: {describe_exception(exc)}"
+                        )
+                        continue
+
+                    for article in listing_articles:
+                        article_url = str(article.get("url") or "")
+                        if article_link_filter and not article_link_filter(article_url):
+                            continue
+                        if article_url in seen_links:
+                            continue
+                        seen_links.add(article_url)
+                        articles.append(article)
+                        if max_articles and len(articles) >= max_articles:
+                            break
+                    if max_articles and len(articles) >= max_articles:
+                        break
+                return articles
+
             for listing_url in listing_urls:
                 try:
                     listing_links = self.extract_listing_links(listing_url)

@@ -7,6 +7,7 @@ Tool Python chạy trong Docker để crawl bài viết từ một web truyền 
 - Giao diện web để chọn preset config, sửa JSON config, chạy crawl và xem kết quả ngay trên trang.
 - Có ô nhập `URL cần crawl` riêng để đổi sang chuyên mục hoặc bài viết khác mà không phải sửa tay `listing_urls`.
 - Có tab `Nguồn` để lưu nhiều URL crawl khác nhau, mỗi nguồn tham chiếu tới một preset.
+- Có thể xuất một file JSON danh sách nguồn để rà soát, xoá/thêm/sửa nguồn trong repo rồi deploy lại.
 - Có tab `Preset` để quản lý các bộ selector trong `configs/`.
 - Nhiều nguồn có thể dùng chung một preset.
 - Có tuỳ chọn dịch kết quả hiển thị sang tiếng Việt, còn JSON output vẫn giữ nguyên bản gốc.

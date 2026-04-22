@@ -1073,6 +1073,48 @@ def create_app() -> Flask:
             download_name="sources_export.zip",
         )
 
+    @app.get("/api/sources/export-list.json")
+    def export_sources_review_list():
+        sources_payload = []
+        for index, source in enumerate(list_sources(), start=1):
+            sources_payload.append(
+                {
+                    "index": index,
+                    "review_action": "",
+                    "review_note": "",
+                    "source_key": source.get("source_key", ""),
+                    "name": source.get("name", ""),
+                    "target_url": source.get("target_url", ""),
+                    "target_mode": source.get("target_mode", ""),
+                    "preset_path": source.get("preset_path", ""),
+                    "output": source.get("output", ""),
+                    "max_pages": source.get("max_pages"),
+                    "max_articles": source.get("max_articles"),
+                    "workers": source.get("workers"),
+                    "notes": source.get("notes", ""),
+                }
+            )
+
+        body = json.dumps(
+            {
+                "format": "media-crawler-source-review-v1",
+                "instructions": {
+                    "review_action": "Optional: keep, delete, update, or add.",
+                    "review_note": "Optional note about what should change.",
+                    "add_source": "To request a new source, append an object with review_action='add'.",
+                },
+                "source_count": len(sources_payload),
+                "sources": sources_payload,
+            },
+            ensure_ascii=False,
+            indent=2,
+        ) + "\n"
+        return Response(
+            body,
+            mimetype="application/json; charset=utf-8",
+            headers={"Content-Disposition": 'attachment; filename="sources_review.json"'},
+        )
+
     return app
 
 

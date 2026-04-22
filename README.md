@@ -8,7 +8,6 @@ Tool Python chạy trong Docker để crawl bài viết từ một web truyền 
 - Có ô nhập `URL cần crawl` riêng để đổi sang chuyên mục hoặc bài viết khác mà không phải sửa tay `listing_urls`.
 - Có tab `Nguồn` để lưu nhiều URL crawl khác nhau, mỗi nguồn tham chiếu tới một preset.
 - Có tab `Preset` để quản lý các bộ selector trong `configs/`.
-- Có tab `Tóm tắt` để nhận bài từ kết quả crawl và gửi sang Gemini theo prompt mẫu.
 - Nhiều nguồn có thể dùng chung một preset.
 - Có tuỳ chọn dịch kết quả hiển thị sang tiếng Việt, còn JSON output vẫn giữ nguyên bản gốc.
 - Crawl từ trang chuyên mục hoặc trang chủ.
@@ -65,29 +64,6 @@ docker run --rm -v ${PWD}:/app media-crawler python -m app.main crawl --config c
 ## Deploy Render
 
 Docker image mặc định chạy web bằng Gunicorn qua `app.wsgi:app` và đọc cổng từ biến môi trường `PORT` của Render. Khi deploy bằng Docker trên Render, chỉ cần build từ `Dockerfile`; không dùng start command kiểu `python -m app.main web` hoặc `flask run` vì hai lệnh đó sẽ chạy Flask development server.
-
-Để dùng tab tóm tắt, cấu hình thêm Environment Variable trên Render.
-
-Khuyến nghị dùng Groq free tier:
-
-- `GROQ_API_KEY`: API key dùng để gọi Groq.
-- `GROQ_MODEL`: model Groq muốn dùng, mặc định là `llama-3.1-8b-instant`.
-- `GROQ_MAX_ARTICLE_CHARS`: số ký tự bài viết gửi sang Groq, mặc định là `8000` để tránh vượt TPM free tier.
-- `GROQ_MAX_OUTPUT_TOKENS`: số token trả lời tối đa, mặc định là `900`.
-- `SUMMARY_PROVIDER`: đặt là `groq`.
-
-Tuỳ chọn dùng Gemini:
-
-- `GEMINI_API_KEY`: API key dùng để gọi Gemini.
-- `GEMINI_MODEL`: model Gemini muốn dùng, mặc định là `gemini-2.0-flash`.
-
-Hoặc dùng OpenAI:
-
-- `OPENAI_API_KEY`: API key dùng để gọi OpenAI.
-- `OPENAI_MODEL`: model OpenAI muốn dùng, mặc định là `gpt-4o-mini`.
-- `SUMMARY_PROVIDER`: chọn `groq`, `openai`, `gemini`, hoặc `auto`. Mặc định `auto`; nếu có `GROQ_API_KEY` thì ưu tiên Groq, sau đó đến OpenAI, rồi Gemini.
-
-Khi chạy bằng Docker Compose, có thể đặt các biến này trong file `.env` ở thư mục dự án.
 
 Để nguồn/preset thêm từ UI không mất sau khi Render restart hoặc redeploy, cần bật Persistent Disk và cấu hình:
 

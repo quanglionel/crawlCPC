@@ -129,7 +129,6 @@ body {
 
 .hero-badges span,
 .article-meta span,
-.summary-label,
 .empty-kicker {
   display: inline-flex;
   align-items: center;
@@ -424,28 +423,6 @@ button {
   border-radius: 999px;
 }
 
-.summary-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
-  margin-bottom: 18px;
-}
-
-.summary-card {
-  display: grid;
-  gap: 10px;
-  padding: 18px;
-  border-radius: 22px;
-  background:
-    linear-gradient(160deg, rgba(255, 255, 255, 0.88), rgba(255, 246, 232, 0.82)),
-    var(--bg-soft);
-  border: 1px solid rgba(23, 33, 43, 0.08);
-}
-
-.summary-card strong {
-  font-size: 1.05rem;
-}
-
 .result-toolbar {
   display: grid;
   gap: 16px;
@@ -673,75 +650,6 @@ button {
   align-items: center;
 }
 
-.summary-workspace {
-  grid-template-columns: minmax(380px, 520px) minmax(0, 1fr);
-}
-
-.summary-form {
-  gap: 14px;
-}
-
-.summary-input-textarea {
-  min-height: 260px;
-}
-
-.summary-prompt-textarea {
-  min-height: 320px;
-}
-
-.chat-thread {
-  display: grid;
-  gap: 14px;
-  max-height: 820px;
-  overflow: auto;
-  padding-right: 4px;
-}
-
-.chat-message {
-  display: grid;
-  gap: 8px;
-  max-width: 92%;
-}
-
-.chat-message.is-user {
-  justify-self: end;
-}
-
-.chat-message.is-assistant,
-.chat-message.is-error {
-  justify-self: start;
-}
-
-.chat-role {
-  color: var(--ink-soft);
-  font-size: 0.82rem;
-  font-weight: 700;
-}
-
-.chat-message.is-user .chat-role {
-  text-align: right;
-}
-
-.chat-body {
-  padding: 16px 18px;
-  border-radius: 22px;
-  background: rgba(255, 255, 255, 0.88);
-  border: 1px solid rgba(23, 33, 43, 0.08);
-  color: var(--ink);
-  line-height: 1.7;
-  white-space: pre-wrap;
-}
-
-.chat-message.is-user .chat-body {
-  background: rgba(29, 122, 116, 0.13);
-  color: #174d49;
-}
-
-.chat-message.is-error .chat-body {
-  background: rgba(186, 38, 62, 0.12);
-  color: #7e2030;
-}
-
 .original-view {
   margin-top: 14px;
   padding: 14px 16px;
@@ -846,10 +754,6 @@ body.is-loading .panel {
     grid-template-columns: 1fr;
   }
 
-  .summary-workspace {
-    grid-template-columns: 1fr;
-  }
-
   .hero {
     grid-template-columns: 1fr;
     align-items: flex-start;
@@ -898,8 +802,7 @@ body.is-loading .panel {
     white-space: normal;
   }
 
-  .form-grid,
-  .summary-grid {
+  .form-grid {
     grid-template-columns: 1fr;
   }
 
@@ -922,10 +825,6 @@ body.is-loading .panel {
 
   .filter-grid {
     grid-template-columns: 1fr;
-  }
-
-  .chat-message {
-    max-width: 100%;
   }
 
   .filter-search-field {

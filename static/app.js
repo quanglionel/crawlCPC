@@ -7,6 +7,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const crawlJobText = document.getElementById("crawl_job_text");
   const crawlJobMeta = document.getElementById("crawl_job_meta");
   const crawlJobProgress = document.getElementById("crawl_job_progress");
+  const translationToggle = document.getElementById("translation_toggle");
+  const translationNotice = document.getElementById("translation_notice");
   const sources = window.SOURCE_CATALOG || [];
   const presetLabels = window.PRESET_LABELS || {};
   const sourceLookup = Object.fromEntries(sources.map((source) => [source.source_key, source]));
@@ -197,6 +199,64 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const dateOnly = (date) => new Date(date.getFullYear(), date.getMonth(), date.getDate());
 
+  const textForLanguage = (card, field, useVietnamese) => {
+    const prefix = useVietnamese && card.dataset.hasVi === "true" ? "vi" : "original";
+    return card.dataset[`${prefix}${field}`] || "";
+  };
+
+  const setOptionalText = (node, text, truncated = false) => {
+    if (!node) {
+      return;
+    }
+
+    node.textContent = text ? `${text}${truncated ? "..." : ""}` : "";
+    node.hidden = !text;
+  };
+
+  const applyTranslationToggle = () => {
+    const useVietnamese = Boolean(translationToggle?.checked);
+    let translatedVisibleCount = 0;
+
+    articleCards.forEach((card) => {
+      const hasVietnamese = card.dataset.hasVi === "true";
+      const showVietnamese = useVietnamese && hasVietnamese;
+      if (showVietnamese) {
+        translatedVisibleCount += 1;
+      }
+
+      const title = card.querySelector("[data-article-field='title']");
+      const date = card.querySelector("[data-article-field='date']");
+      const summary = card.querySelector("[data-article-field='summary']");
+      const content = card.querySelector("[data-article-field='content']");
+      const badge = card.querySelector("[data-translation-badge]");
+      const originalView = card.querySelector("[data-original-view]");
+      const prefix = showVietnamese ? "vi" : "original";
+
+      if (title) {
+        title.textContent = textForLanguage(card, "Title", showVietnamese) || title.textContent;
+      }
+      if (date) {
+        date.textContent = textForLanguage(card, "Date", showVietnamese) || "Chưa có ngày đăng";
+      }
+      setOptionalText(summary, textForLanguage(card, "Summary", showVietnamese));
+      setOptionalText(
+        content,
+        textForLanguage(card, "Content", showVietnamese),
+        card.dataset[`${prefix}ContentTruncated`] === "true",
+      );
+      if (badge) {
+        badge.hidden = !showVietnamese;
+      }
+      if (originalView) {
+        originalView.hidden = !showVietnamese;
+      }
+    });
+
+    if (translationNotice) {
+      translationNotice.hidden = !useVietnamese || translatedVisibleCount === 0;
+    }
+  };
+
   const parseDateValue = (value) => {
     const raw = (value || "").trim();
     if (!raw) {
@@ -332,6 +392,14 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  if (translationToggle) {
+    translationToggle.addEventListener("change", () => {
+      applyTranslationToggle();
+      applyResultFilters();
+    });
+  }
+
+  applyTranslationToggle();
   applyResultFilters();
 
   const visibleSourceCheckboxes = () => sourceCheckboxes.filter((checkbox) => {

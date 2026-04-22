@@ -83,6 +83,7 @@
               <label class="translation-toggle">
                 <input
                   type="checkbox"
+                  id="translation_toggle"
                   name="translate_to_vi"
                   value="on"
                   {% if crawl_form_data.translate_to_vi == "on" %}checked{% endif %}
@@ -173,8 +174,12 @@
                 </p>
               </div>
 
-              {% if result.translation and result.translation.enabled %}
-                <div class="notice is-success">
+              {% if result.translation and result.translation.article_success_count %}
+                <div
+                  class="notice is-success"
+                  id="translation_notice"
+                  {% if crawl_form_data.translate_to_vi != "on" %}hidden{% endif %}
+                >
                   <p>Đang hiển thị bản dịch tiếng Việt cho bài viết. File JSON và phần “Xem JSON đầy đủ” vẫn là dữ liệu gốc.</p>
                 </div>
               {% endif %}
@@ -199,35 +204,62 @@
                   {% for article in result.articles %}
                     {% set article_source_key = article.source_key or (selected_source.source_key if selected_source else "") %}
                     {% set article_source_name = article.source_name or (selected_source.name if selected_source else result.site_name) %}
+                    {% set has_vi_translation = article.display_language == "vi" %}
+                    {% set show_vi_translation = has_vi_translation and crawl_form_data.translate_to_vi == "on" %}
+                    {% set original_title = article.title or article.url %}
+                    {% set original_summary = article.summary or "" %}
+                    {% set original_date = article.published_at or "Chưa có ngày đăng" %}
+                    {% set original_content = article.content[:420] if article.content else "" %}
+                    {% set original_content_truncated = article.content and article.content|length > 420 %}
+                    {% set vi_title = article.display_title or "" %}
+                    {% set vi_summary = article.display_summary or "" %}
+                    {% set vi_date = article.display_published_at or "" %}
+                    {% set vi_content = article.display_content or "" %}
+                    {% set active_summary = vi_summary if show_vi_translation else original_summary %}
+                    {% set active_content = vi_content if show_vi_translation else original_content %}
+                    {% set active_content_truncated = article.display_content_truncated if show_vi_translation else original_content_truncated %}
                     <article
                       class="article-card {% if article.error %}is-error{% endif %}"
                       data-source-key="{{ article_source_key }}"
                       data-source-name="{{ article_source_name }}"
                       data-published-at="{{ article.published_at or '' }}"
+                      data-has-vi="{{ 'true' if has_vi_translation else 'false' }}"
+                      data-original-title="{{ original_title }}"
+                      data-original-summary="{{ original_summary }}"
+                      data-original-date="{{ original_date }}"
+                      data-original-content="{{ original_content }}"
+                      data-original-content-truncated="{{ 'true' if original_content_truncated else 'false' }}"
+                      data-vi-title="{{ vi_title }}"
+                      data-vi-summary="{{ vi_summary }}"
+                      data-vi-date="{{ vi_date }}"
+                      data-vi-content="{{ vi_content }}"
+                      data-vi-content-truncated="{{ 'true' if article.display_content_truncated else 'false' }}"
                     >
                       <div class="article-meta">
                         <span>{{ article_source_name }}</span>
-                        <span>{{ article.display_published_at or article.published_at or "Chưa có ngày đăng" }}</span>
+                        <span data-article-field="date">{{ vi_date if show_vi_translation else original_date }}</span>
                         <span>{{ article.author or "Không rõ tác giả" }}</span>
-                        {% if article.display_language == "vi" %}
-                          <span>Bản dịch tiếng Việt</span>
-                        {% endif %}
+                        <span class="translation-badge" data-translation-badge {% if not show_vi_translation %}hidden{% endif %}>Bản dịch tiếng Việt</span>
                       </div>
-                      <h3>{{ article.display_title or article.title or article.url }}</h3>
-                      {% if article.display_summary %}
-                        <p class="article-summary">{{ article.display_summary }}</p>
-                      {% endif %}
-                      {% if article.display_content %}
-                        <p class="article-content">{{ article.display_content }}{% if article.display_content_truncated %}...{% endif %}</p>
-                      {% endif %}
+                      <h3 data-article-field="title">{{ vi_title if show_vi_translation else original_title }}</h3>
+                      <p
+                        class="article-summary"
+                        data-article-field="summary"
+                        {% if not active_summary %}hidden{% endif %}
+                      >{{ active_summary }}</p>
+                      <p
+                        class="article-content"
+                        data-article-field="content"
+                        {% if not active_content %}hidden{% endif %}
+                      >{{ active_content }}{% if active_content_truncated %}...{% endif %}</p>
                       {% if article.translation_error %}
                         <p class="article-error">Không dịch được bài này: {{ article.translation_error }}</p>
                       {% endif %}
                       {% if article.error %}
                         <p class="article-error">{{ article.error }}</p>
                       {% endif %}
-                      {% if article.display_language == "vi" %}
-                        <details class="original-view">
+                      {% if has_vi_translation %}
+                        <details class="original-view" data-original-view {% if not show_vi_translation %}hidden{% endif %}>
                           <summary>Xem nguyên bản</summary>
                           <h4>{{ article.title or article.url }}</h4>
                           {% if article.summary %}

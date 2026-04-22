@@ -730,7 +730,7 @@ def create_app() -> Flask:
                         raw_result_json = json.dumps(loaded_result, ensure_ascii=False, indent=2)
                         result = prepare_result_for_display(
                             loaded_result,
-                            translate_to_vi=crawl_form_data["translate_to_vi"] == "on",
+                            translate_to_vi=True,
                         )
                     except Exception:
                         pass
@@ -827,7 +827,7 @@ def create_app() -> Flask:
                         raw_result_json = json.dumps(result, ensure_ascii=False, indent=2)
                         result = prepare_result_for_display(
                             result,
-                            translate_to_vi=crawl_form_data["translate_to_vi"] == "on",
+                            translate_to_vi=True,
                         )
 
                         display_filtered_articles = [

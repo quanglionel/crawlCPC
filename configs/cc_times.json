@@ -1,0 +1,121 @@
+{
+  "site_name": "CC Times",
+  "base_url": "https://cc-times.com",
+  "allowed_domains": [
+    "cc-times.com"
+  ],
+  "listing_urls": [
+    "https://cc-times.com/"
+  ],
+  "article_link_selectors": [
+    "a[href*='/posts/']"
+  ],
+  "article_link_pattern": "^https?://(?:www\\.)?cc-times\\.com/posts/\\d+/?$",
+  "article_link_order": "id_desc",
+  "article_link_id_pattern": "/posts/(\\d+)",
+  "article_link_exclude_patterns": [
+    "\\.(?:7z|avi|css|docx?|gif|ico|jpe?g|js|mp3|mp4|pdf|png|rar|svg|webp|xlsx?|xml|zip)(?:[?#]|$)",
+    "(?:facebook|instagram|linkedin|telegram|tiktok|twitter|x|youtube)\\.com"
+  ],
+  "fields": {
+    "title": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": "h1.title"
+        },
+        {
+          "selector": "h1"
+        },
+        {
+          "selector": "meta[property='og:title']",
+          "attr": "content"
+        },
+        {
+          "selector": "title"
+        }
+      ]
+    },
+    "summary": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": "meta[property='og:description']",
+          "attr": "content"
+        },
+        {
+          "selector": "meta[name='description']",
+          "attr": "content"
+        }
+      ]
+    },
+    "published_at": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": ".post-widget",
+          "regex": "(\\d{4}年\\d{1,2}月\\d{1,2}日\\s+\\d{1,2}:\\d{2})"
+        }
+      ]
+    },
+    "author": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": ".author"
+        }
+      ]
+    },
+    "content": {
+      "mode": "join",
+      "separator": "\n\n",
+      "extractors": [
+        {
+          "selector": ".js-post-content > p"
+        }
+      ]
+    },
+    "images": {
+      "mode": "list",
+      "extractors": [
+        {
+          "selector": "meta[property='og:image']",
+          "attr": "content"
+        },
+        {
+          "selector": ".post-container img[src]",
+          "attr": "src"
+        }
+      ]
+    }
+  },
+  "remove_selectors": [
+    "script",
+    "style",
+    "noscript",
+    "iframe",
+    "form",
+    "nav",
+    "header",
+    "footer",
+    ".advertisement",
+    ".ads",
+    ".ad",
+    ".share",
+    ".social-share",
+    ".related-posts",
+    ".related",
+    ".comments",
+    ".download-app-link"
+  ],
+  "request": {
+    "timeout_seconds": 20,
+    "delay_seconds": 0.2,
+    "respect_robots_txt": false,
+    "headers": {
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+      "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+      "Accept-Language": "zh-CN,zh;q=0.9,km;q=0.8,en-US;q=0.7,en;q=0.6"
+    }
+  }
+}

@@ -458,6 +458,10 @@ class MediaCrawler:
                 value = str(node)
             else:
                 value = extract_text(node)
+            regex = spec.get("regex")
+            if value and regex:
+                match = re.search(str(regex), value)
+                value = match.group(1) if match and match.groups() else (match.group(0) if match else "")
             if value:
                 values.append(value)
 

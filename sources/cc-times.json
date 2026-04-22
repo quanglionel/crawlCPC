@@ -1,0 +1,12 @@
+{
+  "source_key": "cc-times",
+  "name": "CC Times",
+  "target_url": "https://cc-times.com/",
+  "target_mode": "listing",
+  "preset_path": "configs/cc_times.json",
+  "output": "output/cc_times.json",
+  "max_pages": 1,
+  "max_articles": 5,
+  "workers": 4,
+  "notes": "Dedicated preset for CC Times. Uses /posts/ article links and .js-post-content paragraphs."
+}

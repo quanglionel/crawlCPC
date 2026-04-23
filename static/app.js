@@ -9,11 +9,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const crawlJobProgress = document.getElementById("crawl_job_progress");
   const translationToggle = document.getElementById("translation_toggle");
   const translationNotice = document.getElementById("translation_notice");
+  const articleList = document.getElementById("article_list");
   const sources = window.SOURCE_CATALOG || [];
   const presetLabels = window.PRESET_LABELS || {};
   const sourceLookup = Object.fromEntries(sources.map((source) => [source.source_key, source]));
   const allSourcesKey = "__all__";
   let crawlJobPollTimer = null;
+  let articleCards = Array.from(document.querySelectorAll(".article-card"));
+  const renderedArticleUrls = new Set(articleCards.map((card) => card.dataset.articleUrl || "").filter(Boolean));
   const keepAliveIntervalMs = 4 * 60 * 1000;
 
   const pingHealthCheck = () => {
@@ -71,12 +74,135 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  const clipText = (value, maxLength = 420) => {
+    const text = String(value || "");
+    if (text.length <= maxLength) {
+      return { text, truncated: false };
+    }
+    return { text: text.slice(0, maxLength), truncated: true };
+  };
+
+  const setCardDataset = (card, article) => {
+    const originalContent = clipText(article.content || "");
+    card.dataset.articleUrl = article.url || "";
+    card.dataset.sourceKey = article.source_key || "";
+    card.dataset.sourceName = article.source_name || "All Sources";
+    card.dataset.publishedAt = article.published_at || "";
+    card.dataset.hasVi = article.display_language === "vi" ? "true" : "false";
+    card.dataset.originalTitle = article.title || article.url || "";
+    card.dataset.originalSummary = article.summary || "";
+    card.dataset.originalDate = article.published_at || "Chua co ngay dang";
+    card.dataset.originalContent = originalContent.text;
+    card.dataset.originalContentTruncated = originalContent.truncated ? "true" : "false";
+    card.dataset.viTitle = article.display_title || "";
+    card.dataset.viSummary = article.display_summary || "";
+    card.dataset.viDate = article.display_published_at || "";
+    card.dataset.viContent = article.display_content || "";
+    card.dataset.viContentTruncated = article.display_content_truncated ? "true" : "false";
+  };
+
+  const appendTextNode = (parent, tagName, className, text) => {
+    const node = document.createElement(tagName);
+    if (className) {
+      node.className = className;
+    }
+    node.textContent = text || "";
+    parent.appendChild(node);
+    return node;
+  };
+
+  const createArticleCard = (article) => {
+    const card = document.createElement("article");
+    card.className = `article-card${article.error ? " is-error" : ""}`;
+    setCardDataset(card, article);
+
+    const meta = document.createElement("div");
+    meta.className = "article-meta";
+    appendTextNode(meta, "span", "", card.dataset.sourceName);
+    const date = appendTextNode(meta, "span", "", "");
+    date.dataset.articleField = "date";
+    appendTextNode(meta, "span", "", article.author || "Khong ro tac gia");
+    const badge = appendTextNode(meta, "span", "translation-badge", "Ban dich tieng Viet");
+    badge.dataset.translationBadge = "";
+    badge.hidden = true;
+    card.appendChild(meta);
+
+    const title = appendTextNode(card, "h3", "", "");
+    title.dataset.articleField = "title";
+    const summary = appendTextNode(card, "p", "article-summary", "");
+    summary.dataset.articleField = "summary";
+    const content = appendTextNode(card, "p", "article-content", "");
+    content.dataset.articleField = "content";
+
+    if (article.translation_error) {
+      appendTextNode(card, "p", "article-error", `Khong dich duoc bai nay: ${article.translation_error}`);
+    }
+    if (article.error) {
+      appendTextNode(card, "p", "article-error", article.error);
+    }
+
+    if (article.display_language === "vi") {
+      const details = document.createElement("details");
+      details.className = "original-view";
+      details.dataset.originalView = "";
+      details.hidden = true;
+      appendTextNode(details, "summary", "", "Xem nguyen ban");
+      appendTextNode(details, "h4", "", article.title || article.url || "");
+      if (article.summary) {
+        appendTextNode(details, "p", "", article.summary);
+      }
+      if (article.content) {
+        const originalContent = clipText(article.content);
+        appendTextNode(details, "p", "", `${originalContent.text}${originalContent.truncated ? "..." : ""}`);
+      }
+      card.appendChild(details);
+    }
+
+    const actions = document.createElement("div");
+    actions.className = "article-actions";
+    const link = document.createElement("a");
+    link.href = article.url || "#";
+    link.target = "_blank";
+    link.rel = "noreferrer";
+    link.textContent = "Mo bai goc";
+    actions.appendChild(link);
+    card.appendChild(actions);
+    return card;
+  };
+
+  const appendLiveArticles = (articles) => {
+    if (!articleList || !Array.isArray(articles) || !articles.length) {
+      return;
+    }
+
+    let added = 0;
+    articles.forEach((article) => {
+      const articleUrl = String(article.url || "");
+      if (!articleUrl || renderedArticleUrls.has(articleUrl)) {
+        return;
+      }
+      const card = createArticleCard(article);
+      articleList.appendChild(card);
+      articleCards.push(card);
+      renderedArticleUrls.add(articleUrl);
+      added += 1;
+    });
+
+    if (!added) {
+      return;
+    }
+    ensureSourceFilterOptions();
+    applyTranslationToggle();
+    applyResultFilters();
+  };
+
   const renderCrawlJob = (job) => {
     if (!crawlJobPanel || !job) {
       return;
     }
 
     crawlJobPanel.hidden = false;
+    appendLiveArticles(job.articles || []);
     const total = Number(job.source_count || 0);
     const processed = Number(job.processed_sources || 0);
     const progress = total > 0 ? Math.min(100, Math.round((processed / total) * 100)) : 0;
@@ -162,9 +288,6 @@ document.addEventListener("DOMContentLoaded", () => {
     crawlJobPollTimer = setInterval(poll, 3000);
   };
 
-  startCrawlJobPolling();
-
-  const articleCards = Array.from(document.querySelectorAll(".article-card"));
   const resultSearch = document.getElementById("result_search");
   const resultSourceFilter = document.getElementById("result_source_filter");
   const resultDateFrom = document.getElementById("result_date_from");
@@ -401,6 +524,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   applyTranslationToggle();
   applyResultFilters();
+  startCrawlJobPolling();
 
   const visibleSourceCheckboxes = () => sourceCheckboxes.filter((checkbox) => {
     const card = checkbox.closest(".entity-card");

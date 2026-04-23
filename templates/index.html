@@ -129,14 +129,20 @@
               <p>Tìm kiếm và lọc nhanh trên danh sách bài viết của lần crawl gần nhất.</p>
             </div>
 
-            {% if result %}
+            {% if result or active_crawl_job %}
               <div class="result-toolbar" id="result_filters">
                 <div class="filter-heading">
                   <div>
                     <p class="empty-kicker">Bộ lọc kết quả</p>
                     <h3>Tìm nhanh trong bài đã crawl</h3>
                   </div>
-                  <span class="pill" id="result_count">{{ result_pagination.page_items }}/{{ result_pagination.total_items }} bài ở trang {{ result_pagination.page }}/{{ result_pagination.total_pages }}</span>
+                  <span class="pill" id="result_count">
+                    {% if result %}
+                      {{ result_pagination.page_items }}/{{ result_pagination.total_items }} bài ở trang {{ result_pagination.page }}/{{ result_pagination.total_pages }}
+                    {% else %}
+                      0/0 bài đang hiển thị
+                    {% endif %}
+                  </span>
                 </div>
 
                 <div class="filter-grid">
@@ -174,7 +180,7 @@
                 </p>
               </div>
 
-              {% if result.translation and result.translation.article_success_count %}
+              {% if result and result.translation and result.translation.article_success_count %}
                 <div
                   class="notice is-success"
                   id="translation_notice"
@@ -184,7 +190,7 @@
                 </div>
               {% endif %}
 
-              {% if result.warnings %}
+              {% if result and result.warnings %}
                 <div class="notice is-warning">
                   {% for warning in result.warnings %}
                     <p>{{ warning }}</p>
@@ -192,7 +198,7 @@
                 </div>
               {% endif %}
 
-              {% if result.article_count == 0 %}
+              {% if result and result.article_count == 0 %}
                 <div class="notice is-warning">
                   <p>Chưa tìm thấy bài viết nào. Hãy kiểm tra nguồn và preset có khớp nhau không.</p>
                 </div>
@@ -200,7 +206,8 @@
                 <div class="notice is-warning filter-empty-state" id="filter_empty_state" hidden>
                   <p>Không có bài nào khớp với bộ lọc hiện tại.</p>
                 </div>
-                <div class="article-list">
+                <div class="article-list" id="article_list">
+                  {% if result %}
                   {% for article in result.articles %}
                     {% set article_source_key = article.source_key or (selected_source.source_key if selected_source else "") %}
                     {% set article_source_name = article.source_name or (selected_source.name if selected_source else result.site_name) %}
@@ -220,6 +227,7 @@
                     {% set active_content_truncated = article.display_content_truncated if show_vi_translation else original_content_truncated %}
                     <article
                       class="article-card {% if article.error %}is-error{% endif %}"
+                      data-article-url="{{ article.url or '' }}"
                       data-source-key="{{ article_source_key }}"
                       data-source-name="{{ article_source_name }}"
                       data-published-at="{{ article.published_at or '' }}"
@@ -275,9 +283,10 @@
                       </div>
                     </article>
                   {% endfor %}
+                  {% endif %}
                 </div>
 
-                {% if result_pagination.total_pages > 1 %}
+                {% if result and result_pagination.total_pages > 1 %}
                   <nav class="result-pagination" aria-label="Phân trang kết quả crawl">
                     {% if result_pagination.has_prev %}
                       <a
@@ -302,10 +311,12 @@
                 {% endif %}
               {% endif %}
 
-              <details class="json-viewer">
-                <summary>Xem JSON đầy đủ</summary>
-                <pre>{{ raw_result_json }}</pre>
-              </details>
+              {% if result %}
+                <details class="json-viewer">
+                  <summary>Xem JSON đầy đủ</summary>
+                  <pre>{{ raw_result_json }}</pre>
+                </details>
+              {% endif %}
             {% else %}
               <div class="empty-state">
                 <p class="empty-kicker">Sẵn sàng cho lần chạy đầu tiên</p>

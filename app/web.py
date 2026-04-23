@@ -80,6 +80,7 @@ def create_crawl_job(job_id: str, source_count: int, output_path: str) -> None:
             "dropped_no_time_count": 0,
             "dropped_old_count": 0,
             "current_source": "",
+            "articles": [],
             "output_path": output_path,
             "created_at": datetime.now(timezone.utc).isoformat(),
             "updated_at": datetime.now(timezone.utc).isoformat(),
@@ -100,6 +101,25 @@ def update_crawl_job(job_id: str, **updates: Any) -> None:
             return
         for key, value in updates.items():
             job[key] = value
+        job["updated_at"] = datetime.now(timezone.utc).isoformat()
+
+
+def append_crawl_job_articles(job_id: str, articles: list[dict[str, Any]]) -> None:
+    if not articles:
+        return
+
+    with CRAWL_JOBS_LOCK:
+        job = CRAWL_JOBS.get(job_id)
+        if not job:
+            return
+        known_urls = {str(article.get("url") or "") for article in job.get("articles", [])}
+        for article in articles:
+            article_url = str(article.get("url") or "")
+            if article_url and article_url in known_urls:
+                continue
+            job.setdefault("articles", []).append(article)
+            if article_url:
+                known_urls.add(article_url)
         job["updated_at"] = datetime.now(timezone.utc).isoformat()
 
 
@@ -587,6 +607,7 @@ def run_crawl_all_sources_last_24h(
                             "dropped_no_time_count": dropped_no_time,
                             "dropped_old_count": dropped_old,
                             "current_source": "",
+                            "new_articles": [],
                         }
                     )
                 continue
@@ -613,6 +634,7 @@ def run_crawl_all_sources_last_24h(
                         "dropped_old_count": dropped_old,
                         "dropped_non_article_count": dropped_non_article,
                         "current_source": str(source_result.get("source_name") or ""),
+                        "new_articles": source_result["articles"],
                     }
                 )
 
@@ -659,6 +681,23 @@ def run_all_sources_crawl_job(
     workers: int,
     clicked_at: datetime,
 ) -> None:
+    def publish_progress(progress: dict[str, Any]) -> None:
+        new_articles = progress.pop("new_articles", [])
+        if new_articles:
+            display_payload = prepare_result_for_display(
+                {
+                    "site_name": "All Sources",
+                    "article_count": len(new_articles),
+                    "success_count": sum(1 for article in new_articles if "error" not in article),
+                    "error_count": sum(1 for article in new_articles if "error" in article),
+                    "warnings": [],
+                    "articles": new_articles,
+                },
+                translate_to_vi=True,
+            )
+            append_crawl_job_articles(job_id, display_payload.get("articles") or [])
+        update_crawl_job(job_id, **progress)
+
     try:
         payload = run_crawl_all_sources_last_24h(
             sources=sources,
@@ -668,8 +707,10 @@ def run_all_sources_crawl_job(
             max_articles=max_articles,
             workers=workers,
             clicked_at=clicked_at,
-            progress_callback=lambda progress: update_crawl_job(job_id, **progress),
+            progress_callback=publish_progress,
         )
+        final_display_payload = prepare_result_for_display(payload, translate_to_vi=True)
+        update_crawl_job(job_id, articles=final_display_payload.get("articles") or [])
         update_crawl_job(
             job_id,
             status="completed",

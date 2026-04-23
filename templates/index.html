@@ -111,9 +111,9 @@
                 <p id="crawl_job_text">
                   {% if active_crawl_job %}
                     {% if active_crawl_job.status == "running" %}
-                      Dang crawl tat ca nguon o che do nen...
+                      Dang crawl tat ca nguon o che do nen. Bai nao crawl duoc se hien thi ngay trong luc chay.
                     {% elif active_crawl_job.status == "completed" %}
-                      Job da hoan tat. Dang tai ket qua moi nhat.
+                      Job da hoan tat. Dang tai lai ket qua day du.
                     {% else %}
                       Job crawl that bai: {{ active_crawl_job.error or 'Khong ro nguyen nhan' }}
                     {% endif %}

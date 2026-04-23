@@ -825,7 +825,7 @@ def create_app() -> Flask:
                         active_crawl_job = get_crawl_job(active_job_id)
                         page_notice = {
                             "level": "success",
-                            "text": "Da bat dau crawl tat ca nguon o che do nen. Ket qua se tu dong cap nhat khi hoan tat.",
+                            "text": "Da bat dau crawl tat ca nguon o che do nen. Bai nao crawl duoc se hien thi ngay trong luc chay.",
                         }
                         active_tab = "crawl"
                     else:

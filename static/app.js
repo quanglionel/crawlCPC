@@ -216,12 +216,12 @@ document.addEventListener("DOMContentLoaded", () => {
     if (status === "running") {
       if (crawlJobText) {
         crawlJobText.textContent = currentSource
-          ? `Dang crawl: ${currentSource}`
-          : "Dang crawl tat ca nguon o che do nen...";
+          ? `Dang crawl: ${currentSource}. Bai moi se hien thi ngay khi co.`
+          : "Dang crawl tat ca nguon o che do nen. Bai moi se hien thi ngay khi co.";
       }
     } else if (status === "completed") {
       if (crawlJobText) {
-        crawlJobText.textContent = "Crawl tat ca nguon da hoan tat, dang tai ket qua.";
+        crawlJobText.textContent = "Crawl tat ca nguon da hoan tat. Dang tai lai ket qua day du.";
       }
     } else if (status === "failed") {
       if (crawlJobText) {

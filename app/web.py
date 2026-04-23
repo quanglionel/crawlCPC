@@ -36,6 +36,7 @@ from app.translator import prepare_result_for_display
 
 
 ALL_SOURCES_KEY = "__all__"
+CUSTOM_SOURCES_KEY = "__custom__"
 RECENT_WINDOW_HOURS = 24
 ALL_SOURCES_MAX_CONCURRENT_SOURCES = 8
 ALL_SOURCES_PER_DOMAIN_CONCURRENCY = 1
@@ -145,10 +146,11 @@ def first_preset_path(presets: list[dict[str, Any]]) -> str:
     return presets[0]["path"] if presets else ""
 
 
-def build_initial_crawl_form_data(presets: list[dict[str, Any]], preset_lookup: dict[str, str]) -> dict[str, str]:
+def build_initial_crawl_form_data(presets: list[dict[str, Any]], preset_lookup: dict[str, str]) -> dict[str, Any]:
     selected_preset = first_preset_path(presets)
     return {
         "selected_source_key": ALL_SOURCES_KEY,
+        "selected_source_keys": [],
         "selected_preset": selected_preset,
         "target_url": "",
         "target_mode": "auto",
@@ -189,10 +191,16 @@ def build_initial_preset_form_data(presets: list[dict[str, Any]], preset_lookup:
     }
 
 
-def update_crawl_form_data(form_data: dict[str, str], form: Any) -> None:
+def update_crawl_form_data(form_data: dict[str, Any], form: Any) -> None:
+    selected_source_keys = [
+        key.strip()
+        for key in form.getlist("selected_source_keys")
+        if key.strip()
+    ]
     form_data.update(
         {
             "selected_source_key": form.get("selected_source_key", form_data["selected_source_key"]).strip(),
+            "selected_source_keys": selected_source_keys,
             "selected_preset": form.get("selected_preset", form_data["selected_preset"]).strip(),
             "target_url": form.get("target_url", form_data["target_url"]).strip(),
             "target_mode": form.get("target_mode", form_data["target_mode"]).strip() or "auto",
@@ -257,12 +265,13 @@ def build_crawl_form_from_source(
     source: dict[str, Any],
     preset_lookup: dict[str, str],
     presets: list[dict[str, Any]],
-) -> dict[str, str]:
+) -> dict[str, Any]:
     selected_preset = str(source.get("preset_path") or "")
     if selected_preset not in preset_lookup:
         selected_preset = first_preset_path(presets)
     return {
         "selected_source_key": source["source_key"],
+        "selected_source_keys": [],
         "selected_preset": selected_preset,
         "target_url": str(source.get("target_url") or ""),
         "target_mode": str(source.get("target_mode") or "auto"),
@@ -281,7 +290,7 @@ def build_crawl_form_for_run(
     presets: list[dict[str, Any]],
     max_articles_override: str = "",
     translate_to_vi: str = "on",
-) -> dict[str, str]:
+) -> dict[str, Any]:
     form_data = build_crawl_form_from_source(source, preset_lookup, presets)
     if max_articles_override.strip():
         form_data["max_articles"] = max_articles_override.strip()
@@ -798,12 +807,29 @@ def create_app() -> Flask:
                     max_articles = parse_optional_int(crawl_form_data["max_articles"], "max_articles")
                     workers = parse_optional_int(crawl_form_data["workers"], "workers") or 4
 
-                    if crawl_form_data["selected_source_key"] == ALL_SOURCES_KEY:
+                    if crawl_form_data["selected_source_key"] in {ALL_SOURCES_KEY, CUSTOM_SOURCES_KEY}:
+                        if crawl_form_data["selected_source_key"] == CUSTOM_SOURCES_KEY:
+                            selected_keys = list(dict.fromkeys(crawl_form_data.get("selected_source_keys") or []))
+                            selected_sources = [source_lookup[key] for key in selected_keys if key in source_lookup]
+                            if not selected_sources:
+                                raise ValueError("Vui lòng chọn ít nhất một nguồn để crawl.")
+                            output_prefix = "articles_selected_sources_last_24h"
+                            notice_text = (
+                                f"Da bat dau crawl {len(selected_sources)} nguon da chon o che do nen. "
+                                "Bai nao crawl duoc se hien thi ngay trong luc chay."
+                            )
+                        else:
+                            selected_sources = sources
+                            output_prefix = "articles_all_sources_last_24h"
+                            notice_text = (
+                                "Da bat dau crawl tat ca nguon o che do nen. "
+                                "Bai nao crawl duoc se hien thi ngay trong luc chay."
+                            )
                         active_job_id = uuid.uuid4().hex[:12]
-                        crawl_form_data["output"] = f"output/articles_all_sources_last_24h_{active_job_id}.json"
+                        crawl_form_data["output"] = f"output/{output_prefix}_{active_job_id}.json"
                         create_crawl_job(
                             job_id=active_job_id,
-                            source_count=len(sources),
+                            source_count=len(selected_sources),
                             output_path=crawl_form_data["output"],
                         )
                         clicked_at = datetime.now(timezone.utc)
@@ -811,7 +837,7 @@ def create_app() -> Flask:
                             target=run_all_sources_crawl_job,
                             kwargs={
                                 "job_id": active_job_id,
-                                "sources": sources,
+                                "sources": selected_sources,
                                 "preset_lookup": preset_lookup,
                                 "output_path": resolve_path(crawl_form_data["output"]),
                                 "max_pages": max_pages,
@@ -825,7 +851,7 @@ def create_app() -> Flask:
                         active_crawl_job = get_crawl_job(active_job_id)
                         page_notice = {
                             "level": "success",
-                            "text": "Da bat dau crawl tat ca nguon o che do nen. Bai nao crawl duoc se hien thi ngay trong luc chay.",
+                            "text": notice_text,
                         }
                         active_tab = "crawl"
                     else:
@@ -1071,7 +1097,8 @@ def create_app() -> Flask:
         preset_label_lookup = {preset["path"]: preset["label"] for preset in presets}
         selected_source = (
             source_lookup.get(crawl_form_data["selected_source_key"])
-            if crawl_form_data["selected_source_key"] and crawl_form_data["selected_source_key"] != ALL_SOURCES_KEY
+            if crawl_form_data["selected_source_key"]
+            and crawl_form_data["selected_source_key"] not in {ALL_SOURCES_KEY, CUSTOM_SOURCES_KEY}
             else None
         )
 
@@ -1086,6 +1113,7 @@ def create_app() -> Flask:
             source_lookup=source_lookup,
             selected_source=selected_source,
             all_sources_key=ALL_SOURCES_KEY,
+            custom_sources_key=CUSTOM_SOURCES_KEY,
             active_job_id=active_job_id,
             active_crawl_job=active_crawl_job,
             result_pagination=result_pagination,

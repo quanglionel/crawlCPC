@@ -221,6 +221,67 @@ body {
   min-height: 24px;
 }
 
+.custom-source-picker {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid rgba(23, 33, 43, 0.1);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.custom-source-picker[hidden] {
+  display: none;
+}
+
+.custom-source-picker-head,
+.custom-source-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.custom-source-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 8px;
+  max-height: 280px;
+  overflow: auto;
+  padding-right: 4px;
+}
+
+.custom-source-option {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 4px 8px;
+  align-items: start;
+  padding: 10px;
+  border: 1px solid rgba(23, 33, 43, 0.08);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.custom-source-option input {
+  grid-row: span 2;
+  margin-top: 2px;
+}
+
+.custom-source-option span,
+.custom-source-option small {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.custom-source-option span {
+  font-weight: 700;
+}
+
+.custom-source-option small {
+  color: var(--muted);
+}
+
 .translation-toggle {
   display: grid;
   grid-template-columns: auto minmax(0, max-content) 1fr;

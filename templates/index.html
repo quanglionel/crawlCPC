@@ -53,6 +53,8 @@
               </div>
               {% if selected_source %}
                 <span class="pill">Nguồn hiện tại: {{ selected_source.name }}</span>
+              {% elif crawl_form_data.selected_source_key == custom_sources_key %}
+                <span class="pill">Nguồn hiện tại: Nguồn đã chọn</span>
               {% elif crawl_form_data.selected_source_key == all_sources_key %}
                 <span class="pill">Nguồn hiện tại: Tất cả nguồn</span>
               {% endif %}
@@ -66,6 +68,7 @@
                   <span>Nguồn</span>
                   <select name="selected_source_key" id="selected_source_key">
                     <option value="{{ all_sources_key }}" {% if crawl_form_data.selected_source_key == all_sources_key %}selected{% endif %}>Tất cả nguồn (lọc 24h)</option>
+                    <option value="{{ custom_sources_key }}" {% if crawl_form_data.selected_source_key == custom_sources_key %}selected{% endif %}>Nguồn đã chọn (lọc 24h)</option>
                     {% for source in sources %}
                       <option value="{{ source.source_key }}" {% if source.source_key == crawl_form_data.selected_source_key %}selected{% endif %}>
                         {{ source.name }}
@@ -74,10 +77,40 @@
                   </select>
                 </label>
                 <label class="field quick-count-field">
-                  <span>Số bài viết</span>
+                  <span>Số bài viết / nguồn</span>
                   <input type="number" name="max_articles" min="1" value="{{ crawl_form_data.max_articles }}" placeholder="5">
                 </label>
                 <button type="submit" class="primary-button" id="submit_button">Bắt đầu crawl</button>
+              </div>
+
+              <div
+                class="custom-source-picker"
+                id="custom_source_picker"
+                {% if crawl_form_data.selected_source_key != custom_sources_key %}hidden{% endif %}
+              >
+                <div class="custom-source-picker-head">
+                  <strong>Chọn nguồn cần crawl</strong>
+                  <span class="helper-text" id="custom_source_count">Chưa chọn nguồn nào</span>
+                </div>
+                <div class="custom-source-actions">
+                  <button type="button" class="ghost-button small-button" id="custom_source_select_all">Chọn tất cả</button>
+                  <button type="button" class="ghost-button small-button" id="custom_source_clear">Bỏ chọn</button>
+                </div>
+                <div class="custom-source-list">
+                  {% for source in sources %}
+                    <label class="custom-source-option">
+                      <input
+                        type="checkbox"
+                        name="selected_source_keys"
+                        value="{{ source.source_key }}"
+                        class="custom-source-checkbox"
+                        {% if source.source_key in crawl_form_data.selected_source_keys %}checked{% endif %}
+                      >
+                      <span>{{ source.name }}</span>
+                      <small>{{ source.target_url }}</small>
+                    </label>
+                  {% endfor %}
+                </div>
               </div>
 
               <label class="translation-toggle">
@@ -95,8 +128,10 @@
               <p class="helper-text source-runtime-note" id="selected_source_hint">
                 {% if selected_source %}
                   {{ selected_source.target_url }} · preset {{ preset_label_lookup.get(selected_source.preset_path, selected_source.preset_path) }} · output {{ selected_source.output }}
+                {% elif crawl_form_data.selected_source_key == custom_sources_key %}
+                  Chỉ crawl các nguồn đã tick bên trên. Số bài viết là số bài tối đa cho mỗi nguồn đã chọn.
                 {% elif crawl_form_data.selected_source_key == all_sources_key %}
-                  Se crawl tat ca nguon da luu va chi giu bai co published_at (hoac ngay suy luan tu URL) trong 24h gan nhat.
+                  Se crawl tat ca nguon da luu va chi giu bai co published_at (hoac ngay suy luan tu URL) trong 24h gan nhat. So bai viet la so bai toi da moi nguon.
                 {% else %}
                   Chọn một nguồn đã lưu để chạy. Toàn bộ thiết lập crawl sẽ được nạp tự động từ nguồn đó.
                 {% endif %}

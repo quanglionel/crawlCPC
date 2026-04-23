@@ -3,6 +3,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const submitButton = document.getElementById("submit_button");
   const sourceSelect = document.getElementById("selected_source_key");
   const sourceHint = document.getElementById("selected_source_hint");
+  const customSourcePicker = document.getElementById("custom_source_picker");
+  const customSourceCount = document.getElementById("custom_source_count");
+  const customSourceSelectAll = document.getElementById("custom_source_select_all");
+  const customSourceClear = document.getElementById("custom_source_clear");
+  const customSourceCheckboxes = Array.from(document.querySelectorAll(".custom-source-checkbox"));
   const crawlJobPanel = document.getElementById("crawl_job_panel");
   const crawlJobText = document.getElementById("crawl_job_text");
   const crawlJobMeta = document.getElementById("crawl_job_meta");
@@ -14,6 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const presetLabels = window.PRESET_LABELS || {};
   const sourceLookup = Object.fromEntries(sources.map((source) => [source.source_key, source]));
   const allSourcesKey = "__all__";
+  const customSourcesKey = "__custom__";
   let crawlJobPollTimer = null;
   let articleCards = Array.from(document.querySelectorAll(".article-card"));
   const renderedArticleUrls = new Set(articleCards.map((card) => card.dataset.articleUrl || "").filter(Boolean));
@@ -28,6 +34,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
   window.setInterval(pingHealthCheck, keepAliveIntervalMs);
 
+  const selectedCustomSourceCount = () => customSourceCheckboxes.filter((checkbox) => checkbox.checked).length;
+
+  const updateCustomSourceState = () => {
+    const isCustomMode = sourceSelect?.value === customSourcesKey;
+    if (customSourcePicker) {
+      customSourcePicker.hidden = !isCustomMode;
+    }
+    if (customSourceCount) {
+      const selectedCount = selectedCustomSourceCount();
+      customSourceCount.textContent = selectedCount
+        ? `Đã chọn ${selectedCount} nguồn`
+        : "Chưa chọn nguồn nào";
+    }
+  };
+
   const updateSourceHint = (source) => {
     if (!sourceHint) {
       return;
@@ -35,7 +56,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!source) {
       if (sourceSelect && sourceSelect.value === allSourcesKey) {
-        sourceHint.textContent = "Se crawl tat ca nguon da luu va chi giu bai trong 24h gan nhat tinh tu luc bam crawl.";
+        sourceHint.textContent = "Se crawl tat ca nguon da luu va chi giu bai trong 24h gan nhat tinh tu luc bam crawl. So bai viet la so bai toi da moi nguon.";
+        return;
+      }
+
+      if (sourceSelect && sourceSelect.value === customSourcesKey) {
+        const selectedCount = selectedCustomSourceCount();
+        sourceHint.textContent = selectedCount
+          ? `Se crawl ${selectedCount} nguon da chon va chi giu bai trong 24h gan nhat. So bai viet la so bai toi da moi nguon.`
+          : "Tick cac nguon can crawl trong danh sach ben duoi.";
         return;
       }
 
@@ -54,6 +83,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const source = sourceLookup[sourceSelect.value];
+    updateCustomSourceState();
     updateSourceHint(source);
   };
 
@@ -62,10 +92,37 @@ document.addEventListener("DOMContentLoaded", () => {
     syncSourceDefaults();
   }
 
+  customSourceCheckboxes.forEach((checkbox) => {
+    checkbox.addEventListener("change", () => {
+      updateCustomSourceState();
+      syncSourceDefaults();
+    });
+  });
+
+  if (customSourceSelectAll) {
+    customSourceSelectAll.addEventListener("click", () => {
+      customSourceCheckboxes.forEach((checkbox) => {
+        checkbox.checked = true;
+      });
+      updateCustomSourceState();
+      syncSourceDefaults();
+    });
+  }
+
+  if (customSourceClear) {
+    customSourceClear.addEventListener("click", () => {
+      customSourceCheckboxes.forEach((checkbox) => {
+        checkbox.checked = false;
+      });
+      updateCustomSourceState();
+      syncSourceDefaults();
+    });
+  }
+
   if (form && submitButton) {
     form.addEventListener("submit", () => {
       submitButton.disabled = true;
-      if (sourceSelect && sourceSelect.value === allSourcesKey) {
+      if (sourceSelect && [allSourcesKey, customSourcesKey].includes(sourceSelect.value)) {
         submitButton.textContent = "Dang xep lich crawl...";
       } else {
         submitButton.textContent = "Đang crawl...";

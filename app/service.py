@@ -144,6 +144,7 @@ def run_crawl(
     target_mode: str = "auto",
     include_target_warnings: bool = True,
     article_link_filter: Callable[[str], bool] | None = None,
+    progress_callback: Callable[[dict[str, Any]], None] | None = None,
 ) -> dict[str, Any]:
     started_at = time.perf_counter()
     runtime_config, effective_target_mode, extra_warnings = prepare_runtime_config(
@@ -175,6 +176,7 @@ def run_crawl(
             max_articles=max_articles,
             workers=workers,
             article_link_filter=article_link_filter,
+            progress_callback=progress_callback,
         )
 
     payload = crawler.build_payload(articles)

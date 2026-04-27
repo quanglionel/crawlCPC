@@ -262,23 +262,40 @@ document.addEventListener("DOMContentLoaded", () => {
     appendLiveArticles(job.articles || []);
     const total = Number(job.source_count || 0);
     const processed = Number(job.processed_sources || 0);
-    const progress = total > 0 ? Math.min(100, Math.round((processed / total) * 100)) : 0;
+    const totalArticles = Number(job.total_articles || 0);
+    const completedArticles = Number(job.completed_articles || 0);
+    const isSingleSourceJob = total <= 1;
+    let progress = total > 0 ? Math.min(100, Math.round((processed / total) * 100)) : 0;
+
+    const currentSource = (job.current_source || "").trim();
+    const status = (job.status || "").trim();
+    if (isSingleSourceJob && totalArticles > 0) {
+      progress = Math.min(100, Math.round((completedArticles / totalArticles) * 100));
+    } else if (status === "completed") {
+      progress = 100;
+    }
 
     if (crawlJobProgress) {
       crawlJobProgress.value = progress;
     }
 
-    const currentSource = (job.current_source || "").trim();
-    const status = (job.status || "").trim();
     if (status === "running") {
       if (crawlJobText) {
-        crawlJobText.textContent = currentSource
-          ? `Dang crawl: ${currentSource}. Bai moi se hien thi ngay khi co.`
-          : "Dang crawl tat ca nguon o che do nen. Bai moi se hien thi ngay khi co.";
+        if (isSingleSourceJob) {
+          crawlJobText.textContent = currentSource
+            ? `Dang crawl nguon: ${currentSource}.`
+            : "Dang crawl 1 nguon o che do nen.";
+        } else {
+          crawlJobText.textContent = currentSource
+            ? `Dang crawl: ${currentSource}. Bai moi se hien thi ngay khi co.`
+            : "Dang crawl tat ca nguon o che do nen. Bai moi se hien thi ngay khi co.";
+        }
       }
     } else if (status === "completed") {
       if (crawlJobText) {
-        crawlJobText.textContent = "Crawl tat ca nguon da hoan tat. Dang tai lai ket qua day du.";
+        crawlJobText.textContent = isSingleSourceJob
+          ? "Crawl nguon da hoan tat. Dang tai lai ket qua day du."
+          : "Crawl tat ca nguon da hoan tat. Dang tai lai ket qua day du.";
       }
     } else if (status === "failed") {
       if (crawlJobText) {
@@ -287,7 +304,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (crawlJobMeta) {
-      crawlJobMeta.textContent = `Tien do ${processed}/${total} nguon · crawl thanh cong ${Number(job.crawled_source_count || 0)} · giu lai ${Number(job.article_count || 0)} bai`;
+      crawlJobMeta.textContent = isSingleSourceJob
+        ? `Tien do ${completedArticles}/${Math.max(totalArticles, 0)} bai · ${progress}% · giu lai ${Number(job.article_count || 0)} bai`
+        : `Tien do ${processed}/${total} nguon · crawl thanh cong ${Number(job.crawled_source_count || 0)} · giu lai ${Number(job.article_count || 0)} bai`;
     }
   };
 
@@ -325,10 +344,15 @@ document.addEventListener("DOMContentLoaded", () => {
             clearInterval(crawlJobPollTimer);
             crawlJobPollTimer = null;
           }
-          const url = new URL(window.location.href);
-          url.searchParams.set("tab", "crawl");
-          url.searchParams.set("job_id", jobId);
-          window.location.replace(url.toString());
+          const total = Number(job.source_count || 0);
+          const isSingleSourceJob = total <= 1;
+          const alreadyLoadedFromJob = window.location.search.includes(`job_id=${encodeURIComponent(jobId)}`);
+          if (!isSingleSourceJob && !alreadyLoadedFromJob) {
+            const url = new URL(window.location.href);
+            url.searchParams.set("tab", "crawl");
+            url.searchParams.set("job_id", jobId);
+            window.location.replace(url.toString());
+          }
           return;
         }
 

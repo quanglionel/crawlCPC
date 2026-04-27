@@ -26,8 +26,12 @@ Use `context/` as the first stop when resuming work on this repo.
 - Crawl-all:
   - Supports all sources, selected sources, or one source.
   - Live polling now appends articles as they arrive instead of waiting for full completion.
+  - One-source crawl also runs in background now, so the progress panel works there too.
 - Source review:
   - UI supports export of source review JSON and bulk delete with checkboxes.
+- Blocked sources:
+  - There is now a dedicated tab for sources that cannot currently be crawled.
+  - Records are stored separately from normal sources.
 
 ## Recent Source-Specific Decisions
 
@@ -43,6 +47,9 @@ Use `context/` as the first stop when resuming work on this repo.
     - `/category/national-new`
     - `/category/important-news`
   - Uses `page-link` attribute, not plain `href`.
+- `cambodiadaily.com`:
+  - Use `https://www.cambodiadaily.com/category/news/` as the source target.
+  - Use `configs/cambodiadaily_com_news.json`, not the old BayonTV auto preset.
 - `khmertimeskh.com`:
   - Source removed because Cloudflare blocked homepage, feed, sitemap, API, and browser automation attempts.
 

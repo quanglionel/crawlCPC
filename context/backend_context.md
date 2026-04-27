@@ -46,6 +46,11 @@
   - progress counters
   - `articles` for live UI append
   - output path
+- Single-source crawl now also uses this background job system.
+- For single-source runs:
+  - `source_count = 1`
+  - UI polls `/api/crawl-jobs/<job_id>`
+  - final result is reloaded from saved output JSON when job completes
 - `run_all_sources_crawl_job(...)`:
   - translates newly found articles for display
   - appends them to job state during execution
@@ -62,6 +67,7 @@
 
 - Source delete in UI removes the source JSON file.
 - Bulk source delete exists.
+- Blocked-source records are stored separately in `blocked_sources/*.json`.
 - Export endpoints:
   - single source JSON
   - zip of all sources

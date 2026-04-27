@@ -1,12 +1,12 @@
 {
   "source_key": "cambodiadaily-com",
-  "name": "Cambodiadaily",
-  "target_url": "https://www.cambodiadaily.com/",
+  "name": "Cambodia Daily Khmer",
+  "target_url": "https://www.cambodiadaily.com/category/news/",
   "target_mode": "listing",
-  "preset_path": "configs/auto_bayontv-com-kh.json",
+  "preset_path": "configs/cambodiadaily_com_news.json",
   "output": "output/auto/093_cambodiadaily-com.json",
   "max_pages": 1,
-  "max_articles": 2,
+  "max_articles": 10,
   "workers": 2,
-  "notes": "Auto-generated from https://cambodiadaily.com. Top candidate: https://www.cambodiadaily.com/2026/04/02/23/56/87159/"
+  "notes": "Only crawl the News category listing at https://www.cambodiadaily.com/category/news/."
 }

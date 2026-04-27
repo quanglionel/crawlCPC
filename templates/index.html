@@ -37,6 +37,7 @@
         <a href="/?tab=crawl" class="tab-chip {% if active_tab == 'crawl' %}is-active{% endif %}">Crawl</a>
         <a href="/?tab=sources" class="tab-chip {% if active_tab == 'sources' %}is-active{% endif %}">Nguồn</a>
         <a href="/?tab=presets" class="tab-chip {% if active_tab == 'presets' %}is-active{% endif %}">Preset</a>
+        <a href="/?tab=blocked" class="tab-chip {% if active_tab == 'blocked' %}is-active{% endif %}">Nguồn lỗi</a>
       </nav>
 
       {% if page_notice %}
@@ -499,6 +500,7 @@
                         <a href="/api/sources/{{ source.source_key }}/export" class="ghost-button button-link small-button">Tải JSON</a>
                         <button type="submit" name="action" value="edit_source" class="ghost-button small-button" onclick="this.form.source_ref.value='{{ source.source_key }}'">Sửa</button>
                         <button type="submit" name="action" value="use_source_for_crawl" class="ghost-button small-button" onclick="this.form.source_ref.value='{{ source.source_key }}'">Mở ở Crawl</button>
+                        <button type="submit" name="action" value="mark_source_blocked" class="ghost-button small-button" onclick="this.form.source_ref.value='{{ source.source_key }}'">Lưu lỗi crawl</button>
                         <button type="submit" name="action" value="delete_source" class="danger-button small-button" onclick="this.form.source_ref.value='{{ source.source_key }}'">Xoá</button>
                       </div>
                     </article>
@@ -510,6 +512,109 @@
                 <p class="empty-kicker">Chưa có nguồn nào</p>
                 <h3>Tạo nguồn đầu tiên để tái sử dụng URL và tham số crawl.</h3>
                 <p>Một nguồn chỉ mô tả URL và tham số chạy. Selector thực sự nằm ở preset.</p>
+              </div>
+            {% endif %}
+          </section>
+        </main>
+      {% elif active_tab == "blocked" %}
+        <main class="workspace management-workspace">
+          <section class="panel control-panel">
+            <div class="panel-head">
+              <h2>Nguồn Không Crawl Được</h2>
+              <p>Lưu lại các nguồn đang bị Cloudflare, 403, timeout, hoặc lỗi cấu trúc để theo dõi và xử lý sau.</p>
+            </div>
+
+            <form method="post" class="crawl-form">
+              <input type="hidden" name="active_tab" value="blocked">
+              <input type="hidden" name="original_record_key" value="{{ blocked_source_form_data.original_record_key }}">
+
+              <div class="form-grid">
+                <label class="field">
+                  <span>Record key</span>
+                  <input type="text" name="record_key" value="{{ blocked_source_form_data.record_key }}" placeholder="cambodiantimes-com">
+                </label>
+                <label class="field">
+                  <span>Source key gốc</span>
+                  <input type="text" name="source_key" value="{{ blocked_source_form_data.source_key }}" placeholder="cambodiantimes-com">
+                </label>
+                <label class="field">
+                  <span>Tên nguồn</span>
+                  <input type="text" name="name" value="{{ blocked_source_form_data.name }}" placeholder="Cambodian Times">
+                </label>
+                <label class="field">
+                  <span>Ngày kiểm tra</span>
+                  <input type="text" name="last_checked_at" value="{{ blocked_source_form_data.last_checked_at }}" placeholder="2026-04-28">
+                </label>
+                <label class="field field-wide">
+                  <span>URL nguồn</span>
+                  <input type="url" name="target_url" value="{{ blocked_source_form_data.target_url }}" placeholder="https://example.com/">
+                </label>
+                <label class="field field-wide">
+                  <span>Lý do lỗi</span>
+                  <input type="text" name="reason" value="{{ blocked_source_form_data.reason }}" placeholder="Cloudflare 403 / timeout / crawl HTML không lấy được bài">
+                </label>
+                <label class="field field-wide">
+                  <span>Ghi chú</span>
+                  <textarea name="notes" class="small-textarea" spellcheck="false">{{ blocked_source_form_data.notes }}</textarea>
+                </label>
+              </div>
+
+              <div class="submit-row">
+                <button type="submit" name="action" value="save_blocked_source" class="primary-button">Lưu nguồn lỗi</button>
+                <a href="/?tab=blocked" class="ghost-button button-link">Bản ghi mới</a>
+              </div>
+            </form>
+          </section>
+
+          <section class="panel result-panel">
+            <div class="panel-head">
+              <h2>Danh Sách Nguồn Lỗi</h2>
+              <p>Dùng tab này như danh sách theo dõi các nguồn cần quay lại sửa, thử lại, hoặc bỏ hẳn.</p>
+            </div>
+
+            {% if blocked_sources %}
+              <div class="entity-list">
+                {% for record in blocked_sources %}
+                  <article class="entity-card">
+                    <div class="entity-header">
+                      <div>
+                        <h3>{{ record.name }}</h3>
+                        <p class="entity-subtitle">{{ record.target_url }}</p>
+                      </div>
+                      <span class="pill">{{ record.last_checked_at or "Chưa có ngày" }}</span>
+                    </div>
+                    <div class="entity-meta">
+                      {% if record.source_key %}
+                        <span>Source key: {{ record.source_key }}</span>
+                      {% endif %}
+                      {% if record.reason %}
+                        <span>{{ record.reason }}</span>
+                      {% endif %}
+                    </div>
+                    {% if record.notes %}
+                      <p class="entity-notes">{{ record.notes }}</p>
+                    {% endif %}
+                    <div class="card-actions">
+                      <a href="{{ record.target_url }}" target="_blank" rel="noreferrer" class="ghost-button button-link small-button">Direct</a>
+                      <form method="post">
+                        <input type="hidden" name="active_tab" value="blocked">
+                        <input type="hidden" name="blocked_ref" value="{{ record.record_key }}">
+                        <button type="submit" name="action" value="edit_blocked_source" class="ghost-button small-button">Sửa</button>
+                      </form>
+                      <form method="post">
+                        <input type="hidden" name="active_tab" value="blocked">
+                        <input type="hidden" name="blocked_ref" value="{{ record.record_key }}">
+                        <button type="submit" name="action" value="delete_blocked_source" class="danger-button small-button">Xoá</button>
+                      </form>
+                    </div>
+                  </article>
+                {% endfor %}
+              </div>
+            {% else %}
+              <div class="empty-state">
+                <p class="empty-kicker">Chưa có nguồn lỗi nào</p>
+                <h3>Khi gặp một nguồn bị chặn hoặc crawl hỏng, hãy lưu vào đây để theo dõi.</h3>
+                <p>Bạn cũng có thể vào tab Nguồn và bấm “Lưu lỗi crawl” ngay trên từng source.</p>
               </div>
             {% endif %}
           </section>

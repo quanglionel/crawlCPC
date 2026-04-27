@@ -11,6 +11,7 @@
 - Crawl tab
 - Sources tab
 - Presets tab
+- Blocked sources tab
 
 ## Crawl Tab Behavior
 
@@ -26,6 +27,8 @@
 - Job panel polls `/api/crawl-jobs/<job_id>`.
 - Articles append live while job is running.
 - Final completion reload is still used to restore full server-rendered result JSON and pagination.
+- Single-source crawl now also uses the same job panel.
+- While a single-source crawl is running, the progress bar uses frontend pseudo-progress and completes at 100% when the job finishes.
 
 ## Selected Sources Mode
 
@@ -37,6 +40,7 @@
 - Search/filter sources client-side.
 - Check/uncheck sources for bulk delete.
 - Export review list and source ZIP from here.
+- Each source can be marked into the blocked-sources list from the card actions.
 
 ## Result Card Data Model
 

@@ -602,6 +602,7 @@ class MediaCrawler:
         max_articles: int | None = None,
         workers: int = 4,
         article_link_filter: Callable[[str], bool] | None = None,
+        progress_callback: Callable[[dict[str, Any]], None] | None = None,
     ) -> list[dict[str, Any]]:
         self.run_warnings = []
         article_links: list[str] = []
@@ -663,6 +664,8 @@ class MediaCrawler:
                 article_links = article_links[:max_articles]
 
         results_by_url: dict[str, dict[str, Any]] = {}
+        total_articles = len(article_links)
+        completed_articles = 0
         with ThreadPoolExecutor(max_workers=max(workers, 1)) as executor:
             futures = {executor.submit(self.extract_article, url): url for url in article_links}
             for future in as_completed(futures):
@@ -675,6 +678,15 @@ class MediaCrawler:
                         "site_name": self.site_name,
                         "error": describe_exception(exc),
                     }
+                completed_articles += 1
+                if progress_callback:
+                    progress_callback(
+                        {
+                            "total_articles": total_articles,
+                            "completed_articles": completed_articles,
+                            "latest_article": results_by_url[url],
+                        }
+                    )
 
         results = [results_by_url[url] for url in article_links if url in results_by_url]
         return results

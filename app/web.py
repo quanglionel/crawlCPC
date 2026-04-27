@@ -20,6 +20,7 @@ from urllib.parse import urlparse
 from flask import Flask, Response, jsonify, render_template, request, send_file
 
 from app.auto_preset import resolve_preset_for_new_source
+from app.blocked_sources import delete_blocked_source, list_blocked_sources, save_blocked_source
 from app.catalog import (
     build_preset_lookup,
     delete_preset,
@@ -78,6 +79,8 @@ def create_crawl_job(job_id: str, source_count: int, output_path: str) -> None:
             "crawled_source_count": 0,
             "kept_source_count": 0,
             "article_count": 0,
+            "total_articles": 0,
+            "completed_articles": 0,
             "dropped_no_time_count": 0,
             "dropped_old_count": 0,
             "current_source": "",
@@ -191,6 +194,19 @@ def build_initial_preset_form_data(presets: list[dict[str, Any]], preset_lookup:
     }
 
 
+def build_initial_blocked_source_form_data() -> dict[str, str]:
+    return {
+        "record_key": "",
+        "original_record_key": "",
+        "source_key": "",
+        "name": "",
+        "target_url": "",
+        "reason": "",
+        "last_checked_at": "",
+        "notes": "",
+    }
+
+
 def update_crawl_form_data(form_data: dict[str, Any], form: Any) -> None:
     selected_source_keys = [
         key.strip()
@@ -241,6 +257,21 @@ def update_preset_form_data(form_data: dict[str, str], form: Any) -> None:
             "preset_key": form.get("preset_key", form_data["preset_key"]).strip(),
             "original_preset_path": form.get("original_preset_path", form_data["original_preset_path"]).strip(),
             "config_json": form.get("config_json", form_data["config_json"]).strip(),
+        }
+    )
+
+
+def update_blocked_source_form_data(form_data: dict[str, str], form: Any) -> None:
+    form_data.update(
+        {
+            "record_key": form.get("record_key", form_data["record_key"]).strip(),
+            "original_record_key": form.get("original_record_key", form_data["original_record_key"]).strip(),
+            "source_key": form.get("source_key", form_data["source_key"]).strip(),
+            "name": form.get("name", form_data["name"]).strip(),
+            "target_url": form.get("target_url", form_data["target_url"]).strip(),
+            "reason": form.get("reason", form_data["reason"]).strip(),
+            "last_checked_at": form.get("last_checked_at", form_data["last_checked_at"]).strip(),
+            "notes": form.get("notes", form_data["notes"]).strip(),
         }
     )
 
@@ -303,6 +334,32 @@ def build_preset_form_from_path(relative_path: str, preset_lookup: dict[str, str
         "preset_key": Path(relative_path).stem if relative_path else "",
         "original_preset_path": relative_path,
         "config_json": preset_lookup.get(relative_path, ""),
+    }
+
+
+def build_blocked_source_form_from_record(record: dict[str, Any]) -> dict[str, str]:
+    return {
+        "record_key": str(record.get("record_key") or ""),
+        "original_record_key": str(record.get("record_key") or ""),
+        "source_key": str(record.get("source_key") or ""),
+        "name": str(record.get("name") or ""),
+        "target_url": str(record.get("target_url") or ""),
+        "reason": str(record.get("reason") or ""),
+        "last_checked_at": str(record.get("last_checked_at") or ""),
+        "notes": str(record.get("notes") or ""),
+    }
+
+
+def build_blocked_source_form_from_source(source: dict[str, Any]) -> dict[str, str]:
+    return {
+        "record_key": str(source.get("source_key") or ""),
+        "original_record_key": "",
+        "source_key": str(source.get("source_key") or ""),
+        "name": str(source.get("name") or ""),
+        "target_url": str(source.get("target_url") or ""),
+        "reason": "Cloudflare/403 or crawl failed",
+        "last_checked_at": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
+        "notes": str(source.get("notes") or ""),
     }
 
 
@@ -744,6 +801,88 @@ def run_all_sources_crawl_job(
         )
 
 
+def run_single_source_crawl_job(
+    job_id: str,
+    source: dict[str, Any],
+    config: dict[str, Any],
+    output_path: Path,
+    max_pages: int | None,
+    max_articles: int | None,
+    workers: int,
+    target_url: str | None,
+    target_mode: str,
+) -> None:
+    source_name = str(source.get("name") or source.get("source_key") or "Nguon")
+    update_crawl_job(job_id, current_source=source_name)
+
+    def publish_progress(progress: dict[str, Any]) -> None:
+        latest_article = progress.pop("latest_article", None)
+        if latest_article:
+            display_payload = prepare_result_for_display(
+                {
+                    "site_name": source_name,
+                    "article_count": 1,
+                    "success_count": 0 if latest_article.get("error") else 1,
+                    "error_count": 1 if latest_article.get("error") else 0,
+                    "warnings": [],
+                    "articles": [latest_article],
+                },
+                translate_to_vi=True,
+            )
+            append_crawl_job_articles(job_id, display_payload.get("articles") or [])
+        update_crawl_job(job_id, **progress)
+
+    try:
+        payload = run_crawl(
+            config=config,
+            output_path=output_path,
+            max_pages=max_pages,
+            max_articles=max_articles,
+            workers=workers,
+            save_output=True,
+            target_url=target_url,
+            target_mode=target_mode,
+            include_target_warnings=False,
+            progress_callback=publish_progress,
+        )
+
+        filtered_articles = [
+            article
+            for article in (payload.get("articles") or [])
+            if not is_non_article_record(article)
+        ]
+        payload["articles"] = filtered_articles
+        payload["article_count"] = len(filtered_articles)
+        payload["success_count"] = sum(1 for article in filtered_articles if "error" not in article)
+        payload["error_count"] = payload["article_count"] - payload["success_count"]
+
+        with output_path.open("w", encoding="utf-8") as file:
+            json.dump(payload, file, ensure_ascii=False, indent=2)
+
+        final_display_payload = prepare_result_for_display(payload, translate_to_vi=True)
+        update_crawl_job(job_id, articles=final_display_payload.get("articles") or [])
+        update_crawl_job(
+            job_id,
+            status="completed",
+            processed_sources=1,
+            crawled_source_count=1,
+            kept_source_count=1 if payload.get("article_count", 0) else 0,
+            article_count=payload.get("article_count", 0),
+            total_articles=payload.get("article_count", 0),
+            completed_articles=payload.get("article_count", 0),
+            current_source="",
+            completed_at=datetime.now(timezone.utc).isoformat(),
+        )
+    except Exception as exc:
+        update_crawl_job(
+            job_id,
+            status="failed",
+            error=str(exc),
+            current_source="",
+            completed_at=datetime.now(timezone.utc).isoformat(),
+        )
+
+
 def create_app() -> Flask:
     app = Flask(
         __name__,
@@ -758,12 +897,15 @@ def create_app() -> Flask:
         crawl_form_data = build_initial_crawl_form_data(presets, preset_lookup)
         source_form_data = build_initial_source_form_data(presets)
         preset_form_data = build_initial_preset_form_data(presets, preset_lookup)
+        blocked_source_form_data = build_initial_blocked_source_form_data()
+        blocked_sources = list_blocked_sources()
+        blocked_source_lookup = {record["record_key"]: record for record in blocked_sources}
         result: dict[str, Any] | None = None
         raw_result_json = ""
         page_notice: dict[str, str] | None = None
 
         active_tab = request.values.get("tab", request.values.get("active_tab", "crawl")).strip() or "crawl"
-        if active_tab not in {"crawl", "sources", "presets"}:
+        if active_tab not in {"crawl", "sources", "presets", "blocked"}:
             active_tab = "crawl"
         result_page = parse_result_page(request.values.get("result_page", "1"))
         search_sources = request.values.get("search_sources", "").strip()
@@ -792,6 +934,7 @@ def create_app() -> Flask:
             update_crawl_form_data(crawl_form_data, request.form)
             update_source_form_data(source_form_data, request.form)
             update_preset_form_data(preset_form_data, request.form)
+            update_blocked_source_form_data(blocked_source_form_data, request.form)
 
             try:
                 if action == "load_source_into_crawl":
@@ -869,47 +1012,36 @@ def create_app() -> Flask:
                             crawl_form_data["config_json"] = preset_lookup[crawl_form_data["selected_preset"]]
                         config = load_config_from_json(crawl_form_data["config_json"])
                         target_url = parse_target_url(crawl_form_data["target_url"])
-                        result = run_crawl(
-                            config=config,
-                            output_path=resolve_path(crawl_form_data["output"]),
-                            max_pages=max_pages,
-                            max_articles=max_articles,
-                            workers=workers,
-                            save_output=True,
-                            target_url=target_url,
-                            target_mode=crawl_form_data["target_mode"],
-                            include_target_warnings=False,
+                        active_job_id = uuid.uuid4().hex[:12]
+                        create_crawl_job(
+                            job_id=active_job_id,
+                            source_count=1,
+                            output_path=crawl_form_data["output"],
                         )
-
-                        filtered_articles = [
-                            article
-                            for article in (result.get("articles") or [])
-                            if not is_non_article_record(article)
-                        ]
-                        result["articles"] = filtered_articles
-                        result["article_count"] = len(filtered_articles)
-                        result["success_count"] = sum(1 for article in filtered_articles if "error" not in article)
-                        result["error_count"] = result["article_count"] - result["success_count"]
-
-                        raw_result_json = json.dumps(result, ensure_ascii=False, indent=2)
-                        result = prepare_result_for_display(
-                            result,
-                            translate_to_vi=True,
+                        update_crawl_job(
+                            active_job_id,
+                            current_source=str(source.get("name") or source.get("source_key") or ""),
                         )
-
-                        display_filtered_articles = [
-                            article
-                            for article in (result.get("articles") or [])
-                            if not is_non_article_record(article)
-                        ]
-                        result["articles"] = display_filtered_articles
-                        result["article_count"] = len(display_filtered_articles)
-                        result["success_count"] = sum(1 for article in display_filtered_articles if "error" not in article)
-                        result["error_count"] = result["article_count"] - result["success_count"]
-
+                        worker = threading.Thread(
+                            target=run_single_source_crawl_job,
+                            kwargs={
+                                "job_id": active_job_id,
+                                "source": source,
+                                "config": config,
+                                "output_path": resolve_path(crawl_form_data["output"]),
+                                "max_pages": max_pages,
+                                "max_articles": max_articles,
+                                "workers": workers,
+                                "target_url": target_url,
+                                "target_mode": crawl_form_data["target_mode"],
+                            },
+                            daemon=True,
+                        )
+                        worker.start()
+                        active_crawl_job = get_crawl_job(active_job_id)
                         page_notice = {
                             "level": "success",
-                            "text": f"Crawl xong: {result['success_count']}/{result['article_count']} bài thành công.",
+                            "text": f"Da bat dau crawl nguon '{source['name']}' o che do nen. Tien do se cap nhat ngay trong luc chay.",
                         }
                         active_tab = "crawl"
 
@@ -1032,6 +1164,17 @@ def create_app() -> Flask:
                     page_notice = {"level": "success", "text": notice_text}
                     active_tab = "sources"
 
+                elif action == "mark_source_blocked":
+                    source = source_lookup.get(request.form.get("source_ref", "").strip())
+                    if not source:
+                        raise ValueError("Không tìm thấy nguồn.")
+                    blocked_source_form_data = build_blocked_source_form_from_source(source)
+                    page_notice = {
+                        "level": "success",
+                        "text": f"Đã nạp nguồn '{source['name']}' vào danh sách nguồn không crawl được.",
+                    }
+                    active_tab = "blocked"
+
                 elif action == "save_preset":
                     if not preset_form_data["preset_key"]:
                         raise ValueError("Preset key là bắt buộc.")
@@ -1079,6 +1222,59 @@ def create_app() -> Flask:
                     page_notice = {"level": "success", "text": f"Đã xóa preset '{preset_path}'."}
                     active_tab = "presets"
 
+                elif action == "save_blocked_source":
+                    if not blocked_source_form_data["record_key"] and not blocked_source_form_data["name"]:
+                        raise ValueError("Hãy nhập ít nhất record key hoặc tên nguồn.")
+                    target_url = parse_target_url(blocked_source_form_data["target_url"])
+                    if not target_url:
+                        raise ValueError("URL nguồn là bắt buộc.")
+
+                    existing_records = list_blocked_sources()
+                    new_key = blocked_source_form_data["record_key"] or blocked_source_form_data["name"]
+                    for record in existing_records:
+                        if record["record_key"] == new_key and record["record_key"] != (blocked_source_form_data["original_record_key"] or ""):
+                            raise ValueError(f"Nguồn lỗi với key '{new_key}' đã tồn tại.")
+                        if record["target_url"] == target_url and record["record_key"] != (blocked_source_form_data["original_record_key"] or ""):
+                            raise ValueError(f"Nguồn lỗi với URL '{target_url}' đã tồn tại.")
+
+                    saved_record = save_blocked_source(
+                        {
+                            "record_key": blocked_source_form_data["record_key"] or blocked_source_form_data["name"],
+                            "source_key": blocked_source_form_data["source_key"],
+                            "name": blocked_source_form_data["name"] or blocked_source_form_data["record_key"],
+                            "target_url": target_url,
+                            "reason": blocked_source_form_data["reason"],
+                            "last_checked_at": blocked_source_form_data["last_checked_at"],
+                            "notes": blocked_source_form_data["notes"],
+                        },
+                        original_record_key=blocked_source_form_data["original_record_key"] or None,
+                    )
+                    blocked_sources = list_blocked_sources()
+                    blocked_source_lookup = {record["record_key"]: record for record in blocked_sources}
+                    blocked_source_form_data = build_blocked_source_form_from_record(saved_record)
+                    page_notice = {"level": "success", "text": f"Đã lưu nguồn lỗi '{saved_record['name']}'."}
+                    active_tab = "blocked"
+
+                elif action == "edit_blocked_source":
+                    record = blocked_source_lookup.get(request.form.get("blocked_ref", "").strip())
+                    if not record:
+                        raise ValueError("Không tìm thấy nguồn lỗi.")
+                    blocked_source_form_data = build_blocked_source_form_from_record(record)
+                    page_notice = {"level": "success", "text": f"Đang sửa nguồn lỗi '{record['name']}'."}
+                    active_tab = "blocked"
+
+                elif action == "delete_blocked_source":
+                    record_key = request.form.get("blocked_ref", "").strip()
+                    record = blocked_source_lookup.get(record_key)
+                    if not record:
+                        raise ValueError("Không tìm thấy nguồn lỗi.")
+                    delete_blocked_source(record_key)
+                    blocked_sources = list_blocked_sources()
+                    blocked_source_lookup = {item["record_key"]: item for item in blocked_sources}
+                    blocked_source_form_data = build_initial_blocked_source_form_data()
+                    page_notice = {"level": "success", "text": f"Đã xóa nguồn lỗi '{record['name']}'."}
+                    active_tab = "blocked"
+
             except json.JSONDecodeError as exc:
                 page_notice = {
                     "level": "error",
@@ -1120,6 +1316,8 @@ def create_app() -> Flask:
             crawl_form_data=crawl_form_data,
             source_form_data=source_form_data,
             preset_form_data=preset_form_data,
+            blocked_source_form_data=blocked_source_form_data,
+            blocked_sources=blocked_sources,
             result=result,
             raw_result_json=raw_result_json,
             page_notice=page_notice,

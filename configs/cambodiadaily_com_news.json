@@ -1,0 +1,125 @@
+{
+  "site_name": "Cambodia Daily Khmer",
+  "base_url": "https://www.cambodiadaily.com",
+  "allowed_domains": [
+    "www.cambodiadaily.com",
+    "cambodiadaily.com"
+  ],
+  "listing_urls": [
+    "https://www.cambodiadaily.com/category/news/"
+  ],
+  "article_link_selectors": [
+    ".tdb_module_loop .td-module-title a[href]",
+    ".td-module-title a[href]",
+    "h3.entry-title a[href]",
+    ".entry-title a[href]"
+  ],
+  "article_link_pattern": "^https?://(?:www\\.)?cambodiadaily\\.com/20\\d{2}/\\d{2}/\\d{2}/\\d{2}/\\d{2}/\\d+/?$",
+  "article_link_order": "document",
+  "fields": {
+    "title": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": "meta[property='og:title']",
+          "attr": "content"
+        },
+        {
+          "selector": "h1.tdb-title-text"
+        },
+        {
+          "selector": "h1.entry-title"
+        },
+        {
+          "selector": "h1"
+        },
+        {
+          "selector": "title"
+        }
+      ]
+    },
+    "summary": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": "meta[property='og:description']",
+          "attr": "content"
+        },
+        {
+          "selector": "meta[name='description']",
+          "attr": "content"
+        },
+        {
+          "selector": ".tdb_single_excerpt"
+        },
+        {
+          "selector": ".td-post-sub-title"
+        }
+      ]
+    },
+    "published_at": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": "meta[property='article:published_time']",
+          "attr": "content"
+        },
+        {
+          "selector": "time.entry-date[datetime]",
+          "attr": "datetime"
+        },
+        {
+          "selector": "time[datetime]",
+          "attr": "datetime"
+        }
+      ]
+    },
+    "author": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": "meta[name='author']",
+          "attr": "content"
+        },
+        {
+          "selector": ".tdb-author-name"
+        },
+        {
+          "selector": ".author"
+        }
+      ]
+    },
+    "content": {
+      "mode": "join",
+      "separator": "\n\n",
+      "extractors": [
+        {
+          "selector": ".td-post-content p"
+        },
+        {
+          "selector": "article .td-post-content p"
+        },
+        {
+          "selector": "article p"
+        }
+      ]
+    },
+    "images": {
+      "mode": "list",
+      "extractors": [
+        {
+          "selector": "meta[property='og:image']",
+          "attr": "content"
+        },
+        {
+          "selector": ".td-post-featured-image img",
+          "attr": "src"
+        },
+        {
+          "selector": "article img",
+          "attr": "src"
+        }
+      ]
+    }
+  }
+}

@@ -41,6 +41,9 @@ The app is designed so non-technical source management can happen in the UI whil
     - `important-news`
   - link extraction uses `page-link`
   - preset preserves multiple listing URLs
+- `cambodiadaily.com`
+  - dedicated news-category preset
+  - source should target `/category/news/`, not homepage
 - `thmeythmey.com`
   - listing-card fallback because detail pages are Cloudflare-blocked
 
@@ -51,6 +54,7 @@ The app is designed so non-technical source management can happen in the UI whil
 - Export source review list
 - Live crawl-all progress with live article append
 - Selected-sources crawl mode
+- Blocked-sources tab for saving sources that currently cannot be crawled
 
 ## Known Operational Caveats
 

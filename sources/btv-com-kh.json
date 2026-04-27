@@ -1,0 +1,12 @@
+{
+  "source_key": "btv-com-kh",
+  "name": "www.btv.com.kh",
+  "target_url": "https://www.btv.com.kh/category/national-new",
+  "target_mode": "listing",
+  "preset_path": "configs/btv_com_kh.json",
+  "output": "output/btv-com-kh.json",
+  "max_pages": 1,
+  "max_articles": 10,
+  "workers": 2,
+  "notes": "Chi lay bai viet trong 2 danh muc: /category/national-new va /category/important-news."
+}

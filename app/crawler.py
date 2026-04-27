@@ -69,6 +69,7 @@ class MediaCrawler:
         self.allowed_domains = set(config.get("allowed_domains") or [urlparse(self.base_url).netloc])
         self.hash_link_prefix = str(config.get("hash_link_prefix") or "").strip()
         self.link_selectors = config["article_link_selectors"]
+        self.link_attribute = str(config.get("article_link_attribute") or "href").strip() or "href"
         self.article_link_pattern = re.compile(config.get("article_link_pattern", ".*"))
         self.article_link_exclude_patterns = [
             re.compile(pattern) for pattern in config.get("article_link_exclude_patterns", [])
@@ -293,7 +294,7 @@ class MediaCrawler:
 
         for selector in self.link_selectors:
             for node in soup.select(selector):
-                href = node.get("href")
+                href = node.get(self.link_attribute)
                 if not href:
                     continue
                 add_candidate(href)
@@ -657,10 +658,9 @@ class MediaCrawler:
                         continue
                     seen_links.add(article_url)
                     article_links.append(article_url)
-                    if max_articles and len(article_links) >= max_articles:
-                        break
-                if max_articles and len(article_links) >= max_articles:
-                    break
+
+            if max_articles:
+                article_links = article_links[:max_articles]
 
         results_by_url: dict[str, dict[str, Any]] = {}
         with ThreadPoolExecutor(max_workers=max(workers, 1)) as executor:

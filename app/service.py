@@ -116,10 +116,14 @@ def prepare_runtime_config(
             warnings.append("Custom URL is being crawled as a single article page.")
         return runtime_config, effective_mode, warnings
 
-    runtime_config["listing_urls"] = [target_url]
-    runtime_config.pop("pagination", None)
-    if include_target_warnings:
-        warnings.append("Custom URL is being used as the listing page for this run.")
+    if runtime_config.get("preserve_listing_urls"):
+        if include_target_warnings:
+            warnings.append("Preset listing URLs are being used for this run.")
+    else:
+        runtime_config["listing_urls"] = [target_url]
+        runtime_config.pop("pagination", None)
+        if include_target_warnings:
+            warnings.append("Custom URL is being used as the listing page for this run.")
 
     if custom_domain != original_domain:
         runtime_config["article_link_pattern"] = rf"https?://{re.escape(custom_domain)}/.*"

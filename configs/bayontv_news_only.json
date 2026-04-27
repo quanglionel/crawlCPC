@@ -87,6 +87,11 @@
       "mode": "first",
       "extractors": [
         {
+          "selector": "meta[property='og:image']",
+          "attr": "content",
+          "regex": "(20\\d{2}-\\d{2}-\\d{2})"
+        },
+        {
           "selector": "meta[property='article:published_time']",
           "attr": "content"
         },

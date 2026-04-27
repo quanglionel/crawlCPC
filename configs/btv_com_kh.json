@@ -1,0 +1,114 @@
+{
+  "site_name": "btv.com.kh",
+  "base_url": "https://www.btv.com.kh",
+  "allowed_domains": [
+    "www.btv.com.kh",
+    "btv.com.kh"
+  ],
+  "preserve_listing_urls": true,
+  "listing_urls": [
+    "https://www.btv.com.kh/category/national-new",
+    "https://www.btv.com.kh/category/important-news"
+  ],
+  "article_link_attribute": "page-link",
+  "article_link_selectors": [
+    ".main-slider [page-link*='https://www.btv.com.kh/article/']",
+    ".blogs-section [page-link*='https://www.btv.com.kh/article/']"
+  ],
+  "article_link_pattern": "^https?://(?:www\\.)?btv\\.com\\.kh/article/\\d+/?$",
+  "article_link_order": "id_desc",
+  "article_link_id_pattern": "/article/(\\d+)(?:/|$)",
+  "article_link_exclude_patterns": [
+    "(?:facebook|instagram|linkedin|telegram|tiktok|twitter|x|youtube)\\.com"
+  ],
+  "fields": {
+    "title": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": "meta[property='og:title']",
+          "attr": "content"
+        },
+        {
+          "selector": "title"
+        }
+      ]
+    },
+    "summary": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": "meta[property='og:description']",
+          "attr": "content"
+        },
+        {
+          "selector": ".font-size-detail.textview p"
+        }
+      ]
+    },
+    "published_at": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": ".group-date-share .view-date-time",
+          "regex": "(20\\d{2}/\\d{2}/\\d{2}\\s+\\d{2}:\\d{2}:\\d{2}\\s+[ap]m)"
+        }
+      ]
+    },
+    "author": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": "meta[name='author']",
+          "attr": "content"
+        }
+      ]
+    },
+    "content": {
+      "mode": "join",
+      "separator": "\n\n",
+      "extractors": [
+        {
+          "selector": ".font-size-detail.textview p"
+        }
+      ]
+    },
+    "images": {
+      "mode": "list",
+      "extractors": [
+        {
+          "selector": "meta[property='og:image']",
+          "attr": "content"
+        }
+      ]
+    }
+  },
+  "remove_selectors": [
+    "script",
+    "style",
+    "noscript",
+    "iframe",
+    "form",
+    "nav",
+    "header",
+    "footer",
+    ".advertisement",
+    ".ads",
+    ".ad",
+    ".share",
+    ".social-share",
+    ".related-posts",
+    ".related",
+    ".comments"
+  ],
+  "request": {
+    "timeout_seconds": 20,
+    "delay_seconds": 0.2,
+    "respect_robots_txt": false,
+    "headers": {
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+      "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+      "Accept-Language": "km,en-US;q=0.9,en;q=0.8,vi;q=0.7"
+    }
+  }
+}

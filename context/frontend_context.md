@@ -21,14 +21,17 @@
   - one source
 - `max_articles` label on crawl screen is effectively “per source” for multi-source runs.
 - Translation to Vietnamese is a checkbox toggle that changes visible text immediately.
+- Result quick-search/filter UI is intentionally hidden for now with `future-result-filters`/`hidden`; keep the markup for later development.
 
 ## Live Crawl-All UX
 
 - Job panel polls `/api/crawl-jobs/<job_id>`.
 - Articles append live while job is running.
+- Crawl submit button is disabled/dimmed while a crawl job is running and re-enabled when the job finishes or fails.
 - Final completion reload is still used to restore full server-rendered result JSON and pagination.
 - Single-source crawl now also uses the same job panel.
-- While a single-source crawl is running, the progress bar uses frontend pseudo-progress and completes at 100% when the job finishes.
+- Single-source crawl progress now uses real article completion counts from the backend.
+- Single-source completion should not keep reloading the page in a loop.
 
 ## Selected Sources Mode
 

@@ -27,6 +27,7 @@ Use `context/` as the first stop when resuming work on this repo.
   - Supports all sources, selected sources, or one source.
   - Live polling now appends articles as they arrive instead of waiting for full completion.
   - One-source crawl also runs in background now, so the progress panel works there too.
+  - One-source progress is now real article progress (`completed_articles / total_articles`), not fake timer-based progress.
 - Source review:
   - UI supports export of source review JSON and bulk delete with checkboxes.
 - Blocked sources:
@@ -50,6 +51,67 @@ Use `context/` as the first stop when resuming work on this repo.
 - `cambodiadaily.com`:
   - Use `https://www.cambodiadaily.com/category/news/` as the source target.
   - Use `configs/cambodiadaily_com_news.json`, not the old BayonTV auto preset.
+- `cwcicambodia.net`:
+  - Use `https://cwcicambodia.net/category/news/` as the source target and preset listing URL.
+- `maff.gov.kh`:
+  - Use `https://www.maff.gov.kh/news` as the source target.
+  - `configs/auto_maff-gov-kh.json` is narrowed to `/newsdetail/<id>` links; old homepage target was too broad.
+  - `published_at` is extracted from the `og:image` URL date because article pages do not provide standard publish meta.
+- `mfaic.gov.kh`:
+  - Existing source was repointed from BayonTV auto preset to `configs/mfaic_gov_kh_media.json`.
+  - Use `https://www.mfaic.gov.kh/Media/News` as listing. The requested bare `/en/media/view` route is not a listing; detail pages require a slug.
+  - Browser-like headers are required to avoid MFAIC's "Request Rejected" WAF page.
+  - Tested 2/2 successfully; title/date/content/images come from `.viewpost-title`, `.viewpost-date`, `.viewpost-content`, `.viewpost img`.
+- `mme.gov.kh`:
+  - Use `https://mme.gov.kh/newsroom` as the source target.
+  - `configs/auto_mme-gov-kh.json` is narrowed to `/newsroom/all-news/<slug>` links; old homepage target was broad.
+  - Tested 2/2 successfully; detail content is under `.news-single article p`.
+- `moc.gov.kh`:
+  - Use `https://moc.gov.kh/kh/news` as the source target.
+  - The `/kh/news` page is Next.js client-rendered and static HTML currently has only skeleton cards; direct crawl test returned 0/0 links.
+  - The JS chunk references GraphQL `publicNewsList` at `https://graphql.moc.gov.kh/graphql`, but direct POST returned 403 "Site Under Maintenance" on 2026-04-28.
+- `grandnewsasia.com`:
+  - Use `https://grandnewsasia.com/archives/category/local-news` as the source target.
+  - Use `configs/grandnewsasia_local_news.json`; article content is under `.main-text p`.
+- `immigration.gov.kh`:
+  - Use `https://immigration.gov.kh/news` as the source target.
+  - The public news list is Angular-rendered; static HTML gives menu pages only.
+  - `configs/auto_immigration-gov-kh.json` uses Firestore REST `projects/egdi-ecosystem/databases/(default)/documents:runQuery`, collection `news`, `display_path` contains `fSWeA16hLDGk6hEpCxHD`, `status.key = 2`.
+- `interior.gov.kh`:
+  - Use `https://interior.gov.kh/news` as the source target.
+  - `configs/auto_interior-gov-kh.json` is narrowed to `/news/<hash>` links; old broad preset crawled menu/footer pages.
+  - Dates can be `28-April-2026`; backend date parser now supports English month names in this shape.
+- `kampuchea.news`:
+  - Source was removed from `sources/`.
+  - Unused preset `configs/kampuchea_news_listing.json` was also removed so the URL no longer appears in UI preset data.
+  - It is an aggregator; cards link to original publishers such as AKP/Kiripost, so crawl results show those publishers.
+- `kampucheathmey.com`:
+  - Khmer source now uses `configs/kampucheathmey_kh.json`, not the old BayonTV auto preset.
+  - English source added as `sources/en-kampucheathmey-com.json` using `configs/kampucheathmey_en.json`.
+  - Both tested 2/2 successfully on 2026-04-28; English publishes dates as `YYYY-MM-DD`, Khmer has `article:published_time`.
+- `khmercircle.blogspot.com`:
+  - Existing source was repointed from BayonTV auto preset to `configs/khmercircle_blogspot.json`.
+  - Tested 2/2 successfully; content comes from `.post-body`, dates from `.date-header span`.
+- `khmerization.blogspot.com`:
+  - Existing source was repointed from BayonTV auto preset to `configs/khmerization_blogspot.json`.
+  - Tested 2/2 successfully for links/title/date/image; first homepage posts are video-only and have empty text content by source HTML.
+- `khmerkrom.org`:
+  - Source `sources/khmerkrom-org.json` was removed.
+  - Feed preset `configs/khmerkrom_org.json` was removed so `https://khmerkrom.org/feed/` no longer appears in UI preset data.
+  - Network test on 2026-04-28: feed, homepage, and www homepage all reset the connection.
+- `navy.mil.kh`:
+  - Source `sources/navy-mil-kh.json` was removed.
+  - Unused preset `configs/auto_navy-mil-kh.json` was removed.
+  - The auto-generated top candidate was `/cdn-cgi/l/email-protection`, not a valid article.
+- `mlmupc.gov.kh`:
+  - Source `sources/mlmupc-gov-kh.json` was removed.
+  - Unused preset `configs/mlmupc_gov_kh.json` was removed.
+  - User asked to remove `https://mlmupc.gov.kh/#`.
+- `cambodian.cri.cn`:
+  - Source was removed from `sources/`.
+- `cambodiantimes.com`:
+  - HTTP crawler and cloudscraper both hit Cloudflare `403`.
+  - Source was removed from `sources/`.
 - `khmertimeskh.com`:
   - Source removed because Cloudflare blocked homepage, feed, sitemap, API, and browser automation attempts.
 
@@ -64,6 +126,8 @@ Use `context/` as the first stop when resuming work on this repo.
 - `f334901` Add selected sources crawl mode
 - `a6efca8` Remove Khmer Times source
 - `3bcdacf` Add dedicated BTV source categories
+- `df1df79` Add project context memory
+- `f71d24a` Add blocked sources tab and crawl updates
 
 ## Notes For Future Edits
 

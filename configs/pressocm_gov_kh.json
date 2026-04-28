@@ -1,0 +1,133 @@
+{
+  "site_name": "pressocm.gov.kh",
+  "base_url": "https://pressocm.gov.kh",
+  "allowed_domains": [
+    "pressocm.gov.kh"
+  ],
+  "listing_urls": [
+    "https://pressocm.gov.kh/"
+  ],
+  "article_link_selectors": [
+    ".entry-title a[href]",
+    "h3.entry-title a[href]"
+  ],
+  "article_link_pattern": "^https?://pressocm\\.gov\\.kh/archives/\\d+/?$",
+  "article_link_exclude_patterns": [
+    "/(?:about|category|contact|feed|page|privacy|search|tag)(?:/|$)",
+    "/(?:wp-admin|wp-content|wp-json)(?:/|$)",
+    "\\.(?:7z|avi|css|docx?|gif|ico|jpe?g|js|mp3|mp4|pdf|png|rar|svg|webp|xlsx?|xml|zip)(?:[?#]|$)",
+    "(?:facebook|instagram|linkedin|telegram|tiktok|twitter|x|youtube)\\.com"
+  ],
+  "fields": {
+    "title": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": ".tdb-title-text"
+        },
+        {
+          "selector": "h1"
+        },
+        {
+          "selector": "title"
+        }
+      ]
+    },
+    "summary": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": "meta[name='description']",
+          "attr": "content"
+        }
+      ]
+    },
+    "published_at": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": "time[datetime]",
+          "attr": "datetime"
+        },
+        {
+          "selector": "time.entry-date"
+        },
+        {
+          "selector": ".entry-date"
+        }
+      ]
+    },
+    "author": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": "meta[name='author']",
+          "attr": "content"
+        },
+        {
+          "selector": ".td-post-author-name"
+        },
+        {
+          "selector": ".author"
+        }
+      ]
+    },
+    "content": {
+      "mode": "join",
+      "separator": "\n\n",
+      "extractors": [
+        {
+          "selector": ".td-post-content p"
+        },
+        {
+          "selector": ".td-post-content"
+        }
+      ]
+    },
+    "images": {
+      "mode": "list",
+      "extractors": [
+        {
+          "selector": ".td-post-content img[data-lazy-src^='https://']",
+          "attr": "data-lazy-src"
+        },
+        {
+          "selector": ".td-post-content img[src^='https://']",
+          "attr": "src"
+        },
+        {
+          "selector": ".td-post-content img[src^='http://']",
+          "attr": "src"
+        }
+      ]
+    }
+  },
+  "remove_selectors": [
+    "script",
+    "style",
+    "noscript",
+    "iframe",
+    "form",
+    "nav",
+    "header",
+    "footer",
+    ".td-post-sharing",
+    ".td-social-sharing",
+    ".share",
+    ".social-share",
+    ".related-posts",
+    ".td-related",
+    ".td_block_related_posts",
+    ".comments"
+  ],
+  "request": {
+    "timeout_seconds": 20,
+    "delay_seconds": 0.2,
+    "respect_robots_txt": false,
+    "headers": {
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+      "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+      "Accept-Language": "km,en-US;q=0.9,en;q=0.8"
+    }
+  }
+}

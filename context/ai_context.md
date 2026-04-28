@@ -38,8 +38,10 @@ Use `context/` as the first stop when resuming work on this repo.
 ## Recent Source-Specific Decisions
 
 - `thmeythmey.com`:
-  - Detail pages are blocked by Cloudflare.
-  - Source uses homepage/listing-card extraction fallback.
+  - Source target is `https://thmeythmey.com/category/9`.
+  - Direct category and detail pages are blocked by Cloudflare.
+  - Preset sets `preserve_listing_urls: true`, loads the homepage, and extracts only `.section-container:has(.filter-nav a[href='https://thmeythmey.com/category/9']) + .news-grid .news-card`.
+  - Tested 2/2 successfully on 2026-04-28 through `run_crawl(... target_url='https://thmeythmey.com/category/9')`.
 
 - `nac.org.kh`:
   - Đã thêm nguồn với preset dùng chung với BayonTV (`configs/auto_bayontv-com-kh.json`).
@@ -77,6 +79,12 @@ Use `context/` as the first stop when resuming work on this repo.
   - Use `https://moc.gov.kh/kh/news` as the source target.
   - The `/kh/news` page is Next.js client-rendered and static HTML currently has only skeleton cards; direct crawl test returned 0/0 links.
   - The JS chunk references GraphQL `publicNewsList` at `https://graphql.moc.gov.kh/graphql`, but direct POST returned 403 "Site Under Maintenance" on 2026-04-28.
+- `pressocm.gov.kh`:
+  - Existing source was repointed from `configs/auto_bayontv-com-kh.json` to `configs/pressocm_gov_kh.json`.
+  - Listing uses `.entry-title a[href]` and strict `/archives/<id>` article URLs.
+  - Detail extraction uses `.tdb-title-text`, `time[datetime]`, `.td-post-content`, and image lazy-load URLs from `img[data-lazy-src]`.
+  - Tested 2/2 successfully on 2026-04-28. Some Press OCM articles are scan/PDF style and legitimately have little or no text content, but images are captured.
+  - Backend date parser now supports English month display dates with comma, e.g. `24 April, 2026`.
 - `grandnewsasia.com`:
   - Use `https://grandnewsasia.com/archives/category/local-news` as the source target.
   - Use `configs/grandnewsasia_local_news.json`; article content is under `.main-text p`.
@@ -117,6 +125,9 @@ Use `context/` as the first stop when resuming work on this repo.
 - `monoroom.info`:
   - Source `sources/monoroom-info.json` was removed.
   - It used shared `configs/auto_bayontv-com-kh.json`, so no preset was removed.
+- `rac.gov.kh`:
+  - Source `sources/rac-gov-kh.json` was removed.
+  - User asked to remove `https://rac.gov.kh/`.
 - `cambodian.cri.cn`:
   - Source was removed from `sources/`.
 - `cambodiantimes.com`:

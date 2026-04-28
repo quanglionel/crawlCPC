@@ -73,6 +73,11 @@ The app is designed so non-technical source management can happen in the UI whil
   - listing page is a Next.js client-rendered page; static HTML currently only exposes loading skeleton, not article cards
   - article data is fetched through GraphQL at `https://graphql.moc.gov.kh/graphql`, but on 2026-04-28 direct HTTP requests returned 403 "Site Under Maintenance"
   - existing preset still uses URL regexes for `/kh/news/<id>` when links are present
+- `pressocm.gov.kh`
+  - source should use dedicated preset `configs/pressocm_gov_kh.json`, not the shared BayonTV auto preset
+  - listing links are `https://pressocm.gov.kh/archives/<id>` from `.entry-title a[href]`
+  - detail title comes from `.tdb-title-text`, date from `time[datetime]`, content from `.td-post-content`
+  - many articles are scanned documents; they may have little/no text content but expose page images via `img[data-lazy-src]`
 - `grandnewsasia.com`
   - source should target `/archives/category/local-news`
   - uses dedicated preset `configs/grandnewsasia_local_news.json`
@@ -84,7 +89,9 @@ The app is designed so non-technical source management can happen in the UI whil
   - preset should only accept article URLs like `/news/<hash>`, not menu/footer links
   - dates may be displayed as `28-April-2026`; backend parser supports this format
 - `thmeythmey.com`
-  - listing-card fallback because detail pages are Cloudflare-blocked
+  - source targets `https://thmeythmey.com/category/9`
+  - direct category and detail pages are Cloudflare-blocked for HTTP crawler access
+  - preset preserves homepage listing and extracts only the `category/9` national-news section cards
 - `kampuchea.news`
   - source was intentionally removed from `sources/`
   - unused preset `configs/kampuchea_news_listing.json` was also removed
@@ -116,6 +123,9 @@ The app is designed so non-technical source management can happen in the UI whil
 - `monoroom.info`
   - source was intentionally removed from `sources/`
   - it used shared `configs/auto_bayontv-com-kh.json`, so no preset was removed
+- `rac.gov.kh`
+  - source was intentionally removed from `sources/`
+  - user asked to remove `https://rac.gov.kh/`
 - `cambodian.cri.cn`
   - source was intentionally removed from `sources/`
 - `cambodiantimes.com`
@@ -135,5 +145,6 @@ The app is designed so non-technical source management can happen in the UI whil
 ## Known Operational Caveats
 
 - Some sites expose unstable or partial dates.
+- English dates with a comma, such as `24 April, 2026`, are supported by backend date parsing.
 - Some Cloudflare-protected sites cannot be crawled reliably via HTTP.
 - Multi-listing presets may need `preserve_listing_urls: true`.

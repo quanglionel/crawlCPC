@@ -1,12 +1,12 @@
 {
   "source_key": "thmeythmey-com",
   "name": "Thmeythmey",
-  "target_url": "https://thmeythmey.com/",
+  "target_url": "https://thmeythmey.com/category/9",
   "target_mode": "listing",
   "preset_path": "configs/thmeythmey_com.json",
   "output": "output/thmeythmey-com.json",
   "max_pages": 1,
   "max_articles": 5,
   "workers": 2,
-  "notes": "Trang chi tiet dang bi Cloudflare chan crawler HTTP, preset nay lay title/mo ta/anh tu card tren homepage de tranh load lai link rac."
+  "notes": "Category /category/9 is Cloudflare-blocked for direct HTTP, so the preset preserves homepage listing and extracts the matching national-news section cards."
 }

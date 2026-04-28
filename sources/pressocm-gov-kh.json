@@ -3,10 +3,10 @@
   "name": "pressocm.gov.kh",
   "target_url": "https://pressocm.gov.kh/",
   "target_mode": "listing",
-  "preset_path": "configs/auto_bayontv-com-kh.json",
+  "preset_path": "configs/pressocm_gov_kh.json",
   "output": "output/auto/025_pressocm-gov-kh.json",
   "max_pages": 1,
   "max_articles": 2,
   "workers": 2,
-  "notes": "Auto-generated from https://pressocm.gov.kh. Top candidate: https://pressocm.gov.kh/archives/121777"
+  "notes": "Use dedicated Press OCM preset for /archives/<id> links and .td-post-content article bodies."
 }

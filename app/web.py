@@ -472,7 +472,7 @@ def parse_article_timestamp(raw_value: str | None) -> datetime | None:
 
     english_month_like = re.search(
         r"(\d{1,2})[-\s](Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|"
-        r"Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)[-\s](20\d{2})",
+        r"Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?),?[-\s]+(20\d{2})",
         value,
         re.IGNORECASE,
     )

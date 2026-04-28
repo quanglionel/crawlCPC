@@ -7,6 +7,7 @@
   "listing_urls": [
     "https://thmeythmey.com/"
   ],
+  "preserve_listing_urls": true,
   "article_link_selectors": [
     "a[href*='/detail/']"
   ],
@@ -19,10 +20,7 @@
   "listing_articles": {
     "enabled": true,
     "card_selectors": [
-      ".main-article",
-      ".news-item",
-      ".news-item-1",
-      ".news-card"
+      ".section-container:has(.filter-nav a[href='https://thmeythmey.com/category/9']) + .news-grid .news-card"
     ],
     "link_selectors": [
       "a[href*='/detail/']"

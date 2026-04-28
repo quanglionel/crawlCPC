@@ -5,7 +5,7 @@
     "www.maff.gov.kh"
   ],
   "listing_urls": [
-    "https://www.maff.gov.kh/"
+    "https://www.maff.gov.kh/news"
   ],
   "article_link_selectors": [
     "article a[href]",
@@ -23,7 +23,7 @@
     "h3 a[href]",
     "a[href]"
   ],
-  "article_link_pattern": "^https?://(?:www\\.maff\\.gov\\.kh)/.+",
+  "article_link_pattern": "^https?://(?:www\\.maff\\.gov\\.kh)/newsdetail/[A-Za-z0-9_-]+/?$",
   "article_link_exclude_patterns": [
     "/(?:about|advertise|author|category|contact|feed|login|page|privacy|register|rss|search|tag|terms)(?:/|$)",
     "/(?:wp-admin|wp-content|wp-json)(?:/|$)",
@@ -104,6 +104,11 @@
         },
         {
           "selector": "time"
+        },
+        {
+          "selector": "meta[property='og:image']",
+          "attr": "content",
+          "regex": "20\\d{2}-\\d{2}-\\d{2}"
         },
         {
           "selector": ".published"

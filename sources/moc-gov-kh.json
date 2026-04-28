@@ -1,7 +1,7 @@
 {
   "source_key": "moc-gov-kh",
   "name": "moc.gov.kh",
-  "target_url": "https://moc.gov.kh/kh",
+  "target_url": "https://moc.gov.kh/kh/news",
   "target_mode": "listing",
   "preset_path": "configs/moc_gov_kh.json",
   "output": "output/moc_gov_kh.json",

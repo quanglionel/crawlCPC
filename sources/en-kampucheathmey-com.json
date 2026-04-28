@@ -1,0 +1,12 @@
+{
+  "source_key": "en-kampucheathmey-com",
+  "name": "Kampuchea Thmey English",
+  "target_url": "https://en.kampucheathmey.com/",
+  "target_mode": "listing",
+  "preset_path": "configs/kampucheathmey_en.json",
+  "output": "output/en-kampucheathmey-com.json",
+  "max_pages": 1,
+  "max_articles": 2,
+  "workers": 2,
+  "notes": "Crawl English homepage with dedicated Kampuchea Thmey English preset."
+}

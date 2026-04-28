@@ -414,6 +414,20 @@ def parse_article_timestamp(raw_value: str | None) -> datetime | None:
     if not value:
         return None
 
+    relative_hours = re.search(r"(\d+)\s*(?:hours?|hrs?|ម៉ោង)\s*(?:ago|មុន)", value, re.IGNORECASE)
+    if relative_hours:
+        return datetime.now(timezone.utc) - timedelta(hours=int(relative_hours.group(1)))
+
+    relative_minutes = re.search(r"(\d+)\s*(?:minutes?|mins?|នាទី)\s*(?:ago|មុន)", value, re.IGNORECASE)
+    if relative_minutes:
+        return datetime.now(timezone.utc) - timedelta(minutes=int(relative_minutes.group(1)))
+
+    if re.search(r"(?:just now|ឥឡូវ)", value, re.IGNORECASE):
+        return datetime.now(timezone.utc)
+
+    if re.search(r"(?:yesterday|ម្សិលមិញ)", value, re.IGNORECASE):
+        return datetime.now(timezone.utc) - timedelta(days=1)
+
     normalized = value.replace("Z", "+00:00")
     try:
         parsed = datetime.fromisoformat(normalized)
@@ -451,6 +465,35 @@ def parse_article_timestamp(raw_value: str | None) -> datetime | None:
         day = int(slash_like.group(1))
         month = int(slash_like.group(2))
         year = int(slash_like.group(3))
+        try:
+            return datetime(year, month, day, tzinfo=timezone.utc)
+        except ValueError:
+            return None
+
+    english_month_like = re.search(
+        r"(\d{1,2})[-\s](Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|"
+        r"Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)[-\s](20\d{2})",
+        value,
+        re.IGNORECASE,
+    )
+    if english_month_like:
+        month_names = {
+            "jan": 1,
+            "feb": 2,
+            "mar": 3,
+            "apr": 4,
+            "may": 5,
+            "jun": 6,
+            "jul": 7,
+            "aug": 8,
+            "sep": 9,
+            "oct": 10,
+            "nov": 11,
+            "dec": 12,
+        }
+        day = int(english_month_like.group(1))
+        month = month_names[english_month_like.group(2)[:3].lower()]
+        year = int(english_month_like.group(3))
         try:
             return datetime(year, month, day, tzinfo=timezone.utc)
         except ValueError:
@@ -812,20 +855,24 @@ def run_single_source_crawl_job(
     target_url: str | None,
     target_mode: str,
 ) -> None:
+    source_key = str(source.get("source_key") or "")
     source_name = str(source.get("name") or source.get("source_key") or "Nguon")
     update_crawl_job(job_id, current_source=source_name)
 
     def publish_progress(progress: dict[str, Any]) -> None:
         latest_article = progress.pop("latest_article", None)
         if latest_article:
+            live_article = dict(latest_article)
+            live_article["source_key"] = source_key
+            live_article["source_name"] = source_name
             display_payload = prepare_result_for_display(
                 {
                     "site_name": source_name,
                     "article_count": 1,
-                    "success_count": 0 if latest_article.get("error") else 1,
-                    "error_count": 1 if latest_article.get("error") else 0,
+                    "success_count": 0 if live_article.get("error") else 1,
+                    "error_count": 1 if live_article.get("error") else 0,
                     "warnings": [],
-                    "articles": [latest_article],
+                    "articles": [live_article],
                 },
                 translate_to_vi=True,
             )
@@ -846,8 +893,13 @@ def run_single_source_crawl_job(
             progress_callback=publish_progress,
         )
 
+        payload["site_name"] = source_name
         filtered_articles = [
-            article
+            {
+                **article,
+                "source_key": source_key,
+                "source_name": source_name,
+            }
             for article in (payload.get("articles") or [])
             if not is_non_article_record(article)
         ]

@@ -1,41 +1,22 @@
 {
-  "site_name": "MLMUPC",
-  "base_url": "https://mlmupc.gov.kh",
+  "site_name": "Grandnewsasia",
+  "base_url": "https://grandnewsasia.com",
   "allowed_domains": [
-    "mlmupc.gov.kh",
-    "www.mlmupc.gov.kh"
+    "grandnewsasia.com"
   ],
   "listing_urls": [
-    "https://mlmupc.gov.kh/wp-sitemap-posts-post-1.xml"
+    "https://grandnewsasia.com/archives/category/local-news"
   ],
-  "article_link_selectors": [],
-  "article_link_regexes": [
-    "<loc>(https://mlmupc\\.gov\\.kh/\\d{4}/\\d{2}/\\d{2}/[^<]+/)</loc>"
+  "article_link_selectors": [
+    "h2 a[href]",
+    "article a[href]"
   ],
-  "article_link_pattern": "https?://(?:www\\.)?mlmupc\\.gov\\.kh/\\d{4}/\\d{2}/\\d{2}/[^?#]+/?$",
+  "article_link_pattern": "^https?://grandnewsasia\\.com/archives/\\d+/?$",
   "article_link_exclude_patterns": [
-    "https?://(?:www\\.)?mlmupc\\.gov\\.kh/2023/09/06/%e1%9e%91%e1%9f%86%e1%9e%93%e1%9e%b6%e1%9e%80"
+    "/archives/category/",
+    "/wp/",
+    "\\.(?:css|gif|ico|jpe?g|js|png|svg|webp)(?:[?#]|$)"
   ],
-  "remove_selectors": [
-    "script",
-    "style",
-    "noscript",
-    "iframe",
-    "form",
-    "nav",
-    "header",
-    "footer",
-    ".sidebar",
-    ".widget-area",
-    ".comments-area"
-  ],
-  "request": {
-    "timeout_seconds": 30,
-    "delay_seconds": 0.15,
-    "verify_ssl": true,
-    "respect_robots_txt": false,
-    "user_agent": "Mozilla/5.0"
-  },
   "fields": {
     "title": {
       "mode": "first",
@@ -67,7 +48,7 @@
           "attr": "content"
         },
         {
-          "selector": ".entry-content p"
+          "selector": ".entry-summary"
         }
       ]
     },
@@ -81,6 +62,15 @@
         {
           "selector": "time[datetime]",
           "attr": "datetime"
+        },
+        {
+          "selector": ".entry-date"
+        },
+        {
+          "selector": ".posted-on"
+        },
+        {
+          "selector": ".meta-wrapper"
         }
       ]
     },
@@ -92,21 +82,10 @@
           "attr": "content"
         },
         {
-          "selector": ".author-name"
+          "selector": ".author"
         },
         {
-          "selector": ".byline a"
-        }
-      ]
-    },
-    "category": {
-      "mode": "list",
-      "extractors": [
-        {
-          "selector": ".cat-links a"
-        },
-        {
-          "selector": "a[rel='category tag']"
+          "selector": ".byline"
         }
       ]
     },
@@ -115,18 +94,24 @@
       "separator": "\n\n",
       "extractors": [
         {
+          "selector": ".main-text p"
+        },
+        {
+          "selector": ".detail p"
+        },
+        {
           "selector": ".entry-content p"
         },
         {
-          "selector": ".single-content p"
+          "selector": ".post-content p"
         },
         {
           "selector": "article p"
         }
       ]
     },
-    "image": {
-      "mode": "first",
+    "images": {
+      "mode": "list",
       "extractors": [
         {
           "selector": "meta[property='og:image']",
@@ -141,6 +126,30 @@
           "attr": "src"
         }
       ]
+    }
+  },
+  "remove_selectors": [
+    "script",
+    "style",
+    "noscript",
+    "iframe",
+    "form",
+    "nav",
+    "header",
+    "footer",
+    ".advertisement",
+    ".ads",
+    ".share",
+    ".related-posts",
+    ".comments"
+  ],
+  "request": {
+    "timeout_seconds": 20,
+    "delay_seconds": 0.2,
+    "respect_robots_txt": false,
+    "headers": {
+      "User-Agent": "Mozilla/5.0",
+      "Accept-Language": "km,en-US;q=0.9,en;q=0.8"
     }
   }
 }

@@ -1,0 +1,136 @@
+{
+  "site_name": "Khmerization",
+  "base_url": "https://khmerization.blogspot.com",
+  "allowed_domains": [
+    "khmerization.blogspot.com"
+  ],
+  "listing_urls": [
+    "https://khmerization.blogspot.com/"
+  ],
+  "article_link_selectors": [
+    "h3.post-title a[href]",
+    ".post-title a[href]"
+  ],
+  "article_link_pattern": "^https?://khmerization\\.blogspot\\.com/\\d{4}/\\d{2}/[^/?#]+\\.html/?$",
+  "article_link_exclude_patterns": [
+    "#",
+    "/search(?:/|\\?|$)",
+    "\\.(?:css|gif|ico|jpe?g|js|png|svg|webp)(?:[?#]|$)"
+  ],
+  "fields": {
+    "title": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": "meta[property='og:title']",
+          "attr": "content"
+        },
+        {
+          "selector": "h3.post-title"
+        },
+        {
+          "selector": ".post-title.entry-title"
+        },
+        {
+          "selector": "title"
+        }
+      ]
+    },
+    "summary": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": "meta[property='og:description']",
+          "attr": "content"
+        },
+        {
+          "selector": "meta[name='description']",
+          "attr": "content"
+        }
+      ]
+    },
+    "published_at": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": ".date-header span"
+        },
+        {
+          "selector": "abbr.published",
+          "attr": "title"
+        },
+        {
+          "selector": "abbr.published"
+        },
+        {
+          "selector": "$url",
+          "regex": "/(\\d{4}/\\d{2})/"
+        }
+      ]
+    },
+    "author": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": ".post-author .fn"
+        },
+        {
+          "selector": ".post-author"
+        },
+        {
+          "selector": "meta[name='author']",
+          "attr": "content"
+        }
+      ]
+    },
+    "content": {
+      "mode": "join",
+      "separator": "\n\n",
+      "extractors": [
+        {
+          "selector": ".post-body p"
+        },
+        {
+          "selector": ".post-body"
+        }
+      ]
+    },
+    "images": {
+      "mode": "list",
+      "extractors": [
+        {
+          "selector": "meta[property='og:image']",
+          "attr": "content"
+        },
+        {
+          "selector": ".post-body img[src]",
+          "attr": "src"
+        }
+      ]
+    }
+  },
+  "remove_selectors": [
+    "script",
+    "style",
+    "noscript",
+    "iframe",
+    "form",
+    "nav",
+    "header",
+    "footer",
+    ".comments",
+    ".comment-thread",
+    ".post-footer",
+    ".blog-pager",
+    ".sidebar"
+  ],
+  "request": {
+    "timeout_seconds": 20,
+    "delay_seconds": 0.2,
+    "respect_robots_txt": false,
+    "headers": {
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+      "Accept-Language": "km,en-US;q=0.9,en;q=0.8,vi;q=0.7"
+    }
+  }
+}

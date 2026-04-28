@@ -1,12 +1,12 @@
 {
   "source_key": "khmerization-blogspot-com",
-  "name": "khmerization.blogspot.com",
+  "name": "Khmerization",
   "target_url": "https://khmerization.blogspot.com/",
   "target_mode": "listing",
-  "preset_path": "configs/auto_bayontv-com-kh.json",
+  "preset_path": "configs/khmerization_blogspot.json",
   "output": "output/auto/092_khmerization-blogspot-com.json",
   "max_pages": 1,
   "max_articles": 2,
   "workers": 2,
-  "notes": "Auto-generated from https://khmerization.blogspot.com. Top candidate: https://khmerization.blogspot.com/2023/04/blog-post_13.html"
+  "notes": "Blogspot source using dedicated Khmerization preset."
 }

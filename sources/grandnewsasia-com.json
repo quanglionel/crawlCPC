@@ -1,12 +1,12 @@
 {
   "source_key": "grandnewsasia-com",
   "name": "Grandnewsasia",
-  "target_url": "https://grandnewsasia.com/",
+  "target_url": "https://grandnewsasia.com/archives/category/local-news",
   "target_mode": "listing",
-  "preset_path": "configs/auto_bayontv-com-kh.json",
+  "preset_path": "configs/grandnewsasia_local_news.json",
   "output": "output/auto/014_grandnewsasia-com.json",
   "max_pages": 1,
   "max_articles": 2,
   "workers": 2,
-  "notes": "Auto-generated from https://grandnewsasia.com. Top candidate: https://grandnewsasia.com/archives/45228"
+  "notes": "Targets local-news category with a dedicated Grand News Asia preset."
 }

@@ -1,43 +1,21 @@
 {
-  "site_name": "Cwcicambodia",
-  "base_url": "https://cwcicambodia.net",
+  "site_name": "Kampuchea Thmey English",
+  "base_url": "https://en.kampucheathmey.com",
   "allowed_domains": [
-    "cwcicambodia.net",
-    "www.cwcicambodia.net"
+    "en.kampucheathmey.com"
   ],
   "listing_urls": [
-    "https://cwcicambodia.net/category/news/"
+    "https://en.kampucheathmey.com/"
   ],
   "article_link_selectors": [
-    "h2 a[href]",
-    "article a[href]"
+    "a[href]"
   ],
-  "article_link_pattern": "https?://(?:www\\.)?cwcicambodia\\.net/\\d{4}/\\d{2}/\\d{2}/[^/?#]+/?$",
+  "article_link_pattern": "^https?://en\\.kampucheathmey\\.com/(?!category/|author/|tag/|page/)[a-z0-9-]+/\\d+/?$",
   "article_link_exclude_patterns": [
-    "#respond$"
+    "/(?:category|author|tag|page|feed|wp-admin|wp-content|wp-json)(?:/|$)",
+    "\\.(?:css|gif|ico|jpe?g|js|png|svg|webp)(?:[?#]|$)",
+    "(?:facebook|instagram|linkedin|telegram|tiktok|twitter|x|youtube)\\.com"
   ],
-  "remove_selectors": [
-    "script",
-    "style",
-    "noscript",
-    "iframe",
-    "form",
-    "nav",
-    "header",
-    "footer",
-    ".sharedaddy",
-    ".jp-relatedposts",
-    ".comments-area",
-    ".widget-area",
-    ".post-navigation"
-  ],
-  "request": {
-    "timeout_seconds": 30,
-    "delay_seconds": 0.2,
-    "verify_ssl": true,
-    "respect_robots_txt": false,
-    "user_agent": "Mozilla/5.0"
-  },
   "fields": {
     "title": {
       "mode": "first",
@@ -47,13 +25,13 @@
           "attr": "content"
         },
         {
+          "selector": "h1.mvp-post-title"
+        },
+        {
           "selector": "h1.entry-title"
         },
         {
           "selector": "h1"
-        },
-        {
-          "selector": "title"
         }
       ]
     },
@@ -67,9 +45,6 @@
         {
           "selector": "meta[name='description']",
           "attr": "content"
-        },
-        {
-          "selector": ".entry-summary"
         }
       ]
     },
@@ -88,7 +63,7 @@
           "selector": "time"
         },
         {
-          "selector": ".posted-on"
+          "selector": ".mvp-post-date.updated"
         }
       ]
     },
@@ -100,10 +75,10 @@
           "attr": "content"
         },
         {
-          "selector": ".byline"
+          "selector": ".author-name"
         },
         {
-          "selector": ".author"
+          "selector": ".byline"
         }
       ]
     },
@@ -112,29 +87,47 @@
       "separator": "\n\n",
       "extractors": [
         {
-          "selector": ".entry-content p"
-        },
-        {
-          "selector": "article p"
+          "selector": "#mvp-content-main p"
         }
       ]
     },
-    "image": {
-      "mode": "first",
+    "images": {
+      "mode": "list",
       "extractors": [
         {
           "selector": "meta[property='og:image']",
           "attr": "content"
         },
         {
-          "selector": ".entry-content img[src]",
-          "attr": "src"
-        },
-        {
-          "selector": "article img[src]",
+          "selector": "#mvp-content-main img[src]",
           "attr": "src"
         }
       ]
+    }
+  },
+  "remove_selectors": [
+    "script",
+    "style",
+    "noscript",
+    "iframe",
+    "form",
+    "nav",
+    "footer",
+    ".mvp-related-posts",
+    ".mvp-related-posts-list",
+    ".mvp-post-soc-wrap",
+    ".mvp-post-tags",
+    ".comments",
+    ".advertisement",
+    ".ads"
+  ],
+  "request": {
+    "timeout_seconds": 20,
+    "delay_seconds": 0.2,
+    "respect_robots_txt": false,
+    "headers": {
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+      "Accept-Language": "en-US,en;q=0.9,km;q=0.8,vi;q=0.7"
     }
   }
 }

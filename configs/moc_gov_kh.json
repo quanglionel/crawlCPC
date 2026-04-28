@@ -5,7 +5,7 @@
     "moc.gov.kh"
   ],
   "listing_urls": [
-    "https://moc.gov.kh/kh"
+    "https://moc.gov.kh/kh/news"
   ],
   "article_link_selectors": [
     "a[href*='/kh/news/']"

@@ -5,59 +5,141 @@
     "immigration.gov.kh"
   ],
   "listing_urls": [
-    "https://immigration.gov.kh/"
+    "https://immigration.gov.kh/news"
   ],
   "article_link_selectors": [
-    "article a[href]",
-    ".post a[href]",
-    ".entry a[href]",
-    ".entry-title a[href]",
-    ".post-title a[href]",
-    ".news-title a[href]",
-    ".item-title a[href]",
-    ".card a[href]",
-    ".item a[href]",
-    ".news-item a[href]",
-    "h1 a[href]",
-    "h2 a[href]",
-    "h3 a[href]",
     "a[href]"
   ],
-  "article_link_pattern": "^https?://(?:immigration\\.gov\\.kh)/.+",
-  "article_link_exclude_patterns": [
-    "/(?:about|advertise|author|category|contact|feed|login|page|privacy|register|rss|search|tag|terms)(?:/|$)",
-    "/(?:wp-admin|wp-content|wp-json)(?:/|$)",
-    "\\.(?:7z|avi|css|docx?|gif|ico|jpe?g|js|mp3|mp4|pdf|png|rar|svg|webp|xlsx?|xml|zip)(?:[?#]|$)",
-    "(?:facebook|instagram|linkedin|telegram|tiktok|twitter|x|youtube)\\.com",
-    "/(?:home|homepage|latest|latest-news|contact|contact-us|about|about-us|trang-chu|lien-he)(?:/|$)",
-    "^https?://[^/]+/?(?:[?#].*)?$"
-  ],
+  "article_link_pattern": "^https?://immigration\\.gov\\.kh/news/fSWeA16hLDGk6hEpCxHD/[A-Za-z0-9_-]+",
+  "article_link_exclude_patterns": [],
+  "api": {
+    "listing": {
+      "url": "https://firestore.googleapis.com/v1/projects/egdi-ecosystem/databases/(default)/documents:runQuery",
+      "method": "POST",
+      "items_path": "",
+      "link_template": "https://immigration.gov.kh/news/fSWeA16hLDGk6hEpCxHD/{document.fields.key}?q=fSWeA16hLDGk6hEpCxHD",
+      "body": {
+        "structuredQuery": {
+          "from": [
+            {
+              "collectionId": "news"
+            }
+          ],
+          "where": {
+            "compositeFilter": {
+              "op": "AND",
+              "filters": [
+                {
+                  "fieldFilter": {
+                    "field": {
+                      "fieldPath": "display_path"
+                    },
+                    "op": "ARRAY_CONTAINS",
+                    "value": {
+                      "stringValue": "fSWeA16hLDGk6hEpCxHD"
+                    }
+                  }
+                },
+                {
+                  "fieldFilter": {
+                    "field": {
+                      "fieldPath": "status.key"
+                    },
+                    "op": "EQUAL",
+                    "value": {
+                      "integerValue": "2"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "orderBy": [
+            {
+              "field": {
+                "fieldPath": "created_at"
+              },
+              "direction": "DESCENDING"
+            },
+            {
+              "field": {
+                "fieldPath": "__name__"
+              },
+              "direction": "DESCENDING"
+            }
+          ],
+          "limit": 20
+        }
+      }
+    },
+    "article": {
+      "url_template": "https://firestore.googleapis.com/v1/projects/egdi-ecosystem/databases/(default)/documents/news/{id}",
+      "id_pattern": "/news/fSWeA16hLDGk6hEpCxHD/([^/?#]+)",
+      "root_path": "fields"
+    },
+    "json_fields": {
+      "title": {
+        "mode": "first",
+        "extractors": [
+          {
+            "path": "title"
+          }
+        ]
+      },
+      "summary": {
+        "mode": "first",
+        "extractors": [
+          {
+            "path": "description"
+          }
+        ]
+      },
+      "published_at": {
+        "mode": "first",
+        "extractors": [
+          {
+            "path": "created_at"
+          }
+        ]
+      },
+      "author": {
+        "mode": "first",
+        "extractors": [
+          {
+            "path": "created_by.mapValue.fields.displayName"
+          },
+          {
+            "path": "committee.mapValue.fields.name"
+          }
+        ]
+      },
+      "content": {
+        "mode": "first",
+        "extractors": [
+          {
+            "path": "description"
+          }
+        ]
+      },
+      "images": {
+        "mode": "list",
+        "extractors": [
+          {
+            "path": "file.mapValue.fields.fileUrl"
+          },
+          {
+            "path": "photo.arrayValue.values.mapValue.fields.fileUrl"
+          }
+        ]
+      }
+    }
+  },
   "fields": {
     "title": {
       "mode": "first",
       "extractors": [
         {
-          "selector": "meta[property='og:title']",
-          "attr": "content"
-        },
-        {
-          "selector": "meta[name='twitter:title']",
-          "attr": "content"
-        },
-        {
-          "selector": "h1.entry-title"
-        },
-        {
-          "selector": "h1.post-title"
-        },
-        {
-          "selector": "h1.article-title"
-        },
-        {
           "selector": "h1"
-        },
-        {
-          "selector": "title"
         }
       ]
     },
@@ -65,21 +147,8 @@
       "mode": "first",
       "extractors": [
         {
-          "selector": "meta[property='og:description']",
-          "attr": "content"
-        },
-        {
           "selector": "meta[name='description']",
           "attr": "content"
-        },
-        {
-          "selector": ".entry-summary"
-        },
-        {
-          "selector": ".article-summary"
-        },
-        {
-          "selector": ".excerpt"
         }
       ]
     },
@@ -87,35 +156,7 @@
       "mode": "first",
       "extractors": [
         {
-          "selector": "meta[property='article:published_time']",
-          "attr": "content"
-        },
-        {
-          "selector": "meta[name='pubdate']",
-          "attr": "content"
-        },
-        {
-          "selector": "meta[name='publishdate']",
-          "attr": "content"
-        },
-        {
-          "selector": "time[datetime]",
-          "attr": "datetime"
-        },
-        {
           "selector": "time"
-        },
-        {
-          "selector": ".published"
-        },
-        {
-          "selector": ".post-date"
-        },
-        {
-          "selector": ".entry-date"
-        },
-        {
-          "selector": ".date"
         }
       ]
     },
@@ -123,14 +164,7 @@
       "mode": "first",
       "extractors": [
         {
-          "selector": "meta[name='author']",
-          "attr": "content"
-        },
-        {
           "selector": ".author"
-        },
-        {
-          "selector": ".byline"
         }
       ]
     },
@@ -138,42 +172,6 @@
       "mode": "join",
       "separator": "\n\n",
       "extractors": [
-        {
-          "selector": "article .entry-content p"
-        },
-        {
-          "selector": "article .post-content p"
-        },
-        {
-          "selector": "article .article-content p"
-        },
-        {
-          "selector": "article .td-post-content p"
-        },
-        {
-          "selector": ".entry-content p"
-        },
-        {
-          "selector": ".post-content p"
-        },
-        {
-          "selector": ".article-content p"
-        },
-        {
-          "selector": ".news-detail p"
-        },
-        {
-          "selector": ".detail-content p"
-        },
-        {
-          "selector": ".single-content p"
-        },
-        {
-          "selector": ".td-post-content p"
-        },
-        {
-          "selector": "article p"
-        },
         {
           "selector": "main p"
         }
@@ -183,49 +181,20 @@
       "mode": "list",
       "extractors": [
         {
-          "selector": "meta[property='og:image']",
-          "attr": "content"
-        },
-        {
-          "selector": "article img[src]",
-          "attr": "src"
-        },
-        {
-          "selector": ".entry-content img[src]",
-          "attr": "src"
-        },
-        {
-          "selector": ".post-content img[src]",
+          "selector": "img[src]",
           "attr": "src"
         }
       ]
     }
   },
-  "remove_selectors": [
-    "script",
-    "style",
-    "noscript",
-    "iframe",
-    "form",
-    "nav",
-    "header",
-    "footer",
-    ".advertisement",
-    ".ads",
-    ".ad",
-    ".share",
-    ".social-share",
-    ".related-posts",
-    ".related",
-    ".comments"
-  ],
+  "remove_selectors": [],
   "request": {
-    "timeout_seconds": 10,
+    "timeout_seconds": 20,
     "delay_seconds": 0.2,
     "respect_robots_txt": false,
     "headers": {
       "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-      "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+      "Accept": "application/json,text/plain,*/*",
       "Accept-Language": "km,en-US;q=0.9,en;q=0.8,vi;q=0.7"
     }
   },
@@ -233,8 +202,9 @@
   "auto_source": {
     "original_name": "immigration.gov.kh",
     "original_base_url": "https://immigration.gov.kh/",
-    "top_candidate_url": "https://immigration.gov.kh/news?q=fSWeA16hLDGk6hEpCxHD",
+    "top_candidate_url": "https://immigration.gov.kh/news",
     "candidate_count": 2,
-    "created_at": "2026-04-19T09:00:28.272641+00:00"
+    "created_at": "2026-04-19T09:00:28.272641+00:00",
+    "quality_note": "Switched to Firestore API because the public news list is rendered by Angular and the static HTML only exposes menu links."
   }
 }

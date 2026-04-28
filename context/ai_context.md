@@ -114,6 +114,9 @@ Use `context/` as the first stop when resuming work on this repo.
   - Source `sources/mlmupc-gov-kh.json` was removed.
   - Unused preset `configs/mlmupc_gov_kh.json` was removed.
   - User asked to remove `https://mlmupc.gov.kh/#`.
+- `monoroom.info`:
+  - Source `sources/monoroom-info.json` was removed.
+  - It used shared `configs/auto_bayontv-com-kh.json`, so no preset was removed.
 - `cambodian.cri.cn`:
   - Source was removed from `sources/`.
 - `cambodiantimes.com`:

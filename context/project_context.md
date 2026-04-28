@@ -113,6 +113,9 @@ The app is designed so non-technical source management can happen in the UI whil
   - source was intentionally removed from `sources/`
   - unused preset `configs/mlmupc_gov_kh.json` was also removed
   - user asked to remove `https://mlmupc.gov.kh/#`
+- `monoroom.info`
+  - source was intentionally removed from `sources/`
+  - it used shared `configs/auto_bayontv-com-kh.json`, so no preset was removed
 - `cambodian.cri.cn`
   - source was intentionally removed from `sources/`
 - `cambodiantimes.com`

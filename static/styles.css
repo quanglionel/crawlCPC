@@ -234,6 +234,11 @@ body {
   display: none;
 }
 
+.future-result-filters,
+.future-result-filters[hidden] {
+  display: none !important;
+}
+
 .custom-source-picker-head,
 .custom-source-actions {
   display: flex;
@@ -393,8 +398,12 @@ button {
   transform: translateY(-1px);
 }
 
+.primary-button:disabled:hover {
+  transform: none;
+}
+
 .primary-button:disabled {
-  opacity: 0.7;
+  opacity: 0.45;
   cursor: wait;
 }
 

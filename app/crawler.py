@@ -67,6 +67,7 @@ class MediaCrawler:
         self.site_name = config.get("site_name", "media-site")
         self.base_url = config["base_url"]
         self.allowed_domains = set(config.get("allowed_domains") or [urlparse(self.base_url).netloc])
+        self.allow_external_article_urls = bool(config.get("allow_external_article_urls", False))
         self.hash_link_prefix = str(config.get("hash_link_prefix") or "").strip()
         self.link_selectors = config["article_link_selectors"]
         self.link_attribute = str(config.get("article_link_attribute") or "href").strip() or "href"
@@ -236,6 +237,8 @@ class MediaCrawler:
                 verify=self.fetch_settings.verify_ssl,
             )
         response.raise_for_status()
+        if not response.encoding or response.encoding.lower() in {"iso-8859-1", "latin-1"}:
+            response.encoding = "utf-8"
         if self.fetch_settings.delay_seconds > 0:
             time.sleep(self.fetch_settings.delay_seconds)
         return response.json()
@@ -262,7 +265,7 @@ class MediaCrawler:
 
     def is_allowed_article_url(self, url: str) -> bool:
         parsed = urlparse(url)
-        if parsed.netloc and parsed.netloc not in self.allowed_domains:
+        if not self.allow_external_article_urls and parsed.netloc and parsed.netloc not in self.allowed_domains:
             return False
         if not self.article_link_pattern.search(url):
             return False
@@ -375,6 +378,8 @@ class MediaCrawler:
 
     def _json_values_at_path(self, data: Any, path: str | None) -> list[Any]:
         if not path:
+            if isinstance(data, list):
+                return data
             return [data]
 
         parts = [part for part in path.split(".") if part]
@@ -410,6 +415,27 @@ class MediaCrawler:
     def _stringify_json_value(self, value: Any) -> str:
         if value is None:
             return ""
+        if isinstance(value, dict):
+            firestore_scalar_keys = (
+                "stringValue",
+                "timestampValue",
+                "integerValue",
+                "doubleValue",
+                "booleanValue",
+            )
+            for key in firestore_scalar_keys:
+                if key in value:
+                    scalar_value = str(value[key])
+                    if key == "stringValue" and re.search(r"<[a-zA-Z][^>]*>", scalar_value):
+                        return extract_text(BeautifulSoup(scalar_value, "lxml"))
+                    return normalize_text(scalar_value)
+            if "arrayValue" in value:
+                items = value.get("arrayValue", {}).get("values", [])
+                return normalize_text(
+                    ", ".join(self._stringify_json_value(item) for item in items if self._stringify_json_value(item))
+                )
+            if "mapValue" in value:
+                value = value.get("mapValue", {}).get("fields", {})
         if isinstance(value, str):
             if re.search(r"<[a-zA-Z][^>]*>", value):
                 return extract_text(BeautifulSoup(value, "lxml"))
@@ -486,6 +512,11 @@ class MediaCrawler:
         mode = spec.get("mode", "text")
 
         if selector == "$url":
+            regex = spec.get("regex")
+            if regex:
+                match = re.search(str(regex), url)
+                value = match.group(1) if match and match.groups() else (match.group(0) if match else "")
+                return [value] if value else []
             return [url]
 
         nodes = soup.select(selector)

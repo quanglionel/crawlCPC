@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+import time
 from copy import deepcopy
 from pathlib import Path
 from typing import Any
@@ -19,6 +20,10 @@ TRANSLATE_ENDPOINT = "https://translate.googleapis.com/translate_a/single"
 
 
 class TranslatorError(RuntimeError):
+    pass
+
+
+class TranslatorRateLimitError(TranslatorError):
     pass
 
 
@@ -78,9 +83,11 @@ def split_text(text: str, max_chars: int = MAX_TRANSLATE_CHARS) -> list[str]:
 
 
 class GoogleWebTranslator:
-    def __init__(self, target_language: str = "vi", timeout_seconds: int = 20) -> None:
+    def __init__(self, target_language: str = "vi", timeout_seconds: int = 20, max_retries: int = 2) -> None:
         self.target_language = target_language
         self.timeout_seconds = timeout_seconds
+        self.max_retries = max_retries
+        self.unavailable_reason: str | None = None
         self.session = requests.Session()
         self.session.headers.update(
             {
@@ -93,6 +100,9 @@ class GoogleWebTranslator:
         )
 
     def translate(self, text: str) -> str:
+        if self.unavailable_reason:
+            raise TranslatorRateLimitError(self.unavailable_reason)
+
         clean_text = text.strip()
         if not clean_text:
             return text
@@ -109,19 +119,38 @@ class GoogleWebTranslator:
         return translated
 
     def _translate_chunk(self, text: str) -> str:
-        response = self.session.get(
-            TRANSLATE_ENDPOINT,
-            params={
-                "client": "gtx",
-                "sl": "auto",
-                "tl": self.target_language,
-                "dt": "t",
-                "q": text,
-            },
-            timeout=self.timeout_seconds,
-        )
-        response.raise_for_status()
-        payload = response.json()
+        payload = None
+        last_error: Exception | None = None
+        for attempt in range(self.max_retries + 1):
+            try:
+                response = self.session.post(
+                    TRANSLATE_ENDPOINT,
+                    params={
+                        "client": "gtx",
+                        "sl": "auto",
+                        "tl": self.target_language,
+                        "dt": "t",
+                    },
+                    data={"q": text},
+                    timeout=self.timeout_seconds,
+                )
+                if response.status_code == 429 or "/sorry/" in response.url:
+                    self.unavailable_reason = "Google Translate tam thoi gioi han request (429). Hay thu lai sau."
+                    raise TranslatorRateLimitError(self.unavailable_reason)
+                response.raise_for_status()
+                payload = response.json()
+                break
+            except TranslatorRateLimitError:
+                raise
+            except (requests.RequestException, ValueError) as exc:
+                last_error = exc
+                if attempt >= self.max_retries:
+                    break
+                time.sleep(0.5 * (attempt + 1))
+
+        if payload is None:
+            raise TranslatorError(f"Dich vu dich loi: {last_error}") from last_error
+
         try:
             segments = payload[0]
             return "".join(segment[0] for segment in segments if segment and segment[0])
@@ -150,7 +179,7 @@ def set_original_display_fields(article: dict[str, Any]) -> None:
 
 def translate_article_for_display(article: dict[str, Any], translator: GoogleWebTranslator) -> None:
     set_original_display_fields(article)
-    article["display_language"] = "vi"
+    article["display_language"] = "original"
 
     fields = {
         "display_title": article.get("title"),
@@ -161,10 +190,24 @@ def translate_article_for_display(article: dict[str, Any], translator: GoogleWeb
     fields["display_content"] = content_preview
     article["display_content_truncated"] = is_truncated
 
+    translated_count = 0
+    field_errors: list[str] = []
     for display_field, source_value in fields.items():
         if not source_value:
             continue
-        article[display_field] = translator.translate(str(source_value))
+        try:
+            article[display_field] = translator.translate(str(source_value))
+            translated_count += 1
+        except TranslatorRateLimitError as exc:
+            field_errors.append(str(exc))
+            break
+        except Exception as exc:
+            field_errors.append(f"{display_field}: khong dich duoc")
+
+    if translated_count:
+        article["display_language"] = "vi"
+    if field_errors:
+        article["translation_error"] = "; ".join(dict.fromkeys(field_errors))
 
 
 def prepare_result_for_display(result: dict[str, Any], translate_to_vi: bool = False) -> dict[str, Any]:
@@ -189,14 +232,27 @@ def prepare_result_for_display(result: dict[str, Any], translate_to_vi: bool = F
     for index, article in enumerate(articles, start=1):
         if article.get("error"):
             continue
+        if translator.unavailable_reason:
+            set_original_display_fields(article)
+            article["translation_error"] = translator.unavailable_reason
+            display_result["translation"]["article_error_count"] += 1
+            continue
         try:
             translate_article_for_display(article, translator)
-            display_result["translation"]["article_success_count"] += 1
+            if article.get("display_language") == "vi":
+                display_result["translation"]["article_success_count"] += 1
+            else:
+                display_result["translation"]["article_error_count"] += 1
+                translation_warnings.append(f"Khong dich duoc bai #{index}: khong co truong nao dich thanh cong.")
+            if article.get("translation_error"):
+                translation_warnings.append(f"Dich mot phan bai #{index}: {article['translation_error']}")
         except Exception as exc:
             set_original_display_fields(article)
             article["display_language"] = "original"
-            article["translation_error"] = str(exc)
+            article["translation_error"] = "Khong dich duoc bai nay."
             display_result["translation"]["article_error_count"] += 1
+            if translator.unavailable_reason:
+                translation_warnings.append(translator.unavailable_reason)
             translation_warnings.append(f"Không dịch được bài #{index}: {exc}")
 
     if translation_warnings:

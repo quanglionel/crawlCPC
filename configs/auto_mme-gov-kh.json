@@ -5,7 +5,7 @@
     "mme.gov.kh"
   ],
   "listing_urls": [
-    "https://mme.gov.kh/"
+    "https://mme.gov.kh/newsroom"
   ],
   "article_link_selectors": [
     "article a[href]",
@@ -23,7 +23,7 @@
     "h3 a[href]",
     "a[href]"
   ],
-  "article_link_pattern": "^https?://(?:mme\\.gov\\.kh)/.+/.{12,}(?:/)?(?:[?#].*)?$",
+  "article_link_pattern": "^https?://(?:mme\\.gov\\.kh)/newsroom/all-news/[^/?#]+/?$",
   "article_link_exclude_patterns": [
     "/(?:about|advertise|author|category|contact|feed|login|page|privacy|register|rss|search|tag|terms)(?:/|$)",
     "/(?:wp-admin|wp-content|wp-json)(?:/|$)",
@@ -140,6 +140,12 @@
       "extractors": [
         {
           "selector": "article .entry-content p"
+        },
+        {
+          "selector": ".news-single article p"
+        },
+        {
+          "selector": ".entry-content article p"
         },
         {
           "selector": "article .post-content p"

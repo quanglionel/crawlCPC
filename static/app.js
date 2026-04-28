@@ -21,6 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const allSourcesKey = "__all__";
   const customSourcesKey = "__custom__";
   let crawlJobPollTimer = null;
+  const submitButtonDefaultText = submitButton?.textContent || "Bat dau crawl";
   let articleCards = Array.from(document.querySelectorAll(".article-card"));
   const renderedArticleUrls = new Set(articleCards.map((card) => card.dataset.articleUrl || "").filter(Boolean));
   const keepAliveIntervalMs = 4 * 60 * 1000;
@@ -119,15 +120,25 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  const setCrawlButtonBusy = (isBusy, label = "") => {
+    if (!submitButton) {
+      return;
+    }
+
+    submitButton.disabled = isBusy;
+    submitButton.textContent = isBusy ? label || "Dang crawl..." : submitButtonDefaultText;
+    document.body.classList.toggle("is-loading", isBusy);
+  };
+
+  const crawlButtonBusyLabel = () => (
+    sourceSelect && [allSourcesKey, customSourcesKey].includes(sourceSelect.value)
+      ? "Dang xep lich crawl..."
+      : "Dang crawl..."
+  );
+
   if (form && submitButton) {
     form.addEventListener("submit", () => {
-      submitButton.disabled = true;
-      if (sourceSelect && [allSourcesKey, customSourcesKey].includes(sourceSelect.value)) {
-        submitButton.textContent = "Dang xep lich crawl...";
-      } else {
-        submitButton.textContent = "Đang crawl...";
-      }
-      document.body.classList.add("is-loading");
+      setCrawlButtonBusy(true, crawlButtonBusyLabel());
     });
   }
 
@@ -269,6 +280,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const currentSource = (job.current_source || "").trim();
     const status = (job.status || "").trim();
+    crawlJobPanel.dataset.jobStatus = status;
     if (isSingleSourceJob && totalArticles > 0) {
       progress = Math.min(100, Math.round((completedArticles / totalArticles) * 100));
     } else if (status === "completed") {
@@ -280,6 +292,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (status === "running") {
+      setCrawlButtonBusy(true, "Dang crawl...");
       if (crawlJobText) {
         if (isSingleSourceJob) {
           crawlJobText.textContent = currentSource
@@ -292,12 +305,14 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
     } else if (status === "completed") {
+      setCrawlButtonBusy(false);
       if (crawlJobText) {
         crawlJobText.textContent = isSingleSourceJob
           ? "Crawl nguon da hoan tat. Dang tai lai ket qua day du."
           : "Crawl tat ca nguon da hoan tat. Dang tai lai ket qua day du.";
       }
     } else if (status === "failed") {
+      setCrawlButtonBusy(false);
       if (crawlJobText) {
         crawlJobText.textContent = `Job crawl that bai: ${job.error || "Khong ro nguyen nhan"}`;
       }
@@ -333,6 +348,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (crawlJobText) {
               crawlJobText.textContent = "Job crawl khong con ton tai (co the da restart dich vu).";
             }
+            setCrawlButtonBusy(false);
           }
           return;
         }
@@ -359,6 +375,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (job.status === "failed" && crawlJobPollTimer) {
           clearInterval(crawlJobPollTimer);
           crawlJobPollTimer = null;
+          setCrawlButtonBusy(false);
         }
       } catch (_error) {
         // Keep polling; transient network hiccups should not stop updates.
@@ -605,6 +622,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   applyTranslationToggle();
   applyResultFilters();
+  if (crawlJobPanel?.dataset.jobStatus === "running") {
+    setCrawlButtonBusy(true, "Dang crawl...");
+  }
   startCrawlJobPolling();
 
   const visibleSourceCheckboxes = () => sourceCheckboxes.filter((checkbox) => {

@@ -1,12 +1,12 @@
 {
   "source_key": "immigration-gov-kh",
   "name": "immigration.gov.kh",
-  "target_url": "https://immigration.gov.kh/",
+  "target_url": "https://immigration.gov.kh/news",
   "target_mode": "listing",
   "preset_path": "configs/auto_immigration-gov-kh.json",
   "output": "output/auto/156_immigration-gov-kh.json",
   "max_pages": 1,
   "max_articles": 2,
   "workers": 2,
-  "notes": "Auto-generated from https://immigration.gov.kh. Top candidate: https://immigration.gov.kh/news?q=fSWeA16hLDGk6hEpCxHD\nAuto quality fix: moved from broad preset to dedicated preset due to non-article links."
+  "notes": "Auto-generated from https://immigration.gov.kh. User target: https://immigration.gov.kh/news\nAuto quality fix: uses Firestore API because the public news page is Angular-rendered and static HTML exposes menu links only."
 }

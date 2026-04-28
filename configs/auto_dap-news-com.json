@@ -99,6 +99,10 @@
           "attr": "content"
         },
         {
+          "selector": "$url",
+          "regex": "/(20\\d{2}/\\d{1,2}/\\d{1,2})/"
+        },
+        {
           "selector": "time[datetime]",
           "attr": "datetime"
         },

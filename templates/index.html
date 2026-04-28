@@ -142,6 +142,7 @@
                 class="notice is-warning crawl-job-panel"
                 id="crawl_job_panel"
                 data-job-id="{{ active_job_id if active_job_id else '' }}"
+                data-job-status="{{ active_crawl_job.status if active_crawl_job else '' }}"
                 {% if not active_crawl_job %}hidden{% endif %}
               >
                 <p id="crawl_job_text">
@@ -162,11 +163,11 @@
 
             <div class="panel-head">
               <h2>Kết Quả</h2>
-              <p>Tìm kiếm và lọc nhanh trên danh sách bài viết của lần crawl gần nhất.</p>
+              <p class="future-result-filters" hidden>Tìm kiếm và lọc nhanh trên danh sách bài viết của lần crawl gần nhất.</p>
             </div>
 
             {% if result or active_crawl_job %}
-              <div class="result-toolbar" id="result_filters">
+              <div class="result-toolbar future-result-filters" id="result_filters" hidden>
                 <div class="filter-heading">
                   <div>
                     <p class="empty-kicker">Bộ lọc kết quả</p>

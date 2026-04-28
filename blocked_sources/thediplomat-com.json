@@ -1,0 +1,9 @@
+{
+  "record_key": "thediplomat-com",
+  "source_key": "thediplomat-com",
+  "name": "thediplomat.com",
+  "target_url": "https://thediplomat.com/",
+  "reason": "Direct site/feed/WP JSON/sitemap fail SSL handshake in this environment; Jina proxy is temporarily rate-limited with HTTP 451.",
+  "last_checked_at": "2026-04-29",
+  "notes": "Move to blocked sources tab. FeedBurner is reachable but stale from 2015, so it is not suitable for current articles."
+}

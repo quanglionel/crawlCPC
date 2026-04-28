@@ -73,6 +73,25 @@ The app is designed so non-technical source management can happen in the UI whil
   - listing page is a Next.js client-rendered page; static HTML currently only exposes loading skeleton, not article cards
   - article data is fetched through GraphQL at `https://graphql.moc.gov.kh/graphql`, but on 2026-04-28 direct HTTP requests returned 403 "Site Under Maintenance"
   - existing preset still uses URL regexes for `/kh/news/<id>` when links are present
+- `vodkhmer.news`
+  - source should target `https://www.vodkhmer.news/category/national/`
+  - preset `configs/auto_vodkhmer-news.json` is narrowed to dated article URLs like `/YYYY/MM/DD/<slug>/`
+  - detail pages are Elementor; content should come from `.elementor-widget-theme-post-content`
+- `vayofm.com`
+  - requested `https://vayofm.com/news/detail` is not a listing; it redirects to a 404 page
+  - source should target `https://vayofm.com/`
+  - dedicated preset `configs/vayofm_com.json` only accepts real article URLs like `/news/detail/<id>-<id>.html`
+  - detail content comes from `#nation-news p`; date/author come from `.detail-info`
+- `thediplomat.com`
+  - source was moved from normal `sources/` to `blocked_sources/thediplomat-com.json`
+  - unused preset `configs/thediplomat_com.json` was removed
+  - direct homepage/feed/WP JSON/sitemap fail SSL handshake in this environment (`SSLEOFError`)
+  - FeedBurner is reachable but stale from 2015, so do not use it for current articles
+  - Jina can return current feed/article markdown, but after repeated tests it temporarily rate-limited `thediplomat.com` with HTTP 451
+- `khmer.voanews.com`
+  - source was intentionally removed from `sources/`
+  - dedicated preset `configs/khmer_voanews_com.json` was also removed
+  - user asked to remove `https://khmer.voanews.com/`
 - `pressocm.gov.kh`
   - source should use dedicated preset `configs/pressocm_gov_kh.json`, not the shared BayonTV auto preset
   - listing links are `https://pressocm.gov.kh/archives/<id>` from `.entry-title a[href]`
@@ -126,6 +145,20 @@ The app is designed so non-technical source management can happen in the UI whil
 - `rac.gov.kh`
   - source was intentionally removed from `sources/`
   - user asked to remove `https://rac.gov.kh/`
+- `vokk.net`
+  - source was intentionally removed from `sources/`
+  - unused dedicated preset `configs/vokk_kh.json` was also removed
+  - user asked to remove `https://vokk.net/`
+- `vnexpress.net`
+  - source was intentionally removed from `sources/`
+  - user asked to remove `https://vnexpress.net/`
+- `vietnamexport.com`
+  - source was intentionally removed from `sources/`
+  - unused dedicated preset `configs/auto_vietnamexport-com.json` was also removed
+  - user asked to remove `https://vietnamexport.com/`
+- `vietnamese.cri.cn`
+  - source was intentionally removed from `sources/`
+  - user asked to remove `https://vietnamese.cri.cn/`
 - `cambodian.cri.cn`
   - source was intentionally removed from `sources/`
 - `cambodiantimes.com`

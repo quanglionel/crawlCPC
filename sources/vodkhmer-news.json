@@ -1,12 +1,12 @@
 {
   "source_key": "vodkhmer-news",
-  "name": "Vodhotnews",
-  "target_url": "https://www.vodkhmer.news/",
+  "name": "VOD Khmer",
+  "target_url": "https://www.vodkhmer.news/category/national/",
   "target_mode": "listing",
   "preset_path": "configs/auto_vodkhmer-news.json",
   "output": "output/auto/008_vodkhmer-news.json",
   "max_pages": 1,
   "max_articles": 3,
   "workers": 2,
-  "notes": "Auto-generated from https://vodhotnews.com. Top candidate: https://www.vodkhmer.news/2026/04/03/some-history-of-monk-chea-wutthy-who-was-arrested-and-beaten-by-the-police-for-expressing-his-opinion-about-the-thai-invasion/"
+  "notes": "Use the VOD Khmer national category; preset is narrowed to dated article URLs and Elementor post content."
 }

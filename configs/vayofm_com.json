@@ -1,0 +1,123 @@
+{
+  "site_name": "VAYO FM",
+  "base_url": "https://vayofm.com",
+  "allowed_domains": [
+    "vayofm.com"
+  ],
+  "listing_urls": [
+    "https://vayofm.com/"
+  ],
+  "article_link_selectors": [
+    "a[href*='/news/detail/']"
+  ],
+  "article_link_pattern": "^https?://vayofm\\.com/news/detail/\\d+-\\d+\\.html$",
+  "article_link_exclude_patterns": [
+    "\\.(?:7z|avi|css|docx?|gif|ico|jpe?g|js|mp3|mp4|pdf|png|rar|svg|webp|xlsx?|xml|zip)(?:[?#]|$)",
+    "(?:facebook|instagram|linkedin|telegram|tiktok|twitter|x|youtube)\\.com"
+  ],
+  "fields": {
+    "title": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": ".detail-title"
+        },
+        {
+          "selector": "h1"
+        },
+        {
+          "selector": "meta[property='og:title']",
+          "attr": "content"
+        },
+        {
+          "selector": "title"
+        }
+      ]
+    },
+    "summary": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": "meta[property='og:description']",
+          "attr": "content"
+        },
+        {
+          "selector": "meta[name='description']",
+          "attr": "content"
+        }
+      ]
+    },
+    "published_at": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": ".detail-info .col-sm-9",
+          "regex": "(\\d{1,2}-\\d{1,2}-20\\d{2}(?:\\s+\\d{1,2}:\\d{2}\\s*(?:am|pm))?)"
+        },
+        {
+          "selector": ".detail-info"
+        }
+      ]
+    },
+    "author": {
+      "mode": "first",
+      "extractors": [
+        {
+          "selector": ".detail-info span"
+        }
+      ]
+    },
+    "content": {
+      "mode": "join",
+      "separator": "\n\n",
+      "extractors": [
+        {
+          "selector": "#nation-news p"
+        },
+        {
+          "selector": "meta[property='og:description']",
+          "attr": "content"
+        }
+      ]
+    },
+    "images": {
+      "mode": "list",
+      "extractors": [
+        {
+          "selector": "meta[property='og:image']",
+          "attr": "content"
+        },
+        {
+          "selector": "#nation-news img[src*='content_img']",
+          "attr": "src"
+        }
+      ]
+    }
+  },
+  "remove_selectors": [
+    "script",
+    "style",
+    "noscript",
+    "iframe",
+    "form",
+    "nav",
+    "header",
+    "footer",
+    ".ads",
+    ".ad",
+    ".share",
+    ".social-share",
+    ".related",
+    ".comments"
+  ],
+  "request": {
+    "timeout_seconds": 20,
+    "delay_seconds": 0.2,
+    "respect_robots_txt": false,
+    "headers": {
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+      "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+      "Accept-Language": "km,en-US;q=0.9,en;q=0.8"
+    }
+  }
+}

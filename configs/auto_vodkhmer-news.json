@@ -1,12 +1,12 @@
 {
-  "site_name": "Vodhotnews",
+  "site_name": "VOD Khmer",
   "base_url": "https://www.vodkhmer.news",
   "allowed_domains": [
     "vodhotnews.com",
     "www.vodkhmer.news"
   ],
   "listing_urls": [
-    "https://www.vodkhmer.news/"
+    "https://www.vodkhmer.news/category/national/"
   ],
   "article_link_selectors": [
     "article a[href]",
@@ -24,7 +24,7 @@
     "h3 a[href]",
     "a[href]"
   ],
-  "article_link_pattern": "^https?://.+/.+",
+  "article_link_pattern": "^https?://www\\.vodkhmer\\.news/20\\d{2}/\\d{2}/\\d{2}/[^/?#]+/?$",
   "article_link_exclude_patterns": [
     "/(?:about|advertise|author|category|contact|feed|login|page|privacy|register|rss|search|tag|terms)(?:/|$)",
     "/(?:wp-admin|wp-content|wp-json)(?:/|$)",
@@ -36,24 +36,15 @@
       "mode": "first",
       "extractors": [
         {
+          "selector": "h1"
+        },
+        {
           "selector": "meta[property='og:title']",
           "attr": "content"
         },
         {
           "selector": "meta[name='twitter:title']",
           "attr": "content"
-        },
-        {
-          "selector": "h1.entry-title"
-        },
-        {
-          "selector": "h1.post-title"
-        },
-        {
-          "selector": "h1.article-title"
-        },
-        {
-          "selector": "h1"
         },
         {
           "selector": "title"
@@ -137,6 +128,12 @@
       "mode": "join",
       "separator": "\n\n",
       "extractors": [
+        {
+          "selector": ".elementor-widget-theme-post-content .elementor-widget-container p"
+        },
+        {
+          "selector": ".elementor-widget-theme-post-content p"
+        },
         {
           "selector": "article .entry-content p"
         },

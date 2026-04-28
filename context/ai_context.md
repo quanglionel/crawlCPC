@@ -34,7 +34,6 @@ Use `context/` as the first stop when resuming work on this repo.
   - There is now a dedicated tab for sources that cannot currently be crawled.
   - Records are stored separately from normal sources.
 
-
 ## Recent Source-Specific Decisions
 
 - `thmeythmey.com`:
@@ -79,6 +78,26 @@ Use `context/` as the first stop when resuming work on this repo.
   - Use `https://moc.gov.kh/kh/news` as the source target.
   - The `/kh/news` page is Next.js client-rendered and static HTML currently has only skeleton cards; direct crawl test returned 0/0 links.
   - The JS chunk references GraphQL `publicNewsList` at `https://graphql.moc.gov.kh/graphql`, but direct POST returned 403 "Site Under Maintenance" on 2026-04-28.
+- `vodkhmer.news`:
+  - Existing source now targets `https://www.vodkhmer.news/category/national/`.
+  - `configs/auto_vodkhmer-news.json` is narrowed to dated article URLs like `/YYYY/MM/DD/<slug>/`.
+  - Detail content comes from `.elementor-widget-theme-post-content`; older generic content selectors returned empty content.
+  - Tested 2/2 successfully on 2026-04-28 with title/date/content/images.
+- `vayofm.com`:
+  - Existing source `sources/vayofm-1776588230.json` now uses dedicated `configs/vayofm_com.json`.
+  - The requested bare `https://vayofm.com/news/detail` returns the site's 404 page; use homepage listing and match real article URLs `/news/detail/<id>-<id>.html`.
+  - Detail extraction uses `.detail-title`, `.detail-info`, `#nation-news p`, and `content_img` images.
+  - Tested 2/2 successfully on 2026-04-28 with title/date/author/content/images.
+- `thediplomat.com`:
+  - Source `sources/thediplomat-com.json` was removed from normal sources and moved to blocked sources as `blocked_sources/thediplomat-com.json`.
+  - Preset `configs/thediplomat_com.json` was removed because the source is now blocked.
+  - Direct homepage/feed/WP JSON/sitemap all fail SSL handshake (`SSLEOFError`) in this environment, including `curl.exe`, `requests`, and `cloudscraper`.
+  - FeedBurner `feeds.feedburner.com/the-diplomat` is reachable but stale from 2015, so it should not be used for current crawl output.
+  - Jina returned current feed/article markdown during testing, then temporarily rate-limited `thediplomat.com` with HTTP 451 after repeated requests.
+- `khmer.voanews.com`:
+  - Source `sources/khmer-voanews-com.json` was removed.
+  - Dedicated preset `configs/khmer_voanews_com.json` was removed.
+  - User asked to remove `https://khmer.voanews.com/`.
 - `pressocm.gov.kh`:
   - Existing source was repointed from `configs/auto_bayontv-com-kh.json` to `configs/pressocm_gov_kh.json`.
   - Listing uses `.entry-title a[href]` and strict `/archives/<id>` article URLs.
@@ -128,6 +147,20 @@ Use `context/` as the first stop when resuming work on this repo.
 - `rac.gov.kh`:
   - Source `sources/rac-gov-kh.json` was removed.
   - User asked to remove `https://rac.gov.kh/`.
+- `vokk.net`:
+  - Source `sources/vokk-net.json` was removed.
+  - Unused dedicated preset `configs/vokk_kh.json` was removed.
+  - User asked to remove `https://vokk.net/`.
+- `vnexpress.net`:
+  - Source `sources/vnexpress-net.json` was removed.
+  - User asked to remove `https://vnexpress.net/`.
+- `vietnamexport.com`:
+  - Source `sources/vietnamexport-com.json` was removed.
+  - Unused dedicated preset `configs/auto_vietnamexport-com.json` was removed.
+  - User asked to remove `https://vietnamexport.com/`.
+- `vietnamese.cri.cn`:
+  - Source `sources/vietnamese-cri-cn.json` was removed.
+  - User asked to remove `https://vietnamese.cri.cn/`.
 - `cambodian.cri.cn`:
   - Source was removed from `sources/`.
 - `cambodiantimes.com`:

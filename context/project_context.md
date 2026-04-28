@@ -29,6 +29,7 @@ The app is designed so non-technical source management can happen in the UI whil
 - `output/` crawl results
 - `context/` resume memory
 
+
 ## Current Important Sources / Behaviors
 
 - `bayontv.com.kh`
@@ -41,6 +42,14 @@ The app is designed so non-technical source management can happen in the UI whil
     - `important-news`
   - link extraction uses `page-link`
   - preset preserves multiple listing URLs
+  
+- `nac.org.kh`
+  - source: `sources/nac-org-kh.json`
+  - preset: `configs/auto_bayontv-com-kh.json`
+  - target: `https://nac.org.kh/`
+  - mode: listing, max_pages: 1, max_articles: 2
+  - auto-generated, currently uses BayonTV preset for extraction
+  - sample article: https://nac.org.kh/article/9576
 - `cambodiadaily.com`
   - dedicated news-category preset
   - source should target `/category/news/`, not homepage

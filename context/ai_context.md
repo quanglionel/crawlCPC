@@ -34,11 +34,18 @@ Use `context/` as the first stop when resuming work on this repo.
   - There is now a dedicated tab for sources that cannot currently be crawled.
   - Records are stored separately from normal sources.
 
+
 ## Recent Source-Specific Decisions
 
 - `thmeythmey.com`:
   - Detail pages are blocked by Cloudflare.
   - Source uses homepage/listing-card extraction fallback.
+
+- `nac.org.kh`:
+  - Đã thêm nguồn với preset dùng chung với BayonTV (`configs/auto_bayontv-com-kh.json`).
+  - Target: https://nac.org.kh/
+  - Đang ở chế độ listing, crawl tối đa 2 bài, 1 trang.
+  - Được auto-generate, kiểm tra thành công với bài mẫu: https://nac.org.kh/article/9576
 - `bayontv.com.kh`:
   - Works.
   - `published_at` is inferred from `og:image` date in `configs/bayontv_news_only.json`.
